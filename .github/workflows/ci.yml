@@ -26,6 +26,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Check generated localizations
+        run: |
+          flutter gen-l10n
+          git diff --exit-code lib/l10n
+
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
 
