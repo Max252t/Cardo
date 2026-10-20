@@ -11,6 +11,10 @@ class Pair {
   final double min;
 }
 
+const Set<String> decorativeTokensDuplicatedByShapeOrLabel = <String>{
+  'outlineMuted',
+};
+
 List<Pair> pairsFor(CardoColors c) {
   final backgrounds = <String, Color>{
     'background': c.background,
@@ -92,7 +96,12 @@ List<Pair> pairsFor(CardoColors c) {
     )
     ..add(Pair('textSecondary on field', c.textSecondary, c.field))
     ..add(Pair('textPrimary on field', c.textPrimary, c.field))
-    ..add(Pair('dragBorder on card', c.dragBorder, c.card, min: 3));
+    ..add(Pair('dragBorder on card', c.dragBorder, c.card, min: 3))
+    ..add(Pair('tabActiveCount on emphasis', c.tabActiveCount, c.emphasis))
+    ..add(
+      Pair('textSecondary on sidebarField', c.textSecondary, c.sidebarField),
+    )
+    ..add(Pair('textPrimary on sidebarField', c.textPrimary, c.sidebarField));
   final swatches = <String, ConnectionSwatch>{
     'connected': c.connected,
     'syncing': c.syncing,
@@ -171,6 +180,16 @@ void main() {
           );
         });
       }
+
+      test('decorative tokens are not among checked pairs', () {
+        final checkedTokens = <String>{
+          for (final pair in pairsFor(colors)) ...pair.name.split(' '),
+        };
+        expect(
+          checkedTokens.intersection(decorativeTokensDuplicatedByShapeOrLabel),
+          isEmpty,
+        );
+      });
     });
   });
 

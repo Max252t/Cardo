@@ -28,7 +28,7 @@ void main() {
 
   group('ThemeData extensions', () {
     themes.forEach((name, theme) {
-      test('$name has all 7 extensions', () {
+      test('$name has all 8 extensions', () {
         expect(theme.extension<CardoColors>(), isNotNull);
         expect(theme.extension<CardoTypography>(), isNotNull);
         expect(theme.extension<CardoRadii>(), isNotNull);
@@ -36,7 +36,8 @@ void main() {
         expect(theme.extension<CardoSizes>(), isNotNull);
         expect(theme.extension<CardoShadows>(), isNotNull);
         expect(theme.extension<CardoMotion>(), isNotNull);
-        expect(theme.extensions.length, 7);
+        expect(theme.extension<CardoLayout>(), isNotNull);
+        expect(theme.extensions.length, 8);
       });
     });
 
@@ -300,7 +301,9 @@ void main() {
     const base = CardoTypography.standard;
     final other = base.copyWith(
       display: const TextStyle(fontSize: 80, fontWeight: FontWeight.w400),
-      avatarInitialRatio: 0.8,
+      avatarInitialSteps: const <AvatarInitialStep>[
+        AvatarInitialStep(maxDiameter: double.infinity, fontSize: 20),
+      ],
     );
 
     test('copyWith keeps values', () {
@@ -308,8 +311,7 @@ void main() {
       expect(copy.display, base.display);
       expect(copy.body, base.body);
       expect(copy.mono, base.mono);
-      expect(copy.avatarInitialRatio, base.avatarInitialRatio);
-      expect(copy.avatarInitialMin, base.avatarInitialMin);
+      expect(copy.avatarInitialSteps, base.avatarInitialSteps);
     });
 
     test('bricolage styles have Geist fallback for cyrillic', () {
@@ -340,13 +342,15 @@ void main() {
       expect(base.lerp(other, 0).display.fontSize, base.display.fontSize);
       expect(base.lerp(other, 1).display.fontSize, 80);
       expect(base.lerp(other, 0.5).display.fontSize, closeTo(60, 0.001));
-      expect(base.lerp(other, 1).avatarInitialRatio, 0.8);
-      expect(base.lerp(other, 0).avatarInitialRatio, base.avatarInitialRatio);
+      expect(base.lerp(other, 1).avatarInitialSteps, other.avatarInitialSteps);
+      expect(base.lerp(other, 0).avatarInitialSteps, base.avatarInitialSteps);
     });
 
-    test('avatarInitial scales with diameter and respects minimum', () {
-      expect(base.avatarInitial(100).fontSize, 40);
-      expect(base.avatarInitial(10).fontSize, base.avatarInitialMin);
+    test('avatarInitial follows the mockup table', () {
+      expect(base.avatarInitial(22).fontSize, 11);
+      expect(base.avatarInitial(30).fontSize, 12);
+      expect(base.avatarInitial(34).fontSize, 13);
+      expect(base.avatarInitial(36).fontSize, 14);
       expect(base.avatarInitial(28).height, 1);
     });
   });

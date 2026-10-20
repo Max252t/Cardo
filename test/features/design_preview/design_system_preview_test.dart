@@ -1,3 +1,4 @@
+import 'package:cardo/features/design_preview/design_system_preview.dart';
 import 'package:cardo/main.dart';
 import 'package:cardo/shared/widgets/card_tile.dart';
 import 'package:cardo/shared/widgets/connection_pill.dart';
@@ -27,7 +28,9 @@ void main() {
               tester.platformDispatcher.clearAllTestValues();
             });
 
-            await tester.pumpWidget(const CardoApp());
+            await tester.pumpWidget(
+              const CardoApp(home: DesignSystemPreview()),
+            );
             await tester.pump();
             expect(tester.takeException(), isNull);
             expect(find.text('Дизайн-система'), findsOneWidget);
@@ -52,7 +55,7 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
-    await tester.pumpWidget(const CardoApp());
+    await tester.pumpWidget(const CardoApp(home: DesignSystemPreview()));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(find.byType(CardTile), findsWidgets);
@@ -63,7 +66,7 @@ void main() {
   });
 
   testWidgets('app uses russian locale and no-animation theme', (tester) async {
-    await tester.pumpWidget(const CardoApp());
+    await tester.pumpWidget(const CardoApp(home: DesignSystemPreview()));
     await tester.pump();
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.themeMode, ThemeMode.system);

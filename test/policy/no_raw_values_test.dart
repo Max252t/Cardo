@@ -161,6 +161,35 @@ void main() {
     });
   });
 
+  group('feature data and domain do not import theme', () {
+    final rules = <String, RegExp>{
+      'theme import': RegExp(r'''^\s*(import|export)\s+['"][^'"]*theme/'''),
+    };
+
+    test('rule detects theme imports', () {
+      final rule = rules['theme import']!;
+      expect(
+        rule.hasMatch("import '../../../theme/cardo_theme.dart';"),
+        isTrue,
+      );
+      expect(
+        rule.hasMatch("import 'package:cardo/theme/cardo_durations.dart';"),
+        isTrue,
+      );
+      expect(rule.hasMatch("import '../domain/board_model.dart';"), isFalse);
+    });
+
+    test('lib/features/*/data and */domain never import theme', () {
+      final files = _dartFiles(excluded: const <String>[]).where((file) {
+        final normalized = file.path.replaceAll(r'\', '/');
+        return RegExp(r'^lib/features/[^/]+/(data|domain)/')
+            .hasMatch(normalized);
+      }).toList();
+      expect(files, isNotEmpty);
+      expect(_violations(files, rules), isEmpty);
+    });
+  });
+
   group('no comments in lib', () {
     final rules = <String, RegExp>{
       'line comment': RegExp(r'^\s*//'),
