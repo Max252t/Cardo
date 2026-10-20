@@ -104,6 +104,7 @@ class AvatarOverflowBubble extends StatelessWidget {
               .avatarInitial(diameter)
               .copyWith(color: colors.avatarOverflowText),
           textAlign: TextAlign.center,
+          textScaler: TextScaler.noScaling,
         ),
       ),
     );

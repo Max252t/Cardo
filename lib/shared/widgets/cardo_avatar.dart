@@ -39,6 +39,7 @@ class CardoAvatar extends StatelessWidget {
                 .avatarInitial(diameter)
                 .copyWith(color: swatch.onFill),
             textAlign: TextAlign.center,
+            textScaler: TextScaler.noScaling,
           ),
         ),
       ),

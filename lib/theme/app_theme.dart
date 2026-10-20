@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'cardo_colors.dart';
+import 'cardo_layout.dart';
 import 'cardo_motion.dart';
 import 'cardo_radii.dart';
 import 'cardo_shadows.dart';
@@ -92,6 +93,7 @@ ThemeData _buildTheme({
   const spacing = CardoSpacing.standard;
   const sizes = CardoSizes.standard;
   const motion = CardoMotion.standard;
+  const layout = CardoLayout.standard;
 
   final scheme = _colorScheme(colors);
   final buttonShape = RoundedRectangleBorder(
@@ -227,6 +229,7 @@ ThemeData _buildTheme({
       sizes,
       shadows,
       motion,
+      layout,
     ],
   );
 }

@@ -6,6 +6,7 @@ abstract final class CardoPrimitives {
   static const Color neutral0E0F13 = Color(0xFF0E0F13);
   static const Color neutral121318 = Color(0xFF121318);
   static const Color neutral15171C = Color(0xFF15171C);
+  static const Color neutral1B1D24 = Color(0xFF1B1D24);
   static const Color neutral1E2028 = Color(0xFF1E2028);
   static const Color neutral22242B = Color(0xFF22242B);
   static const Color neutral23252D = Color(0xFF23252D);
@@ -16,6 +17,7 @@ abstract final class CardoPrimitives {
   static const Color neutral5B616E = Color(0xFF5B616E);
   static const Color neutral8A93A3 = Color(0xFF8A93A3);
   static const Color neutral9097A3 = Color(0xFF9097A3);
+  static const Color neutralB4BAC4 = Color(0xFFB4BAC4);
   static const Color neutralC3C7CF = Color(0xFFC3C7CF);
   static const Color neutralC9CED6 = Color(0xFFC9CED6);
   static const Color neutralDDE1E7 = Color(0xFFDDE1E7);

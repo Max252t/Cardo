@@ -57,6 +57,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
     required this.avatarFallbackAccent,
     required this.avatarOverflowBackground,
     required this.avatarOverflowText,
+    required this.outlineMuted,
+    required this.sidebarField,
+    required this.tabActiveCount,
   });
 
   static const CardoColors light = CardoColors(
@@ -134,6 +137,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
     avatarFallbackAccent: CardoPrimitives.neutral5B616E,
     avatarOverflowBackground: CardoPrimitives.neutralE4E7EC,
     avatarOverflowText: CardoPrimitives.neutral3B414D,
+    outlineMuted: CardoPrimitives.neutralB4BAC4,
+    sidebarField: CardoPrimitives.neutralEEF0F3,
+    tabActiveCount: CardoPrimitives.neutralC9CED6,
   );
 
   static const CardoColors dark = CardoColors(
@@ -211,6 +217,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
     avatarFallbackAccent: CardoPrimitives.neutral8A93A3,
     avatarOverflowBackground: CardoPrimitives.neutral2A2D36,
     avatarOverflowText: CardoPrimitives.neutralC3C7CF,
+    outlineMuted: CardoPrimitives.neutral3A3E4A,
+    sidebarField: CardoPrimitives.neutral1B1D24,
+    tabActiveCount: CardoPrimitives.neutral5B616E,
   );
 
   final Brightness brightness;
@@ -263,6 +272,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
   final Color avatarFallbackAccent;
   final Color avatarOverflowBackground;
   final Color avatarOverflowText;
+  final Color outlineMuted;
+  final Color sidebarField;
+  final Color tabActiveCount;
 
   static CardoColors of(BuildContext context) {
     final extension = Theme.of(context).extension<CardoColors>();
@@ -336,6 +348,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
     Color? avatarFallbackAccent,
     Color? avatarOverflowBackground,
     Color? avatarOverflowText,
+    Color? outlineMuted,
+    Color? sidebarField,
+    Color? tabActiveCount,
   }) {
     return CardoColors(
       brightness: brightness ?? this.brightness,
@@ -390,6 +405,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
       avatarOverflowBackground:
           avatarOverflowBackground ?? this.avatarOverflowBackground,
       avatarOverflowText: avatarOverflowText ?? this.avatarOverflowText,
+      outlineMuted: outlineMuted ?? this.outlineMuted,
+      sidebarField: sidebarField ?? this.sidebarField,
+      tabActiveCount: tabActiveCount ?? this.tabActiveCount,
     );
   }
 
@@ -456,6 +474,9 @@ class CardoColors extends ThemeExtension<CardoColors> {
         other.avatarOverflowBackground,
       ),
       avatarOverflowText: c(avatarOverflowText, other.avatarOverflowText),
+      outlineMuted: c(outlineMuted, other.outlineMuted),
+      sidebarField: c(sidebarField, other.sidebarField),
+      tabActiveCount: c(tabActiveCount, other.tabActiveCount),
     );
   }
 }

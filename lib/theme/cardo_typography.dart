@@ -1,6 +1,3 @@
-import 'dart:math' as math;
-import 'dart:ui' show lerpDouble;
-
 import 'package:flutter/material.dart';
 
 abstract final class CardoFonts {
@@ -34,8 +31,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
     required this.tag,
     required this.overline,
     required this.mono,
-    required this.avatarInitialRatio,
-    required this.avatarInitialMin,
+    required this.columnTitle,
+    required this.columnTitleDense,
+    required this.tab,
+    required this.avatarInitialSteps,
   });
 
   static const CardoTypography standard = CardoTypography(
@@ -183,8 +182,33 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       height: 1.4,
       fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
     ),
-    avatarInitialRatio: 0.4,
-    avatarInitialMin: 10,
+    columnTitle: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0,
+      height: 1.35,
+    ),
+    columnTitleDense: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0,
+      height: 1.35,
+    ),
+    tab: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0,
+      height: 1.3,
+    ),
+    avatarInitialSteps: <AvatarInitialStep>[
+      AvatarInitialStep(maxDiameter: 22, fontSize: 11),
+      AvatarInitialStep(maxDiameter: 30, fontSize: 12),
+      AvatarInitialStep(maxDiameter: 34, fontSize: 13),
+      AvatarInitialStep(maxDiameter: double.infinity, fontSize: 14),
+    ],
   );
 
   final TextStyle display;
@@ -207,8 +231,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
   final TextStyle tag;
   final TextStyle overline;
   final TextStyle mono;
-  final double avatarInitialRatio;
-  final double avatarInitialMin;
+  final TextStyle columnTitle;
+  final TextStyle columnTitleDense;
+  final TextStyle tab;
+  final List<AvatarInitialStep> avatarInitialSteps;
 
   static CardoTypography of(BuildContext context) {
     final extension = Theme.of(context).extension<CardoTypography>();
@@ -219,14 +245,20 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
     return extension!;
   }
 
+  TextStyle columnTitleFor({required bool dense}) =>
+      dense ? columnTitleDense : columnTitle;
+
+  double avatarInitialSize(double diameter) {
+    for (final step in avatarInitialSteps) {
+      if (diameter <= step.maxDiameter) {
+        return step.fontSize;
+      }
+    }
+    return avatarInitialSteps.last.fontSize;
+  }
+
   TextStyle avatarInitial(double diameter) {
-    return label.copyWith(
-      fontSize: math.max(
-        avatarInitialMin,
-        (diameter * avatarInitialRatio).roundToDouble(),
-      ),
-      height: 1,
-    );
+    return label.copyWith(fontSize: avatarInitialSize(diameter), height: 1);
   }
 
   @override
@@ -251,8 +283,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
     TextStyle? tag,
     TextStyle? overline,
     TextStyle? mono,
-    double? avatarInitialRatio,
-    double? avatarInitialMin,
+    TextStyle? columnTitle,
+    TextStyle? columnTitleDense,
+    TextStyle? tab,
+    List<AvatarInitialStep>? avatarInitialSteps,
   }) {
     return CardoTypography(
       display: display ?? this.display,
@@ -275,8 +309,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       tag: tag ?? this.tag,
       overline: overline ?? this.overline,
       mono: mono ?? this.mono,
-      avatarInitialRatio: avatarInitialRatio ?? this.avatarInitialRatio,
-      avatarInitialMin: avatarInitialMin ?? this.avatarInitialMin,
+      columnTitle: columnTitle ?? this.columnTitle,
+      columnTitleDense: columnTitleDense ?? this.columnTitleDense,
+      tab: tab ?? this.tab,
+      avatarInitialSteps: avatarInitialSteps ?? this.avatarInitialSteps,
     );
   }
 
@@ -289,7 +325,6 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       return this;
     }
     TextStyle s(TextStyle a, TextStyle b) => TextStyle.lerp(a, b, t) ?? b;
-    double d(double a, double b) => lerpDouble(a, b, t) ?? b;
     return CardoTypography(
       display: s(display, other.display),
       title: s(title, other.title),
@@ -311,8 +346,30 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       tag: s(tag, other.tag),
       overline: s(overline, other.overline),
       mono: s(mono, other.mono),
-      avatarInitialRatio: d(avatarInitialRatio, other.avatarInitialRatio),
-      avatarInitialMin: d(avatarInitialMin, other.avatarInitialMin),
+      columnTitle: s(columnTitle, other.columnTitle),
+      columnTitleDense: s(columnTitleDense, other.columnTitleDense),
+      tab: s(tab, other.tab),
+      avatarInitialSteps: t < 0.5
+          ? avatarInitialSteps
+          : other.avatarInitialSteps,
     );
   }
+}
+
+@immutable
+class AvatarInitialStep {
+  const AvatarInitialStep({required this.maxDiameter, required this.fontSize});
+
+  final double maxDiameter;
+  final double fontSize;
+
+  @override
+  bool operator ==(Object other) {
+    return other is AvatarInitialStep &&
+        other.maxDiameter == maxDiameter &&
+        other.fontSize == fontSize;
+  }
+
+  @override
+  int get hashCode => Object.hash(maxDiameter, fontSize);
 }

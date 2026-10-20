@@ -15,6 +15,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
     required this.reorderCurve,
     required this.dragTiltTurns,
     required this.dragScale,
+    required this.dragEdgeHold,
+    required this.autoScrollTick,
   });
 
   static const CardoMotion standard = CardoMotion(
@@ -24,6 +26,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
     reorderCurve: Curves.easeOutCubic,
     dragTiltTurns: -3 / 360,
     dragScale: 1.02,
+    dragEdgeHold: Duration(milliseconds: 450),
+    autoScrollTick: Duration(milliseconds: 16),
   );
 
   final Duration lift;
@@ -32,6 +36,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
   final Curve reorderCurve;
   final double dragTiltTurns;
   final double dragScale;
+  final Duration dragEdgeHold;
+  final Duration autoScrollTick;
 
   static CardoMotion of(BuildContext context) {
     final extension = Theme.of(context).extension<CardoMotion>();
@@ -50,6 +56,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
     Curve? reorderCurve,
     double? dragTiltTurns,
     double? dragScale,
+    Duration? dragEdgeHold,
+    Duration? autoScrollTick,
   }) {
     return CardoMotion(
       lift: lift ?? this.lift,
@@ -58,6 +66,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
       reorderCurve: reorderCurve ?? this.reorderCurve,
       dragTiltTurns: dragTiltTurns ?? this.dragTiltTurns,
       dragScale: dragScale ?? this.dragScale,
+      dragEdgeHold: dragEdgeHold ?? this.dragEdgeHold,
+      autoScrollTick: autoScrollTick ?? this.autoScrollTick,
     );
   }
 
@@ -76,6 +86,8 @@ class CardoMotion extends ThemeExtension<CardoMotion> {
           lerpDouble(dragTiltTurns, other.dragTiltTurns, t) ??
           other.dragTiltTurns,
       dragScale: lerpDouble(dragScale, other.dragScale, t) ?? other.dragScale,
+      dragEdgeHold: _duration(dragEdgeHold, other.dragEdgeHold, t),
+      autoScrollTick: _duration(autoScrollTick, other.autoScrollTick, t),
     );
   }
 
