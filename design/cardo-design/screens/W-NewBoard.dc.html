@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cardo — создание доски, веб</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0F3}
+a{color:#111318}a:hover{color:#5B616E}
+</style>
+</helmet>
+<div style="position: relative; min-height: 900px; box-sizing: border-box; background: #EEF0F3; font-family: Geist, system-ui, sans-serif; color: #111318; overflow: hidden">
+
+<div aria-hidden="true">
+<div style="background: #FFFFFF; border-bottom: 1px solid #DDE1E7; height: 68px"></div>
+<div style="max-width: 1240px; margin: 0 auto; padding: 40px 24px; display: flex; flex-direction: column; gap: 28px">
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 44px; letter-spacing: -0.035em">Мои доски</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px">
+<div style="height: 260px; border-radius: 22px; background: #FFFFFF"></div>
+<div style="height: 260px; border-radius: 22px; background: #FFFFFF"></div>
+<div style="height: 260px; border-radius: 22px; background: #FFFFFF"></div>
+</div>
+</div>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(17,19,24,0.48)"></div>
+
+<div role="dialog" aria-labelledby="wnb-title" style="position: absolute; top: 150px; left: 0; right: 0; margin: 0 auto; width: calc(100% - 32px); max-width: 500px; background: #FFFFFF; border-radius: 26px; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 30px 60px rgba(17,19,24,0.3)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<h2 id="wnb-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.02em">Новая доска</h2>
+<a href="W-Boards.dc.html" aria-label="Закрыть" style="width: 40px; height: 40px; border-radius: 12px; background: #EEF0F3; color: #111318; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="wnb-name" style="font-size: 13px; font-weight: 500; color: #3B414D">Название</label>
+<input id="wnb-name" type="text" value="Отпуск в Алтае" style="height: 52px; border-radius: 14px; border: 2px solid #111318; background: #FFFFFF; padding: 0 15px; font: 500 17px Geist, sans-serif; color: #111318; box-sizing: border-box">
+<span style="align-self: flex-end; font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">14 / 200</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="wnb-invite" style="font-size: 13px; font-weight: 500; color: #3B414D">Сразу пригласить <span style="color: #5B616E; font-weight: 400">· необязательно</span></label>
+<input id="wnb-invite" type="email" placeholder="email коллеги" style="height: 52px; border-radius: 14px; border: 1px solid #DDE1E7; background: #FFFFFF; padding: 0 16px; font: 400 16px Geist, sans-serif; color: #111318; box-sizing: border-box">
+</div>
+<div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap">
+<a href="W-Boards.dc.html" style="height: 48px; padding: 0 18px; border-radius: 14px; border: 1px solid #C9CED6; display: inline-flex; align-items: center; font: 600 15px Geist, sans-serif; text-decoration: none; box-sizing: border-box">Отмена</a>
+<a href="W-Board.dc.html" style="height: 48px; padding: 0 20px; border-radius: 14px; background: #111318; color: #FFFFFF; display: inline-flex; align-items: center; font: 600 15px Geist, sans-serif; text-decoration: none">Создать доску</a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
