@@ -399,6 +399,252 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Понятно'**
   String get previewSnackbarAction;
+
+  /// Кнопка возврата к списку досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Назад к доскам'**
+  String get boardBack;
+
+  /// Кнопка меню доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Меню доски'**
+  String get boardMenu;
+
+  /// Кнопка добавления карточки внизу колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить карточку'**
+  String get boardAddCard;
+
+  /// Кнопка добавления колонки в конце ряда
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка'**
+  String get boardAddColumn;
+
+  /// Метка кнопки добавления колонки для экранного диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить колонку'**
+  String get boardAddColumnSemantic;
+
+  /// Метка колонки для экранного диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка «{title}»'**
+  String boardColumnSemantic(String title);
+
+  /// Метка вкладки колонки для экранного диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'{title}, {count, plural, one{{count} карточка} few{{count} карточки} many{{count} карточек} other{{count} карточки}}'**
+  String boardTabSemantic(String title, int count);
+
+  /// Индикатор страниц колонок
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка {index} из {total}'**
+  String boardPageIndicator(int index, int total);
+
+  /// Номер последнего события доски
+  ///
+  /// In ru, this message translates to:
+  /// **'seq {seq}'**
+  String boardSeq(int seq);
+
+  /// Поле поиска в сайдбаре
+  ///
+  /// In ru, this message translates to:
+  /// **'Поиск'**
+  String get boardSearch;
+
+  /// Заголовок списка досок в сайдбаре
+  ///
+  /// In ru, this message translates to:
+  /// **'Доски'**
+  String get boardSidebarBoards;
+
+  /// Кнопка создания доски в сайдбаре
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая доска'**
+  String get boardNewBoard;
+
+  /// Кнопка участников доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Участники'**
+  String get boardMembers;
+
+  /// Кнопка приглашения на доску
+  ///
+  /// In ru, this message translates to:
+  /// **'Пригласить'**
+  String get boardInvite;
+
+  /// Заглушка для ещё не реализованных действий
+  ///
+  /// In ru, this message translates to:
+  /// **'Появится в следующих версиях'**
+  String get boardComingSoon;
+
+  /// Плашка роли наблюдателя на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы наблюдатель: можно смотреть, но не менять. Права выдаёт владелец — {owner}.'**
+  String boardViewerBanner(String owner);
+
+  /// Плашка роли наблюдателя, если владелец неизвестен
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы наблюдатель: можно смотреть, но не менять.'**
+  String get boardViewerBannerNoOwner;
+
+  /// Подсказка экранного диктора для перетаскиваемой карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Удерживайте, чтобы перетащить'**
+  String get cardDragHint;
+
+  /// Действие перемещения карточки в другую колонку
+  ///
+  /// In ru, this message translates to:
+  /// **'Переместить в «{column}»'**
+  String cardMoveTo(String column);
+
+  /// Кнопка архивирования в панели карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'В архив'**
+  String get cardPanelArchive;
+
+  /// Кнопка закрытия панели карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Закрыть'**
+  String get cardPanelClose;
+
+  /// Автор карточки в панели
+  ///
+  /// In ru, this message translates to:
+  /// **'Создал {name}'**
+  String cardPanelCreatedBy(String name);
+
+  /// Версия карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'v{version}'**
+  String cardPanelVersion(int version);
+
+  /// Подсказка пустого поля описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавьте описание'**
+  String get cardPanelDescriptionHint;
+
+  /// Кнопка сохранения описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get cardPanelSave;
+
+  /// Кнопка перемещения карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Переместить'**
+  String get cardPanelMove;
+
+  /// Метка панели карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка «{title}»'**
+  String cardPanelSemantic(String title);
+
+  /// Заглушка пустого описания в превью карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Описания пока нет'**
+  String get cardPreviewNoDescription;
+
+  /// Заголовок диалога создания карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая карточка'**
+  String get addCardTitle;
+
+  /// Подсказка поля заголовка новой карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Заголовок карточки'**
+  String get addCardHint;
+
+  /// Кнопка создания карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить'**
+  String get addCardSubmit;
+
+  /// Кнопка отмены создания карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить'**
+  String get addCardCancel;
+
+  /// Snackbar: nack forbidden
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет прав на это действие.'**
+  String get nackForbidden;
+
+  /// Snackbar: nack validation_error
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком длинный текст: максимум {limit} символов.'**
+  String nackValidation(int limit);
+
+  /// Snackbar: nack version_conflict при перемещении
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточку уже переместил {name}.'**
+  String nackVersionConflict(String name);
+
+  /// Snackbar: nack version_conflict без имени автора
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточку уже изменил другой участник.'**
+  String get nackVersionConflictUnknown;
+
+  /// Snackbar: nack not_found
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка уже в архиве.'**
+  String get nackNotFound;
+
+  /// Snackbar: nack internal, идёт повтор
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось сохранить. Пробуем ещё раз…'**
+  String get nackInternal;
+
+  /// Snackbar: nack internal после всех повторов
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось сохранить изменение.'**
+  String get nackInternalFinal;
+
+  /// Snackbar: nack rate_limited
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много изменений. Попробуйте через минуту.'**
+  String get nackRateLimited;
+
+  /// Кнопка закрытия snackbar
+  ///
+  /// In ru, this message translates to:
+  /// **'Понятно'**
+  String get snackbarDismiss;
 }
 
 class _AppLocalizationsDelegate

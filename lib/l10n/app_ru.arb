@@ -125,5 +125,120 @@
   "previewSnackbarMessage": "Карточку уже переместил Максим — она осталась в «Ревью»",
   "@previewSnackbarMessage": {"description": "Пример текста snackbar"},
   "previewSnackbarAction": "Понятно",
-  "@previewSnackbarAction": {"description": "Пример действия snackbar"}
+  "@previewSnackbarAction": {"description": "Пример действия snackbar"},
+  "boardBack": "Назад к доскам",
+  "@boardBack": {"description": "Кнопка возврата к списку досок"},
+  "boardMenu": "Меню доски",
+  "@boardMenu": {"description": "Кнопка меню доски"},
+  "boardAddCard": "Добавить карточку",
+  "@boardAddCard": {"description": "Кнопка добавления карточки внизу колонки"},
+  "boardAddColumn": "Колонка",
+  "@boardAddColumn": {"description": "Кнопка добавления колонки в конце ряда"},
+  "boardAddColumnSemantic": "Добавить колонку",
+  "@boardAddColumnSemantic": {"description": "Метка кнопки добавления колонки для экранного диктора"},
+  "boardColumnSemantic": "Колонка «{title}»",
+  "@boardColumnSemantic": {
+    "description": "Метка колонки для экранного диктора",
+    "placeholders": {"title": {"type": "String"}}
+  },
+  "boardTabSemantic": "{title}, {count, plural, one{{count} карточка} few{{count} карточки} many{{count} карточек} other{{count} карточки}}",
+  "@boardTabSemantic": {
+    "description": "Метка вкладки колонки для экранного диктора",
+    "placeholders": {"title": {"type": "String"}, "count": {"type": "int"}}
+  },
+  "boardPageIndicator": "Колонка {index} из {total}",
+  "@boardPageIndicator": {
+    "description": "Индикатор страниц колонок",
+    "placeholders": {"index": {"type": "int"}, "total": {"type": "int"}}
+  },
+  "boardSeq": "seq {seq}",
+  "@boardSeq": {
+    "description": "Номер последнего события доски",
+    "placeholders": {"seq": {"type": "int", "format": "decimalPattern"}}
+  },
+  "boardSearch": "Поиск",
+  "@boardSearch": {"description": "Поле поиска в сайдбаре"},
+  "boardSidebarBoards": "Доски",
+  "@boardSidebarBoards": {"description": "Заголовок списка досок в сайдбаре"},
+  "boardNewBoard": "Новая доска",
+  "@boardNewBoard": {"description": "Кнопка создания доски в сайдбаре"},
+  "boardMembers": "Участники",
+  "@boardMembers": {"description": "Кнопка участников доски"},
+  "boardInvite": "Пригласить",
+  "@boardInvite": {"description": "Кнопка приглашения на доску"},
+  "boardComingSoon": "Появится в следующих версиях",
+  "@boardComingSoon": {"description": "Заглушка для ещё не реализованных действий"},
+  "boardViewerBanner": "Вы наблюдатель: можно смотреть, но не менять. Права выдаёт владелец — {owner}.",
+  "@boardViewerBanner": {
+    "description": "Плашка роли наблюдателя на доске",
+    "placeholders": {"owner": {"type": "String"}}
+  },
+  "boardViewerBannerNoOwner": "Вы наблюдатель: можно смотреть, но не менять.",
+  "@boardViewerBannerNoOwner": {"description": "Плашка роли наблюдателя, если владелец неизвестен"},
+  "cardDragHint": "Удерживайте, чтобы перетащить",
+  "@cardDragHint": {"description": "Подсказка экранного диктора для перетаскиваемой карточки"},
+  "cardMoveTo": "Переместить в «{column}»",
+  "@cardMoveTo": {
+    "description": "Действие перемещения карточки в другую колонку",
+    "placeholders": {"column": {"type": "String"}}
+  },
+  "cardPanelArchive": "В архив",
+  "@cardPanelArchive": {"description": "Кнопка архивирования в панели карточки"},
+  "cardPanelClose": "Закрыть",
+  "@cardPanelClose": {"description": "Кнопка закрытия панели карточки"},
+  "cardPanelCreatedBy": "Создал {name}",
+  "@cardPanelCreatedBy": {
+    "description": "Автор карточки в панели",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "cardPanelVersion": "v{version}",
+  "@cardPanelVersion": {
+    "description": "Версия карточки",
+    "placeholders": {"version": {"type": "int"}}
+  },
+  "cardPanelDescriptionHint": "Добавьте описание",
+  "@cardPanelDescriptionHint": {"description": "Подсказка пустого поля описания"},
+  "cardPanelSave": "Сохранить",
+  "@cardPanelSave": {"description": "Кнопка сохранения описания"},
+  "cardPanelMove": "Переместить",
+  "@cardPanelMove": {"description": "Кнопка перемещения карточки"},
+  "cardPanelSemantic": "Карточка «{title}»",
+  "@cardPanelSemantic": {
+    "description": "Метка панели карточки",
+    "placeholders": {"title": {"type": "String"}}
+  },
+  "cardPreviewNoDescription": "Описания пока нет",
+  "@cardPreviewNoDescription": {"description": "Заглушка пустого описания в превью карточки"},
+  "addCardTitle": "Новая карточка",
+  "@addCardTitle": {"description": "Заголовок диалога создания карточки"},
+  "addCardHint": "Заголовок карточки",
+  "@addCardHint": {"description": "Подсказка поля заголовка новой карточки"},
+  "addCardSubmit": "Добавить",
+  "@addCardSubmit": {"description": "Кнопка создания карточки"},
+  "addCardCancel": "Отменить",
+  "@addCardCancel": {"description": "Кнопка отмены создания карточки"},
+  "nackForbidden": "Нет прав на это действие.",
+  "@nackForbidden": {"description": "Snackbar: nack forbidden"},
+  "nackValidation": "Слишком длинный текст: максимум {limit} символов.",
+  "@nackValidation": {
+    "description": "Snackbar: nack validation_error",
+    "placeholders": {"limit": {"type": "int"}}
+  },
+  "nackVersionConflict": "Карточку уже переместил {name}.",
+  "@nackVersionConflict": {
+    "description": "Snackbar: nack version_conflict при перемещении",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "nackVersionConflictUnknown": "Карточку уже изменил другой участник.",
+  "@nackVersionConflictUnknown": {"description": "Snackbar: nack version_conflict без имени автора"},
+  "nackNotFound": "Карточка уже в архиве.",
+  "@nackNotFound": {"description": "Snackbar: nack not_found"},
+  "nackInternal": "Не удалось сохранить. Пробуем ещё раз…",
+  "@nackInternal": {"description": "Snackbar: nack internal, идёт повтор"},
+  "nackInternalFinal": "Не удалось сохранить изменение.",
+  "@nackInternalFinal": {"description": "Snackbar: nack internal после всех повторов"},
+  "nackRateLimited": "Слишком много изменений. Попробуйте через минуту.",
+  "@nackRateLimited": {"description": "Snackbar: nack rate_limited"},
+  "snackbarDismiss": "Понятно",
+  "@snackbarDismiss": {"description": "Кнопка закрытия snackbar"}
 }

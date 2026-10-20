@@ -194,4 +194,165 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get previewSnackbarAction => 'Понятно';
+
+  @override
+  String get boardBack => 'Назад к доскам';
+
+  @override
+  String get boardMenu => 'Меню доски';
+
+  @override
+  String get boardAddCard => 'Добавить карточку';
+
+  @override
+  String get boardAddColumn => 'Колонка';
+
+  @override
+  String get boardAddColumnSemantic => 'Добавить колонку';
+
+  @override
+  String boardColumnSemantic(String title) {
+    return 'Колонка «$title»';
+  }
+
+  @override
+  String boardTabSemantic(String title, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count карточки',
+      many: '$count карточек',
+      few: '$count карточки',
+      one: '$count карточка',
+    );
+    return '$title, $_temp0';
+  }
+
+  @override
+  String boardPageIndicator(int index, int total) {
+    return 'Колонка $index из $total';
+  }
+
+  @override
+  String boardSeq(int seq) {
+    final intl.NumberFormat seqNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String seqString = seqNumberFormat.format(seq);
+
+    return 'seq $seqString';
+  }
+
+  @override
+  String get boardSearch => 'Поиск';
+
+  @override
+  String get boardSidebarBoards => 'Доски';
+
+  @override
+  String get boardNewBoard => 'Новая доска';
+
+  @override
+  String get boardMembers => 'Участники';
+
+  @override
+  String get boardInvite => 'Пригласить';
+
+  @override
+  String get boardComingSoon => 'Появится в следующих версиях';
+
+  @override
+  String boardViewerBanner(String owner) {
+    return 'Вы наблюдатель: можно смотреть, но не менять. Права выдаёт владелец — $owner.';
+  }
+
+  @override
+  String get boardViewerBannerNoOwner =>
+      'Вы наблюдатель: можно смотреть, но не менять.';
+
+  @override
+  String get cardDragHint => 'Удерживайте, чтобы перетащить';
+
+  @override
+  String cardMoveTo(String column) {
+    return 'Переместить в «$column»';
+  }
+
+  @override
+  String get cardPanelArchive => 'В архив';
+
+  @override
+  String get cardPanelClose => 'Закрыть';
+
+  @override
+  String cardPanelCreatedBy(String name) {
+    return 'Создал $name';
+  }
+
+  @override
+  String cardPanelVersion(int version) {
+    return 'v$version';
+  }
+
+  @override
+  String get cardPanelDescriptionHint => 'Добавьте описание';
+
+  @override
+  String get cardPanelSave => 'Сохранить';
+
+  @override
+  String get cardPanelMove => 'Переместить';
+
+  @override
+  String cardPanelSemantic(String title) {
+    return 'Карточка «$title»';
+  }
+
+  @override
+  String get cardPreviewNoDescription => 'Описания пока нет';
+
+  @override
+  String get addCardTitle => 'Новая карточка';
+
+  @override
+  String get addCardHint => 'Заголовок карточки';
+
+  @override
+  String get addCardSubmit => 'Добавить';
+
+  @override
+  String get addCardCancel => 'Отменить';
+
+  @override
+  String get nackForbidden => 'Нет прав на это действие.';
+
+  @override
+  String nackValidation(int limit) {
+    return 'Слишком длинный текст: максимум $limit символов.';
+  }
+
+  @override
+  String nackVersionConflict(String name) {
+    return 'Карточку уже переместил $name.';
+  }
+
+  @override
+  String get nackVersionConflictUnknown =>
+      'Карточку уже изменил другой участник.';
+
+  @override
+  String get nackNotFound => 'Карточка уже в архиве.';
+
+  @override
+  String get nackInternal => 'Не удалось сохранить. Пробуем ещё раз…';
+
+  @override
+  String get nackInternalFinal => 'Не удалось сохранить изменение.';
+
+  @override
+  String get nackRateLimited =>
+      'Слишком много изменений. Попробуйте через минуту.';
+
+  @override
+  String get snackbarDismiss => 'Понятно';
 }

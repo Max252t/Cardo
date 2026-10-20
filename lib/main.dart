@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'features/design_preview/design_system_preview.dart';
+import 'features/board/data/fake_board_gateway.dart';
+import 'features/board/presentation/board_providers.dart';
+import 'features/board/presentation/board_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/cardo_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   CardoFontLicenses.register();
-  runApp(const CardoApp());
+  runApp(
+    ProviderScope(
+      overrides: [
+        boardGatewayProvider.overrideWithValue(
+          FakeBoardGateway(confirmDelay: CardoDurations.syncConfirmDelay),
+        ),
+      ],
+      child: const CardoApp(),
+    ),
+  );
 }
 
 class CardoApp extends StatelessWidget {
-  const CardoApp({super.key, this.home = const DesignSystemPreview()});
+  const CardoApp({super.key, this.home = const BoardScreen()});
 
   final Widget home;
 
