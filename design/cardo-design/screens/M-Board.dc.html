@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cardo — доска</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#111318}a:hover{color:#5B616E}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #EEF0F3; font-family: Geist, system-ui, sans-serif; color: #111318; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="background: #FFFFFF; border-bottom: 1px solid #DDE1E7; padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 4px">
+<a href="M-Boards.dc.html" aria-label="Назад к доскам" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; color: #111318"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.02em; white-space: nowrap">Запуск Cardo 1.0</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #0E5E3A; font-weight: 500"><i style="width: 7px; height: 7px; border-radius: 50%; background: #13804F"></i>В сети</span>
+</div>
+<div style="display: flex; margin-right: 2px">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #13804F; color: #FFFFFF; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF">М</span>
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #7C4DEB; color: #FFFFFF; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF; margin-left: -9px">А</span>
+</div>
+<button type="button" aria-label="Меню доски" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #111318; display: inline-flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></button>
+</div>
+<div style="display: flex; gap: 8px; padding: 0 4px; overflow: hidden">
+<button type="button" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #DDE1E7; background: #FFFFFF; font: 500 14px Geist, sans-serif; color: #111318; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #8A93A3"></i>Бэклог <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">6</span></button>
+<button type="button" aria-pressed="true" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 0; background: #111318; font: 600 14px Geist, sans-serif; color: #FFFFFF; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #6E97FF"></i>В работе <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C9CED6">4</span></button>
+<button type="button" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #DDE1E7; background: #FFFFFF; font: 500 14px Geist, sans-serif; color: #111318; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #F2A516"></i>Ревью <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">3</span></button>
+<button type="button" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #DDE1E7; background: #FFFFFF; font: 500 14px Geist, sans-serif; color: #111318; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #13804F"></i>Готово</button>
+</div>
+</div>
+
+<div style="position: relative; flex: 1; display: flex; gap: 12px; padding: 16px 0 0 16px; overflow: hidden">
+
+<div style="width: 318px; flex-shrink: 0; background: #E4E7EC; border-radius: 20px 20px 0 0; padding: 12px 10px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 4px">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px"><i style="width: 10px; height: 10px; border-radius: 3px; background: #2F6BFF"></i>В работе</span>
+<span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">4</span>
+</div>
+
+<a href="M-Card.dc.html" style="text-decoration: none; color: #111318; background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(17,19,24,0.06)">
+<span style="font-size: 15px; line-height: 1.35; font-weight: 500">Handshake: last_seq → дельта или снапшот</span>
+<span style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #5B616E">
+<span style="display: inline-flex; align-items: center; gap: 6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>Описание</span>
+<span style="width: 22px; height: 22px; border-radius: 50%; background: #13804F; color: #FFFFFF; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">М</span>
+</span>
+</a>
+
+<div style="height: 64px; border-radius: 14px; border: 2px dashed #FF5B2E; background: rgba(255,91,46,0.07); box-sizing: border-box"></div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(17,19,24,0.06)">
+<span style="font-size: 15px; line-height: 1.35; font-weight: 500">BoardSyncState: confirmed + pending</span>
+<span style="display: flex; align-items: center; justify-content: flex-end">
+<span style="width: 22px; height: 22px; border-radius: 50%; background: #2F6BFF; color: #FFFFFF; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">Е</span>
+</span>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(17,19,24,0.06); outline: 2px solid #7C4DEB; outline-offset: -2px; position: relative">
+<span style="position: absolute; top: -10px; right: 12px; background: #7C4DEB; color: #FFFFFF; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px">Аня редактирует</span>
+<span style="font-size: 15px; line-height: 1.35; font-weight: 500">Экран доски только на чтение</span>
+<span style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #5B616E">
+<span style="display: inline-flex; align-items: center; gap: 6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>Описание</span>
+<span style="width: 22px; height: 22px; border-radius: 50%; background: #7C4DEB; color: #FFFFFF; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">А</span>
+</span>
+</div>
+
+<button type="button" style="height: 46px; border-radius: 12px; border: 0; background: transparent; color: #3B414D; font: 500 14px Geist, sans-serif; display: inline-flex; align-items: center; gap: 8px; padding: 0 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Добавить карточку</button>
+</div>
+
+<div style="width: 318px; flex-shrink: 0; background: #E4E7EC; border-radius: 20px 20px 0 0; padding: 12px 10px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 8px; padding: 2px 6px 4px; font-weight: 600; font-size: 15px"><i style="width: 10px; height: 10px; border-radius: 3px; background: #F2A516"></i>Ревью</div>
+<div style="background: #FFFFFF; border-radius: 14px; height: 76px"></div>
+<div style="background: #FFFFFF; border-radius: 14px; height: 96px"></div>
+</div>
+
+<div style="position: absolute; left: 34px; top: 158px; width: 300px; background: #FFFFFF; border: 2px solid #FF5B2E; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; transform: rotate(-3deg); box-shadow: 0 22px 44px rgba(17,19,24,0.22), 0 6px 12px rgba(17,19,24,0.10); box-sizing: border-box">
+<span style="font-size: 15px; line-height: 1.35; font-weight: 500">Fractional indexing для rank</span>
+<span style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #5B616E">
+<span style="font-family: 'Geist Mono', monospace">после «Handshake…»</span>
+<span style="width: 22px; height: 22px; border-radius: 50%; background: #7C4DEB; color: #FFFFFF; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">А</span>
+</span>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: linear-gradient(to bottom, rgba(238,240,243,0), #EEF0F3); pointer-events: none"></div>
+<div style="position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; gap: 6px" aria-hidden="true">
+<i style="width: 6px; height: 6px; border-radius: 50%; background: #B4BAC4"></i>
+<i style="width: 18px; height: 6px; border-radius: 3px; background: #111318"></i>
+<i style="width: 6px; height: 6px; border-radius: 50%; background: #B4BAC4"></i>
+<i style="width: 6px; height: 6px; border-radius: 50%; background: #B4BAC4"></i>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cardo — новая карточка</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#111318}a:hover{color:#5B616E}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #EEF0F3; font-family: Geist, system-ui, sans-serif; color: #111318; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="background: #FFFFFF; border-bottom: 1px solid #DDE1E7; padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 4px">
+<a href="M-Boards.dc.html" aria-label="Назад к доскам" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; color: #111318"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.02em; white-space: nowrap">Запуск Cardo 1.0</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #0E5E3A; font-weight: 500"><i style="width: 7px; height: 7px; border-radius: 50%; background: #13804F"></i>В сети</span>
+</div>
+<button type="button" aria-label="Меню доски" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #111318; display: inline-flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></button>
+</div>
+<div style="display: flex; gap: 8px; padding: 0 4px; overflow: hidden">
+<button type="button" aria-pressed="true" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 0; background: #111318; font: 600 14px Geist, sans-serif; color: #FFFFFF; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #B4BAC4"></i>Бэклог <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C9CED6">4</span></button>
+<button type="button" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #DDE1E7; background: #FFFFFF; font: 500 14px Geist, sans-serif; color: #111318; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #2F6BFF"></i>В работе <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">4</span></button>
+<button type="button" style="flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #DDE1E7; background: #FFFFFF; font: 500 14px Geist, sans-serif; color: #111318; display: inline-flex; align-items: center; gap: 7px"><i style="width: 8px; height: 8px; border-radius: 2px; background: #F2A516"></i>Ревью</button>
+</div>
+</div>
+
+<div style="flex: 1; padding: 16px; display: flex; flex-direction: column">
+<div style="background: #E4E7EC; border-radius: 20px; padding: 12px 10px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 4px">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px"><i style="width: 10px; height: 10px; border-radius: 3px; background: #8A93A3"></i>Бэклог</span>
+<span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B616E">4</span>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 14px; font-size: 15px; line-height: 1.35; font-weight: 500; box-shadow: 0 1px 2px rgba(17,19,24,0.06)">Метрики Prometheus: ops_total</div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; outline: 2px solid #111318; outline-offset: -2px">
+<label for="edit-title" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Заголовок карточки</label>
+<input id="edit-title" type="text" value="Load test: 50 клиентов, 20 оп/с, отчёт p95" style="border: 0; outline: 0; padding: 4px; font: 500 15px Geist, sans-serif; color: #111318; background: transparent">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 12px; color: #5B616E; padding-left: 4px">Правка заголовка</span>
+<div style="display: flex; gap: 4px">
+<button type="button" aria-label="Отменить правку" style="width: 40px; height: 40px; border-radius: 10px; border: 0; background: #EEF0F3; color: #111318; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<button type="button" aria-label="Сохранить заголовок" style="width: 40px; height: 40px; border-radius: 10px; border: 0; background: #111318; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></button>
+</div>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 14px; font-size: 15px; line-height: 1.35; font-weight: 500; box-shadow: 0 1px 2px rgba(17,19,24,0.06)">Graceful shutdown с кодом 1001</div>
+
+<div style="background: #FFFFFF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 12px; border: 2px solid #FF5B2E">
+<label for="new-card" style="font-size: 12px; font-weight: 600; color: #3B414D; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em">Новая карточка</label>
+<textarea id="new-card" rows="2" style="border: 0; outline: 0; resize: none; padding: 0; font: 500 15px/1.4 Geist, sans-serif; color: #111318; background: transparent">Восстановление из архива</textarea>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<button type="button" style="height: 40px; padding: 0 10px; border-radius: 10px; border: 0; background: transparent; color: #3B414D; font: 500 13px Geist, sans-serif; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>Описание</button>
+<div style="display: flex; gap: 6px">
+<button type="button" style="height: 40px; padding: 0 12px; border-radius: 10px; border: 0; background: transparent; color: #111318; font: 600 14px Geist, sans-serif">Отмена</button>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #111318; color: #FFFFFF; font: 600 14px Geist, sans-serif">Добавить</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

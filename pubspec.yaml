@@ -9,6 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  intl: ^0.20.2
+  lucide_icons_flutter: ^4.0.0
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +23,18 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
+  assets:
+    - assets/fonts/OFL-BricolageGrotesque.txt
+    - assets/fonts/OFL-Geist.txt
+    - assets/fonts/OFL-GeistMono.txt
+  fonts:
+    - family: BricolageGrotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque.ttf
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/Geist.ttf
+    - family: GeistMono
+      fonts:
+        - asset: assets/fonts/GeistMono.ttf

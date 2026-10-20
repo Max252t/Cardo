@@ -1,16 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'features/board/data/fake_board_gateway.dart';
+import 'features/board/presentation/board_providers.dart';
+import 'features/board/presentation/board_screen.dart';
+import 'l10n/app_localizations.dart';
+import 'theme/cardo_theme.dart';
 
 void main() {
-  runApp(const MainApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  CardoFontLicenses.register();
+  runApp(
+    ProviderScope(
+      overrides: [
+        boardGatewayProvider.overrideWithValue(
+          FakeBoardGateway(confirmDelay: CardoDurations.syncConfirmDelay),
+        ),
+      ],
+      child: const CardoApp(),
+    ),
+  );
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class CardoApp extends StatelessWidget {
+  const CardoApp({super.key, this.home = const BoardScreen()});
+
+  final Widget home;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      themeMode: ThemeMode.system,
+      themeAnimationStyle: AnimationStyle.noAnimation,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      debugShowCheckedModeBanner: false,
+      home: home,
     );
   }
 }

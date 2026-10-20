@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cardo — вход, веб</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0F3}
+a{color:#111318}a:hover{color:#5B616E}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #EEF0F3; font-family: Geist, system-ui, sans-serif; color: #111318; display: flex; flex-wrap: wrap; padding: 16px; gap: 16px">
+
+<section aria-label="О Cardo" style="flex: 1 1 520px; position: relative; overflow: hidden; background: #111318; color: #FFFFFF; border-radius: 28px; padding: 40px; min-height: 420px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="18" height="20" rx="5" fill="#ECEDF0"></rect><rect x="11" y="3" width="18" height="20" rx="5" fill="#FF5B2E"></rect></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.04em">cardo</span>
+</div>
+
+<div aria-hidden="true" style="position: relative; height: 300px">
+<div style="position: absolute; left: 0; top: 0; width: 210px; background: #17191F; border: 1px solid #2A2D36; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 600; color: #C3C7CF; padding: 2px 4px 4px">В работе</span>
+<div style="background: #1E2028; border: 1px solid #2A2D36; border-radius: 10px; padding: 12px; font-size: 13px; color: #ECEDF0">Финальный тест сходимости</div>
+<div style="height: 46px; border-radius: 10px; border: 2px dashed #FF5B2E; background: rgba(255,91,46,0.08)"></div>
+<div style="background: #1E2028; border: 1px solid #2A2D36; border-radius: 10px; padding: 12px; font-size: 13px; color: #ECEDF0">README с GIF</div>
+</div>
+<div style="position: absolute; left: 230px; top: 30px; width: 210px; background: #17191F; border: 1px solid #2A2D36; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 600; color: #C3C7CF; padding: 2px 4px 4px">Готово</span>
+<div style="background: #1E2028; border: 1px solid #2A2D36; border-radius: 10px; padding: 12px; font-size: 13px; color: #C3C7CF">Ротация токенов</div>
+<div style="background: #1E2028; border: 1px solid #2A2D36; border-radius: 10px; padding: 12px; font-size: 13px; color: #C3C7CF">Presence в Redis</div>
+</div>
+<div style="position: absolute; left: 120px; top: 92px; width: 200px; background: #FFFFFF; color: #111318; border: 2px solid #FF5B2E; border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; transform: rotate(-4deg); box-shadow: 0 24px 40px rgba(0,0,0,0.4)">Запустить бету в пятницу</div>
+<div style="position: absolute; left: 300px; top: 150px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px">
+<svg width="18" height="18" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="#B9A3FF" stroke="#111318" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+<span style="margin-left: 12px; background: #B9A3FF; color: #111318; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px">Аня</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px">
+<h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 40px; line-height: 1.04; letter-spacing: -0.03em">Доски, которые двигаются вместе с командой</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #C3C7CF">Все видят изменения друг друга сразу. Работает и без сети — синхронизируем, как только связь вернётся.</p>
+</div>
+</section>
+
+<main style="flex: 1 1 420px; display: flex; align-items: center; justify-content: center; padding: 40px 16px; box-sizing: border-box">
+<div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 36px; letter-spacing: -0.03em; line-height: 1">С возвращением</h1>
+<p style="margin: 0; font-size: 15px; color: #5B616E">Войдите, чтобы открыть свои доски.</p>
+</div>
+<form style="display: flex; flex-direction: column; gap: 14px; margin: 0">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="wl-email" style="font-size: 13px; font-weight: 500; color: #3B414D">Email</label>
+<input id="wl-email" type="email" value="elena@studio.ru" style="height: 50px; border-radius: 14px; border: 1px solid #DDE1E7; background: #FFFFFF; padding: 0 16px; font: 400 16px Geist, sans-serif; color: #111318; box-sizing: border-box">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<label for="wl-pass" style="font-size: 13px; font-weight: 500; color: #3B414D">Пароль</label>
+<a href="#" style="font-size: 13px; font-weight: 500">Забыли?</a>
+</div>
+<input id="wl-pass" type="password" value="password123" style="height: 50px; border-radius: 14px; border: 2px solid #111318; background: #FFFFFF; padding: 0 15px; font: 400 16px Geist, sans-serif; color: #111318; box-sizing: border-box">
+</div>
+<button type="button" style="margin-top: 6px; height: 52px; border-radius: 15px; border: 0; background: #111318; color: #FFFFFF; font: 600 16px Geist, sans-serif">Войти</button>
+</form>
+<p style="margin: 0; font-size: 14px; color: #5B616E">Нет аккаунта? <a href="#" style="font-weight: 600">Создать</a></p>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

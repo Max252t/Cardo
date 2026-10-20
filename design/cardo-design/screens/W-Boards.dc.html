@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cardo — доски, веб</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#EEF0F3}
+a{color:#111318}a:hover{color:#5B616E}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; background: #EEF0F3; font-family: Geist, system-ui, sans-serif; color: #111318">
+
+<header style="background: #FFFFFF; border-bottom: 1px solid #DDE1E7">
+<div style="max-width: 1240px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+<div style="display: flex; align-items: center; gap: 9px">
+<svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="18" height="20" rx="5" fill="#111318"></rect><rect x="11" y="3" width="18" height="20" rx="5" fill="#FF5B2E"></rect></svg>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.04em">cardo</span>
+</div>
+<nav aria-label="Разделы" style="display: flex; gap: 4px">
+<a href="#" aria-current="page" style="height: 36px; padding: 0 12px; border-radius: 10px; background: #EEF0F3; display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; text-decoration: none">Доски</a>
+<a href="#" style="height: 36px; padding: 0 12px; border-radius: 10px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; color: #3B414D">Приглашения</a>
+</nav>
+<label style="margin-left: auto; flex: 0 1 300px; display: flex; align-items: center; gap: 8px; height: 40px; border-radius: 12px; border: 1px solid #DDE1E7; padding: 0 12px; color: #5B616E">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" placeholder="Найти доску" aria-label="Найти доску" style="border: 0; outline: 0; background: transparent; font: 400 14px Geist, sans-serif; color: #111318; flex: 1; min-width: 0">
+</label>
+<button type="button" aria-label="Профиль" style="width: 40px; height: 40px; border-radius: 50%; border: 0; background: #2F6BFF; color: #FFFFFF; font: 600 15px Geist, sans-serif">Е</button>
+</div>
+</header>
+
+<div style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 56px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 44px; letter-spacing: -0.035em; line-height: 1">Мои доски</h1>
+<p style="margin: 0; font-size: 15px; color: #5B616E">4 доски · 2 человека работают прямо сейчас</p>
+</div>
+<button type="button" style="height: 48px; padding: 0 20px 0 16px; border-radius: 14px; border: 0; background: #111318; color: #FFFFFF; font: 600 15px Geist, sans-serif; display: inline-flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5B2E" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Новая доска</button>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: #FFF4EF; border: 1px solid #F3B9A4; border-radius: 18px; padding: 14px 16px">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="width: 36px; height: 36px; border-radius: 50%; background: #F2A516; color: #111318; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; justify-content: center">О</span>
+<span style="font-size: 15px"><b style="font-weight: 600">Олег</b> приглашает вас в «Редизайн сайта» как редактора</span>
+</div>
+<div style="display: flex; gap: 8px">
+<button type="button" style="height: 40px; padding: 0 14px; border-radius: 11px; border: 1px solid #E3A48C; background: transparent; color: #111318; font: 600 14px Geist, sans-serif">Позже</button>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 11px; border: 0; background: #111318; color: #FFFFFF; font: 600 14px Geist, sans-serif">Принять</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px">
+
+<a href="D-Board.dc.html" style="text-decoration: none; color: #111318; background: #FFFFFF; border: 1px solid #DDE1E7; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 14px">
+<div aria-hidden="true" style="background: #EEF0F3; border-radius: 14px; padding: 12px; height: 132px; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #8A93A3; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #2F6BFF; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF; outline: 2px solid #FF5B2E; outline-offset: -2px"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #F2A516; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #13804F; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 0 4px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.02em">Запуск Cardo 1.0</span><span style="font-size: 13px; color: #5B616E">25 карточек</span></div>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 9px; border-radius: 8px; background: #111318; color: #FFFFFF; font-size: 12px; font-weight: 600">Владелец</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 4px">
+<div style="display: flex"><span style="width: 26px; height: 26px; border-radius: 50%; background: #13804F; color: #FFFFFF; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF">М</span><span style="width: 26px; height: 26px; border-radius: 50%; background: #7C4DEB; color: #FFFFFF; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF; margin-left: -8px">А</span></div>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #0E5E3A; font-weight: 500"><i style="width: 7px; height: 7px; border-radius: 50%; background: #13804F"></i>2 на доске</span>
+</div>
+</a>
+
+<a href="D-Board.dc.html" style="text-decoration: none; color: #111318; background: #FFFFFF; border: 1px solid #DDE1E7; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 14px">
+<div aria-hidden="true" style="background: #EEF0F3; border-radius: 14px; padding: 12px; height: 132px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #8A93A3; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #2F6BFF; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #13804F; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 0 4px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.02em">Контент-план, ноябрь</span><span style="font-size: 13px; color: #5B616E">14 карточек</span></div>
+<span style="display: inline-flex; align-items: center; height: 26px; padding: 0 9px; border-radius: 8px; border: 1px solid #111318; font-size: 12px; font-weight: 600">Редактор</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 4px">
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #D23A6E; color: #FFFFFF; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; justify-content: center">Д</span>
+<span style="font-size: 13px; color: #5B616E">изменено 3 ч назад</span>
+</div>
+</a>
+
+<a href="D-Board.dc.html" style="text-decoration: none; color: #111318; background: #FFFFFF; border: 1px solid #DDE1E7; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 14px">
+<div aria-hidden="true" style="background: #EEF0F3; border-radius: 14px; padding: 12px; height: 132px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #8A93A3; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #2F6BFF; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+<div style="display: flex; flex-direction: column; gap: 5px"><i style="height: 4px; border-radius: 2px; background: #13804F; width: 60%"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i><i style="height: 22px; border-radius: 6px; background: #FFFFFF"></i></div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 0 4px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.02em">Ремонт кухни</span><span style="font-size: 13px; color: #5B616E">9 карточек</span></div>
+<span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 8px; background: #E4E7EC; color: #3B414D; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Просмотр</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 4px">
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #F2A516; color: #111318; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; justify-content: center">О</span>
+<span style="font-size: 13px; color: #5B616E">изменено вчера</span>
+</div>
+</a>
+
+<button type="button" style="min-height: 280px; border-radius: 22px; border: 2px dashed #B4BAC4; background: transparent; color: #3B414D; font: 600 15px Geist, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+<span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DDE1E7; display: inline-flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111318" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>
+Создать доску
+</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
