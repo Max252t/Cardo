@@ -33,6 +33,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
     required this.mono,
     required this.columnTitle,
     required this.columnTitleDense,
+    required this.sheetTitle,
+    required this.sheetField,
+    required this.bannerText,
+    required this.panelField,
     required this.tab,
     required this.avatarInitialSteps,
   });
@@ -196,6 +200,35 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       letterSpacing: 0,
       height: 1.35,
     ),
+    sheetTitle: TextStyle(
+      fontFamily: CardoFonts.bricolage,
+      fontFamilyFallback: CardoFonts.bricolageFallback,
+      fontSize: 26,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.52,
+      height: 1.12,
+    ),
+    sheetField: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+      height: 1.55,
+    ),
+    bannerText: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 13,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+      height: 1.45,
+    ),
+    panelField: TextStyle(
+      fontFamily: CardoFonts.geist,
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+      height: 1.6,
+    ),
     tab: TextStyle(
       fontFamily: CardoFonts.geist,
       fontSize: 14,
@@ -233,6 +266,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
   final TextStyle mono;
   final TextStyle columnTitle;
   final TextStyle columnTitleDense;
+  final TextStyle sheetTitle;
+  final TextStyle sheetField;
+  final TextStyle bannerText;
+  final TextStyle panelField;
   final TextStyle tab;
   final List<AvatarInitialStep> avatarInitialSteps;
 
@@ -285,6 +322,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
     TextStyle? mono,
     TextStyle? columnTitle,
     TextStyle? columnTitleDense,
+    TextStyle? sheetTitle,
+    TextStyle? sheetField,
+    TextStyle? bannerText,
+    TextStyle? panelField,
     TextStyle? tab,
     List<AvatarInitialStep>? avatarInitialSteps,
   }) {
@@ -311,6 +352,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       mono: mono ?? this.mono,
       columnTitle: columnTitle ?? this.columnTitle,
       columnTitleDense: columnTitleDense ?? this.columnTitleDense,
+      sheetTitle: sheetTitle ?? this.sheetTitle,
+      sheetField: sheetField ?? this.sheetField,
+      bannerText: bannerText ?? this.bannerText,
+      panelField: panelField ?? this.panelField,
       tab: tab ?? this.tab,
       avatarInitialSteps: avatarInitialSteps ?? this.avatarInitialSteps,
     );
@@ -348,6 +393,10 @@ class CardoTypography extends ThemeExtension<CardoTypography> {
       mono: s(mono, other.mono),
       columnTitle: s(columnTitle, other.columnTitle),
       columnTitleDense: s(columnTitleDense, other.columnTitleDense),
+      sheetTitle: s(sheetTitle, other.sheetTitle),
+      sheetField: s(sheetField, other.sheetField),
+      bannerText: s(bannerText, other.bannerText),
+      panelField: s(panelField, other.panelField),
       tab: s(tab, other.tab),
       avatarInitialSteps: t < 0.5
           ? avatarInitialSteps

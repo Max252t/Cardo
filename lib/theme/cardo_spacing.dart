@@ -38,6 +38,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
     required this.textButtonPaddingHorizontal,
     required this.snackbarPadding,
     required this.snackbarPaddingStart,
+    required this.bannerTextGap,
     required this.snackbarGap,
   });
 
@@ -75,6 +76,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
     textButtonPaddingHorizontal: 16,
     snackbarPadding: 14,
     snackbarPaddingStart: 18,
+    bannerTextGap: 3,
     snackbarGap: 12,
   );
 
@@ -111,6 +113,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
   final double textButtonPaddingHorizontal;
   final double snackbarPadding;
   final double snackbarPaddingStart;
+  final double bannerTextGap;
   final double snackbarGap;
 
   static CardoSpacing of(BuildContext context) {
@@ -165,6 +168,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
     double? textButtonPaddingHorizontal,
     double? snackbarPadding,
     double? snackbarPaddingStart,
+    double? bannerTextGap,
     double? snackbarGap,
   }) {
     return CardoSpacing(
@@ -208,6 +212,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
           textButtonPaddingHorizontal ?? this.textButtonPaddingHorizontal,
       snackbarPadding: snackbarPadding ?? this.snackbarPadding,
       snackbarPaddingStart: snackbarPaddingStart ?? this.snackbarPaddingStart,
+      bannerTextGap: bannerTextGap ?? this.bannerTextGap,
       snackbarGap: snackbarGap ?? this.snackbarGap,
     );
   }
@@ -273,6 +278,7 @@ class CardoSpacing extends ThemeExtension<CardoSpacing> {
       ),
       snackbarPadding: l(snackbarPadding, other.snackbarPadding),
       snackbarPaddingStart: l(snackbarPaddingStart, other.snackbarPaddingStart),
+      bannerTextGap: l(bannerTextGap, other.bannerTextGap),
       snackbarGap: l(snackbarGap, other.snackbarGap),
     );
   }

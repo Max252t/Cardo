@@ -210,6 +210,7 @@ ThemeData _buildTheme({
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: colors.surface,
       modalBackgroundColor: colors.surface,
+      modalBarrierColor: colors.scrim,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       modalElevation: 0,

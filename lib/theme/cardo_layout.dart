@@ -51,6 +51,11 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
     required this.bannerRadius,
     required this.iconDense,
     required this.iconHeader,
+    required this.sheetTopInset,
+    required this.sheetPaddingTop,
+    required this.sheetPaddingBottom,
+    required this.sheetChipHeight,
+    required this.stackActionsTextScale,
     required this.headerMaxFraction,
   });
 
@@ -99,6 +104,11 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
     bannerRadius: 12,
     iconDense: 16,
     iconHeader: 22,
+    sheetTopInset: 96,
+    sheetPaddingTop: 10,
+    sheetPaddingBottom: 24,
+    sheetChipHeight: 30,
+    stackActionsTextScale: 1.3,
     headerMaxFraction: 0.5,
   );
 
@@ -146,6 +156,11 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
   final double bannerRadius;
   final double iconDense;
   final double iconHeader;
+  final double sheetTopInset;
+  final double sheetPaddingTop;
+  final double sheetPaddingBottom;
+  final double sheetChipHeight;
+  final double stackActionsTextScale;
   final double headerMaxFraction;
 
   static CardoLayout of(BuildContext context) {
@@ -216,6 +231,11 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
     double? bannerRadius,
     double? iconDense,
     double? iconHeader,
+    double? sheetTopInset,
+    double? sheetPaddingTop,
+    double? sheetPaddingBottom,
+    double? sheetChipHeight,
+    double? stackActionsTextScale,
     double? headerMaxFraction,
   }) {
     return CardoLayout(
@@ -272,6 +292,12 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
       bannerRadius: bannerRadius ?? this.bannerRadius,
       iconDense: iconDense ?? this.iconDense,
       iconHeader: iconHeader ?? this.iconHeader,
+      sheetTopInset: sheetTopInset ?? this.sheetTopInset,
+      sheetPaddingTop: sheetPaddingTop ?? this.sheetPaddingTop,
+      sheetPaddingBottom: sheetPaddingBottom ?? this.sheetPaddingBottom,
+      sheetChipHeight: sheetChipHeight ?? this.sheetChipHeight,
+      stackActionsTextScale:
+          stackActionsTextScale ?? this.stackActionsTextScale,
       headerMaxFraction: headerMaxFraction ?? this.headerMaxFraction,
     );
   }
@@ -354,6 +380,14 @@ class CardoLayout extends ThemeExtension<CardoLayout> {
       bannerRadius: l(bannerRadius, other.bannerRadius),
       iconDense: l(iconDense, other.iconDense),
       iconHeader: l(iconHeader, other.iconHeader),
+      sheetTopInset: l(sheetTopInset, other.sheetTopInset),
+      sheetPaddingTop: l(sheetPaddingTop, other.sheetPaddingTop),
+      sheetPaddingBottom: l(sheetPaddingBottom, other.sheetPaddingBottom),
+      sheetChipHeight: l(sheetChipHeight, other.sheetChipHeight),
+      stackActionsTextScale: l(
+        stackActionsTextScale,
+        other.stackActionsTextScale,
+      ),
       headerMaxFraction: l(headerMaxFraction, other.headerMaxFraction),
     );
   }
