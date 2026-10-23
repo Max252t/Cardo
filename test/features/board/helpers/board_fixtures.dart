@@ -31,6 +31,8 @@ CardModel makeCard(
     version: version,
     createdBy: 'u1',
     updatedBy: 'u1',
+    createdAt: DateTime.utc(2026, 1, 1),
+    updatedAt: DateTime.utc(2026, 1, 1),
     archived: archived,
   );
 }

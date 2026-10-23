@@ -190,6 +190,56 @@ void main() {
     });
   });
 
+  group('pure layers do not import Flutter', () {
+    final rules = <String, RegExp>{
+      'flutter import': RegExp(
+        r'''^\s*(import|export)\s+['"]package:(flutter|flutter_riverpod)(/|['"])''',
+      ),
+      'dart:ui import': RegExp(r'''^\s*(import|export)\s+['"]dart:ui['"]'''),
+    };
+
+    test('rules detect Flutter imports', () {
+      final flutter = rules['flutter import']!;
+      expect(
+        flutter.hasMatch("import 'package:flutter/foundation.dart';"),
+        isTrue,
+      );
+      expect(
+        flutter.hasMatch("import 'package:flutter/material.dart';"),
+        isTrue,
+      );
+      expect(
+        flutter.hasMatch(
+          "import 'package:flutter_riverpod/flutter_riverpod.dart';",
+        ),
+        isTrue,
+      );
+      expect(
+        flutter.hasMatch("export 'package:flutter/widgets.dart';"),
+        isTrue,
+      );
+      expect(
+        flutter.hasMatch("import 'package:flutter_test/flutter_test.dart';"),
+        isFalse,
+      );
+      expect(flutter.hasMatch("import 'dart:async';"), isFalse);
+      expect(flutter.hasMatch("import '../domain/board_model.dart';"), isFalse);
+      expect(rules['dart:ui import']!.hasMatch("import 'dart:ui';"), isTrue);
+      expect(rules['dart:ui import']!.hasMatch("import 'dart:io';"), isFalse);
+    });
+
+    test('lib/features/*/domain, */data and lib/core never import Flutter', () {
+      final files = _dartFiles(excluded: const <String>[]).where((file) {
+        final normalized = file.path.replaceAll(r'\', '/');
+        return RegExp(r'^lib/features/[^/]+/(data|domain)/')
+                .hasMatch(normalized) ||
+            normalized.startsWith('lib/core/');
+      }).toList();
+      expect(files, isNotEmpty);
+      expect(_violations(files, rules), isEmpty);
+    });
+  });
+
   group('no comments in lib', () {
     final rules = <String, RegExp>{
       'line comment': RegExp(r'^\s*//'),

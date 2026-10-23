@@ -46,6 +46,7 @@ Future<void> pumpBoard(
       overrides: [
         boardGatewayProvider.overrideWithValue(board),
         idGeneratorProvider.overrideWithValue(ids.call),
+        nowProvider.overrideWithValue(() => demoReferenceTime),
       ],
       child: MaterialApp(
         themeAnimationDuration: Duration.zero,

@@ -101,7 +101,36 @@ List<Pair> pairsFor(CardoColors c) {
     ..add(
       Pair('textSecondary on sidebarField', c.textSecondary, c.sidebarField),
     )
-    ..add(Pair('textPrimary on sidebarField', c.textPrimary, c.sidebarField));
+    ..add(Pair('textPrimary on sidebarField', c.textPrimary, c.sidebarField))
+    ..add(
+      Pair(
+        'conflictIcon on conflictBackground',
+        c.conflictIcon,
+        c.conflictBackground,
+        min: 3,
+      ),
+    )
+    ..add(
+      Pair(
+        'conflictTitle on conflictBackground (cancel button text)',
+        c.conflictTitle,
+        c.conflictBackground,
+      ),
+    )
+    ..add(
+      Pair(
+        'conflictText on conflictBackground (banner text)',
+        c.conflictText,
+        c.conflictBackground,
+      ),
+    )
+    ..add(Pair('nackText on surface (sheet counter)', c.nackText, c.surface))
+    ..add(
+      Pair('nackText on background (panel counter)', c.nackText, c.background),
+    )
+    ..add(
+      Pair('textSecondary on surface (sheet meta)', c.textSecondary, c.surface),
+    );
   final swatches = <String, ConnectionSwatch>{
     'connected': c.connected,
     'syncing': c.syncing,
