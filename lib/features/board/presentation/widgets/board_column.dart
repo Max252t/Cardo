@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/board_model.dart';
 import '../board_drag_controller.dart';
 import '../board_view_data.dart';
 import 'board_card_item.dart';
@@ -33,7 +32,7 @@ class BoardColumnView extends ConsumerWidget {
   });
 
   final ColumnViewData data;
-  final List<ColumnModel> columns;
+  final List<ColumnInfo> columns;
   final bool dense;
   final bool fill;
   final bool canEdit;
@@ -57,7 +56,7 @@ class BoardColumnView extends ConsumerWidget {
       drag: drag,
       insets: insets,
       controller: controller,
-      others: <ColumnModel>[
+      others: <ColumnInfo>[
         for (final column in columns)
           if (column.id != columnId) column,
       ],
@@ -105,7 +104,7 @@ class BoardColumnView extends ConsumerWidget {
     required ColumnDragSlice? drag,
     required ColumnInsets insets,
     required BoardDragController controller,
-    required List<ColumnModel> others,
+    required List<ColumnInfo> others,
   }) {
     final columnId = data.column.id;
     final hoverIndex = drag?.hoverIndex;

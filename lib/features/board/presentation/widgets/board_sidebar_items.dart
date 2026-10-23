@@ -8,7 +8,7 @@ import '../../../../shared/widgets/avatar_identity.dart';
 import '../../../../shared/widgets/cardo_avatar.dart';
 import '../../../../shared/widgets/connection_pill.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_session.dart';
+import '../board_view_data.dart';
 import '../board_providers.dart';
 import 'board_snackbar.dart';
 import 'column_marker.dart';
@@ -74,7 +74,7 @@ class SidebarBoardItem extends StatelessWidget {
     required this.connection,
   });
 
-  final BoardSummary board;
+  final BoardListItem board;
   final bool active;
   final ConnectionStatus? connection;
 

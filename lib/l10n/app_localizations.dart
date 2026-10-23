@@ -526,12 +526,6 @@ abstract class AppLocalizations {
   /// **'Закрыть'**
   String get cardPanelClose;
 
-  /// Автор карточки в панели
-  ///
-  /// In ru, this message translates to:
-  /// **'Создал {name}'**
-  String cardPanelCreatedBy(String name);
-
   /// Версия карточки
   ///
   /// In ru, this message translates to:
@@ -562,11 +556,119 @@ abstract class AppLocalizations {
   /// **'Карточка «{title}»'**
   String cardPanelSemantic(String title);
 
-  /// Заглушка пустого описания в превью карточки
+  /// Мета-строка карточки: автор и время создания
   ///
   /// In ru, this message translates to:
-  /// **'Описания пока нет'**
-  String get cardPreviewNoDescription;
+  /// **'Создал {name} · {when}'**
+  String cardMeta(String name, String when);
+
+  /// Относительное время: меньше минуты назад
+  ///
+  /// In ru, this message translates to:
+  /// **'только что'**
+  String get cardAgeJustNow;
+
+  /// Относительное время: минуты назад
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} минуту назад} few{{count} минуты назад} many{{count} минут назад} other{{count} минуты назад}}'**
+  String cardAgeMinutes(int count);
+
+  /// Относительное время: в течение сегодняшнего дня
+  ///
+  /// In ru, this message translates to:
+  /// **'сегодня'**
+  String get cardAgeToday;
+
+  /// Относительное время: вчера
+  ///
+  /// In ru, this message translates to:
+  /// **'вчера'**
+  String get cardAgeYesterday;
+
+  /// Относительное время: дни назад
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} день назад} few{{count} дня назад} many{{count} дней назад} other{{count} дня назад}}'**
+  String cardAgeDays(int count);
+
+  /// Относительное время: дата для давних карточек
+  ///
+  /// In ru, this message translates to:
+  /// **'{date}'**
+  String cardAgeDate(DateTime date);
+
+  /// Подсказка экранного диктора для заголовка, который можно править
+  ///
+  /// In ru, this message translates to:
+  /// **'Нажмите, чтобы изменить заголовок'**
+  String get cardTitleEditHint;
+
+  /// Метка поля inline-правки заголовка
+  ///
+  /// In ru, this message translates to:
+  /// **'Заголовок карточки'**
+  String get cardTitleField;
+
+  /// Счётчик символов описания
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} / {limit}'**
+  String cardDescriptionCounter(int count, int limit);
+
+  /// Подсказка при превышении лимита описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком длинное описание: максимум {limit} символов. Сохранение недоступно.'**
+  String cardDescriptionTooLong(int limit);
+
+  /// Заголовок баннера конфликта описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание изменил {name}'**
+  String cardConflictTitle(String name);
+
+  /// Заголовок баннера конфликта описания без имени автора
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание изменил другой участник'**
+  String get cardConflictTitleUnknown;
+
+  /// Текст баннера конфликта описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Ваш черновик сохранён. Перезаписать его версией или отменить свои правки?'**
+  String get cardConflictBody;
+
+  /// Кнопка баннера конфликта: сохранить свой черновик поверх чужой версии
+  ///
+  /// In ru, this message translates to:
+  /// **'Перезаписать'**
+  String get cardConflictOverwrite;
+
+  /// Кнопка баннера конфликта: отбросить свой черновик
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить'**
+  String get cardConflictCancel;
+
+  /// Подсказка баннера конфликта, пока не пришла актуальная версия описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Загружаем актуальную версию…'**
+  String get cardConflictWaiting;
+
+  /// Snackbar: черновик описания потерян, потому что карточка ушла в архив
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка в архиве. Ваш текст не сохранён.'**
+  String get cardDraftLostArchived;
+
+  /// Действие snackbar: скопировать текст потерянного черновика
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать'**
+  String get cardDraftLostCopy;
 
   /// Заголовок диалога создания карточки
   ///

@@ -186,11 +186,6 @@
   "@cardPanelArchive": {"description": "Кнопка архивирования в панели карточки"},
   "cardPanelClose": "Закрыть",
   "@cardPanelClose": {"description": "Кнопка закрытия панели карточки"},
-  "cardPanelCreatedBy": "Создал {name}",
-  "@cardPanelCreatedBy": {
-    "description": "Автор карточки в панели",
-    "placeholders": {"name": {"type": "String"}}
-  },
   "cardPanelVersion": "v{version}",
   "@cardPanelVersion": {
     "description": "Версия карточки",
@@ -207,8 +202,68 @@
     "description": "Метка панели карточки",
     "placeholders": {"title": {"type": "String"}}
   },
-  "cardPreviewNoDescription": "Описания пока нет",
-  "@cardPreviewNoDescription": {"description": "Заглушка пустого описания в превью карточки"},
+  "cardMeta": "Создал {name} · {when}",
+  "@cardMeta": {
+    "description": "Мета-строка карточки: автор и время создания",
+    "placeholders": {"name": {"type": "String"}, "when": {"type": "String"}}
+  },
+  "cardAgeJustNow": "только что",
+  "@cardAgeJustNow": {"description": "Относительное время: меньше минуты назад"},
+  "cardAgeMinutes": "{count, plural, one{{count} минуту назад} few{{count} минуты назад} many{{count} минут назад} other{{count} минуты назад}}",
+  "@cardAgeMinutes": {
+    "description": "Относительное время: минуты назад",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cardAgeToday": "сегодня",
+  "@cardAgeToday": {"description": "Относительное время: в течение сегодняшнего дня"},
+  "cardAgeYesterday": "вчера",
+  "@cardAgeYesterday": {"description": "Относительное время: вчера"},
+  "cardAgeDays": "{count, plural, one{{count} день назад} few{{count} дня назад} many{{count} дней назад} other{{count} дня назад}}",
+  "@cardAgeDays": {
+    "description": "Относительное время: дни назад",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cardAgeDate": "{date}",
+  "@cardAgeDate": {
+    "description": "Относительное время: дата для давних карточек",
+    "placeholders": {"date": {"type": "DateTime", "format": "yMMMd"}}
+  },
+  "cardTitleEditHint": "Нажмите, чтобы изменить заголовок",
+  "@cardTitleEditHint": {"description": "Подсказка экранного диктора для заголовка, который можно править"},
+  "cardTitleField": "Заголовок карточки",
+  "@cardTitleField": {"description": "Метка поля inline-правки заголовка"},
+  "cardDescriptionCounter": "{count} / {limit}",
+  "@cardDescriptionCounter": {
+    "description": "Счётчик символов описания",
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"},
+      "limit": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "cardDescriptionTooLong": "Слишком длинное описание: максимум {limit} символов. Сохранение недоступно.",
+  "@cardDescriptionTooLong": {
+    "description": "Подсказка при превышении лимита описания",
+    "placeholders": {"limit": {"type": "int", "format": "decimalPattern"}}
+  },
+  "cardConflictTitle": "Описание изменил {name}",
+  "@cardConflictTitle": {
+    "description": "Заголовок баннера конфликта описания",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "cardConflictTitleUnknown": "Описание изменил другой участник",
+  "@cardConflictTitleUnknown": {"description": "Заголовок баннера конфликта описания без имени автора"},
+  "cardConflictBody": "Ваш черновик сохранён. Перезаписать его версией или отменить свои правки?",
+  "@cardConflictBody": {"description": "Текст баннера конфликта описания"},
+  "cardConflictOverwrite": "Перезаписать",
+  "@cardConflictOverwrite": {"description": "Кнопка баннера конфликта: сохранить свой черновик поверх чужой версии"},
+  "cardConflictCancel": "Отменить",
+  "@cardConflictCancel": {"description": "Кнопка баннера конфликта: отбросить свой черновик"},
+  "cardConflictWaiting": "Загружаем актуальную версию…",
+  "@cardConflictWaiting": {"description": "Подсказка баннера конфликта, пока не пришла актуальная версия описания"},
+  "cardDraftLostArchived": "Карточка в архиве. Ваш текст не сохранён.",
+  "@cardDraftLostArchived": {"description": "Snackbar: черновик описания потерян, потому что карточка ушла в архив"},
+  "cardDraftLostCopy": "Скопировать",
+  "@cardDraftLostCopy": {"description": "Действие snackbar: скопировать текст потерянного черновика"},
   "addCardTitle": "Новая карточка",
   "@addCardTitle": {"description": "Заголовок диалога создания карточки"},
   "addCardHint": "Заголовок карточки",

@@ -34,6 +34,8 @@ void showBoardSnackbar(
   required String message,
   IconData icon = LucideIcons.circleAlert,
   bool withDismiss = false,
+  String? actionLabel,
+  VoidCallback? onAction,
 }) {
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) {
@@ -46,7 +48,9 @@ void showBoardSnackbar(
       SnackBar(
         duration: CardoDurations.snackbar,
         content: BoardSnackbarContent(message: message, icon: icon),
-        action: withDismiss
+        action: actionLabel != null && onAction != null
+            ? SnackBarAction(label: actionLabel, onPressed: onAction)
+            : withDismiss
             ? SnackBarAction(
                 label: l10n.snackbarDismiss,
                 onPressed: messenger.hideCurrentSnackBar,

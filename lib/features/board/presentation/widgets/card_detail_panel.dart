@@ -3,39 +3,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
-import '../../../../shared/widgets/cardo_avatar.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_model.dart';
-import '../../domain/board_sync_state.dart';
 import '../board_providers.dart';
 import '../board_view_data.dart';
-import 'card_panel_editor.dart';
+import '../card_sheet_data.dart';
+import 'card_editor_body.dart';
+import 'card_editor_style.dart';
+import 'card_panel_actions.dart';
 import 'column_marker.dart';
 
 class CardDetailPanel extends ConsumerWidget {
-  const CardDetailPanel({super.key, required this.data});
+  const CardDetailPanel({super.key, required this.cardId});
 
-  final CardViewData data;
+  final String cardId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final data = ref.watch(
+      cardSheetProvider(cardId).select((data) => data?.chrome),
+    );
+    if (data == null) {
+      return const SizedBox.shrink();
+    }
     final colors = CardoColors.of(context);
     final sizes = CardoSizes.of(context);
     final spacing = CardoSpacing.of(context);
     final layout = CardoLayout.of(context);
     final l10n = AppLocalizations.of(context);
-    final board = ref.watch(boardViewProvider);
-    final canEdit = ref.watch(canEditBoardProvider);
-    final column = board.columnById(data.card.columnId);
-    final locked = data.status == CardSyncStatus.rejected;
-    final otherColumns = <ColumnModel>[
-      for (final other in board.orderedColumns)
-        if (other.id != data.card.columnId) other,
-    ];
     return Semantics(
       container: true,
       explicitChildNodes: true,
-      label: l10n.cardPanelSemantic(data.card.title),
+      label: l10n.cardPanelSemantic(data.title),
       child: Container(
         width: layout.detailPanelWidth,
         decoration: BoxDecoration(
@@ -53,23 +51,18 @@ class CardDetailPanel extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: layout.panelGap,
             children: <Widget>[
-              CardPanelTopBar(
-                column: column,
-                canEdit: canEdit,
-                cardId: data.card.id,
-                locked: locked,
+              _PanelTopBar(data: data),
+              CardEditorBody(
+                key: ValueKey<String>(cardId),
+                cardId: cardId,
+                variant: CardEditorVariant.panel,
               ),
-              CardPanelTitle(data: data),
-              CardDescriptionEditor(
-                key: ValueKey<String>(data.card.id),
-                description: data.card.description,
-                readOnly: !canEdit,
-              ),
-              if (canEdit)
+              if (data.canEdit)
                 CardPanelActions(
-                  cardId: data.card.id,
-                  otherColumns: otherColumns,
-                  locked: locked,
+                  cardId: cardId,
+                  otherColumns: data.moveTargets,
+                  canSave: data.canSave,
+                  locked: data.locked,
                 ),
             ],
           ),
@@ -79,19 +72,10 @@ class CardDetailPanel extends ConsumerWidget {
   }
 }
 
-class CardPanelTopBar extends ConsumerWidget {
-  const CardPanelTopBar({
-    super.key,
-    required this.column,
-    required this.canEdit,
-    required this.cardId,
-    this.locked = false,
-  });
+class _PanelTopBar extends ConsumerWidget {
+  const _PanelTopBar({required this.data});
 
-  final ColumnModel? column;
-  final bool canEdit;
-  final String cardId;
-  final bool locked;
+  final CardChromeData data;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -100,28 +84,28 @@ class CardPanelTopBar extends ConsumerWidget {
     final radii = CardoRadii.of(context);
     final spacing = CardoSpacing.of(context);
     final l10n = AppLocalizations.of(context);
-    final current = column;
+    final column = data.column;
     return Row(
       spacing: spacing.xs,
       children: <Widget>[
-        if (current != null)
+        if (column != null)
           Flexible(
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: PanelColumnChip(column: current),
+              child: _PanelColumnChip(column: column),
             ),
           )
         else
           const Spacer(),
-        if (canEdit)
+        if (data.canEdit)
           IconButton(
             tooltip: l10n.cardPanelArchive,
-            onPressed: locked
+            onPressed: data.locked
                 ? null
                 : () {
                     ref
                         .read(boardNotifierProvider.notifier)
-                        .archiveCard(cardId);
+                        .archiveCard(data.cardId);
                     ref.read(selectedCardIdProvider.notifier).clear();
                   },
             color: colors.textSecondary,
@@ -146,58 +130,10 @@ class CardPanelTopBar extends ConsumerWidget {
   }
 }
 
-class CardPanelTitle extends StatelessWidget {
-  const CardPanelTitle({super.key, required this.data});
+class _PanelColumnChip extends StatelessWidget {
+  const _PanelColumnChip({required this.column});
 
-  final CardViewData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = CardoColors.of(context);
-    final typography = CardoTypography.of(context);
-    final sizes = CardoSizes.of(context);
-    final spacing = CardoSpacing.of(context);
-    final l10n = AppLocalizations.of(context);
-    final author = data.createdBy;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: CardoLayout.of(context).panelGap,
-      children: <Widget>[
-        Semantics(
-          header: true,
-          child: Text(
-            data.card.title,
-            style: typography.cardTitle.copyWith(color: colors.textPrimary),
-          ),
-        ),
-        Row(
-          spacing: spacing.cardGap,
-          children: <Widget>[
-            if (author != null)
-              CardoAvatar(identity: author, diameter: sizes.avatarFooter),
-            Expanded(
-              child: Text(
-                author == null ? '' : l10n.cardPanelCreatedBy(author.name),
-                style: typography.captionLarge.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-            ),
-            Text(
-              l10n.cardPanelVersion(data.card.version),
-              style: typography.mono.copyWith(color: colors.textSecondary),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class PanelColumnChip extends StatelessWidget {
-  const PanelColumnChip({super.key, required this.column});
-
-  final ColumnModel column;
+  final ColumnInfo column;
 
   @override
   Widget build(BuildContext context) {

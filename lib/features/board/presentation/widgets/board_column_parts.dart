@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/card_tile.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_model.dart';
+import '../board_view_data.dart';
 import '../board_drag_controller.dart';
 import 'board_card_item.dart';
 import 'board_column_header.dart';
@@ -172,7 +172,7 @@ class ColumnHeaderSlot extends StatelessWidget {
     required this.insets,
   });
 
-  final ColumnModel column;
+  final ColumnInfo column;
   final int count;
   final bool dense;
   final ColumnInsets insets;

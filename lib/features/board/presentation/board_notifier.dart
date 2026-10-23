@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/realtime/connection_status.dart';
+import '../data/board_gateway.dart';
 import '../domain/apply_op.dart';
 import '../domain/board_model.dart';
 import '../domain/board_op.dart';
@@ -16,6 +18,11 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   @override
   BoardSyncState build() {
     final snapshot = ref.watch(boardSnapshotProvider);
+    final gateway = ref.read(boardGatewayProvider);
+    if (gateway is BoardRemoteFeed) {
+      final subscription = gateway.remoteUpdates.listen(_onRemoteUpdate);
+      ref.onDispose(subscription.cancel);
+    }
     ref.onDispose(_cancelTimers);
     return BoardSyncState(
       confirmed: snapshot.board,
@@ -113,6 +120,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         title: trimmed,
         actorId: _actorId,
         afterId: existing.isEmpty ? null : existing.last.id,
+        at: _now(),
       ),
     );
   }
@@ -120,7 +128,11 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   void editCardTitle({required String cardId, required String title}) {
     final trimmed = title.trim();
     final card = state.liveView.cardById(cardId);
-    if (!_canEdit || trimmed.isEmpty || card == null || card.title == trimmed) {
+    if (!_canEdit ||
+        trimmed.isEmpty ||
+        card == null ||
+        card.archived ||
+        card.title == trimmed) {
       return;
     }
     _enqueue(
@@ -129,8 +141,35 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         cardId: cardId,
         title: trimmed,
         actorId: _actorId,
+        at: _now(),
       ),
     );
+  }
+
+  String? editCardDescription({
+    required String cardId,
+    required String description,
+    required int baseDescriptionVersion,
+  }) {
+    final card = state.liveView.cardById(cardId);
+    if (!_canEdit ||
+        card == null ||
+        card.archived ||
+        description.length > CardLimits.descriptionMaxLength) {
+      return null;
+    }
+    final opId = _newId();
+    _enqueue(
+      EditCardDescription(
+        opId: opId,
+        cardId: cardId,
+        description: description,
+        baseDescriptionVersion: baseDescriptionVersion,
+        actorId: _actorId,
+        at: _now(),
+      ),
+    );
+    return opId;
   }
 
   void archiveCard(String cardId) {
@@ -142,6 +181,22 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   }
 
   String _newId() => ref.read(idGeneratorProvider)();
+
+  DateTime _now() => ref.read(nowProvider)().toUtc();
+
+  void _onRemoteUpdate(RemoteCardUpdate update) {
+    if (!ref.mounted) {
+      return;
+    }
+    final seq = math.max(state.lastSeq, update.seq);
+    state = state.copyWith(
+      confirmed: applyRemoteCard(
+        state.confirmed,
+        update.card,
+      ).copyWith(seq: seq),
+      lastSeq: seq,
+    );
+  }
 
   void _enqueue(BoardOp op) {
     final sending = state.connection == ConnectionStatus.connected;

@@ -285,11 +285,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cardPanelClose => 'Закрыть';
 
   @override
-  String cardPanelCreatedBy(String name) {
-    return 'Создал $name';
-  }
-
-  @override
   String cardPanelVersion(int version) {
     return 'v$version';
   }
@@ -309,7 +304,107 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get cardPreviewNoDescription => 'Описания пока нет';
+  String cardMeta(String name, String when) {
+    return 'Создал $name · $when';
+  }
+
+  @override
+  String get cardAgeJustNow => 'только что';
+
+  @override
+  String cardAgeMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count минуты назад',
+      many: '$count минут назад',
+      few: '$count минуты назад',
+      one: '$count минуту назад',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cardAgeToday => 'сегодня';
+
+  @override
+  String get cardAgeYesterday => 'вчера';
+
+  @override
+  String cardAgeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count дня назад',
+      many: '$count дней назад',
+      few: '$count дня назад',
+      one: '$count день назад',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cardAgeDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String get cardTitleEditHint => 'Нажмите, чтобы изменить заголовок';
+
+  @override
+  String get cardTitleField => 'Заголовок карточки';
+
+  @override
+  String cardDescriptionCounter(int count, int limit) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return '$countString / $limitString';
+  }
+
+  @override
+  String cardDescriptionTooLong(int limit) {
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return 'Слишком длинное описание: максимум $limitString символов. Сохранение недоступно.';
+  }
+
+  @override
+  String cardConflictTitle(String name) {
+    return 'Описание изменил $name';
+  }
+
+  @override
+  String get cardConflictTitleUnknown => 'Описание изменил другой участник';
+
+  @override
+  String get cardConflictBody =>
+      'Ваш черновик сохранён. Перезаписать его версией или отменить свои правки?';
+
+  @override
+  String get cardConflictOverwrite => 'Перезаписать';
+
+  @override
+  String get cardConflictCancel => 'Отменить';
+
+  @override
+  String get cardConflictWaiting => 'Загружаем актуальную версию…';
+
+  @override
+  String get cardDraftLostArchived =>
+      'Карточка в архиве. Ваш текст не сохранён.';
+
+  @override
+  String get cardDraftLostCopy => 'Скопировать';
 
   @override
   String get addCardTitle => 'Новая карточка';

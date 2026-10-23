@@ -44,6 +44,9 @@ List<BoardNotice> noticesBetween(
     final old = before[item.opId];
     final rejection = item.rejection;
     if (item.isRejected && rejection != null && !(old?.isRejected ?? false)) {
+      if (item.isDescriptionConflict) {
+        continue;
+      }
       final actorId = rejection.actorId;
       notices.add(
         BoardNotice(

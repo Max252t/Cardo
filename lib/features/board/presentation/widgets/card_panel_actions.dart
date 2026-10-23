@@ -3,95 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_model.dart';
 import '../board_providers.dart';
-import 'board_snackbar.dart';
+import '../board_view_data.dart';
+import '../card_drafts.dart';
 import 'column_marker.dart';
-
-class CardDescriptionEditor extends StatefulWidget {
-  const CardDescriptionEditor({
-    super.key,
-    required this.description,
-    required this.readOnly,
-  });
-
-  final String description;
-  final bool readOnly;
-
-  @override
-  State<CardDescriptionEditor> createState() => _CardDescriptionEditorState();
-}
-
-class _CardDescriptionEditorState extends State<CardDescriptionEditor> {
-  late final TextEditingController _controller = TextEditingController(
-    text: widget.description,
-  );
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = CardoColors.of(context);
-    final typography = CardoTypography.of(context);
-    final spacing = CardoSpacing.of(context);
-    final layout = CardoLayout.of(context);
-    final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: spacing.sm,
-      children: <Widget>[
-        ExcludeSemantics(
-          child: Text(
-            l10n.cardDescription.toUpperCase(),
-            style: typography.overline.copyWith(color: colors.textSecondary),
-          ),
-        ),
-        ConstrainedBox(
-          constraints: BoxConstraints(minHeight: layout.descriptionMinHeight),
-          child: TextField(
-            controller: _controller,
-            readOnly: widget.readOnly,
-            maxLines: null,
-            minLines: 1,
-            maxLength: CardLimits.descriptionMaxLength,
-            buildCounter: (
-              context, {
-              required currentLength,
-              required isFocused,
-              required maxLength,
-            }) => null,
-            keyboardType: TextInputType.multiline,
-            style: typography.message.copyWith(color: colors.textPrimary),
-            decoration: InputDecoration(
-              labelText: l10n.cardDescription,
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              hintText: l10n.cardPanelDescriptionHint,
-              constraints: BoxConstraints(
-                minHeight: layout.descriptionMinHeight,
-              ),
-              alignLabelWithHint: true,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class CardPanelActions extends ConsumerWidget {
   const CardPanelActions({
     super.key,
     required this.cardId,
     required this.otherColumns,
+    required this.canSave,
     this.locked = false,
   });
 
   final String cardId;
-  final List<ColumnModel> otherColumns;
+  final List<ColumnInfo> otherColumns;
+  final bool canSave;
   final bool locked;
 
   @override
@@ -111,7 +39,9 @@ class CardPanelActions extends ConsumerWidget {
       runSpacing: spacing.sm,
       children: <Widget>[
         FilledButton(
-          onPressed: () => showComingSoon(context),
+          onPressed: canSave
+              ? () => ref.read(cardDraftsProvider.notifier).save(cardId)
+              : null,
           style: FilledButton.styleFrom(
             minimumSize: minimum,
             padding: padding,

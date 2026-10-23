@@ -50,11 +50,68 @@ class CardViewData {
 }
 
 @immutable
+class ColumnInfo {
+  const ColumnInfo({
+    required this.id,
+    required this.title,
+    required this.marker,
+  });
+
+  factory ColumnInfo.of(ColumnModel column) =>
+      ColumnInfo(id: column.id, title: column.title, marker: column.marker);
+
+  final String id;
+  final String title;
+  final ColumnMarker marker;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ColumnInfo &&
+        other.id == id &&
+        other.title == title &&
+        other.marker == marker;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, marker);
+}
+
+@immutable
+class BoardListItem {
+  const BoardListItem({
+    required this.id,
+    required this.title,
+    required this.colorHex,
+  });
+
+  factory BoardListItem.of(BoardSummary summary) => BoardListItem(
+    id: summary.id,
+    title: summary.title,
+    colorHex: summary.colorHex,
+  );
+
+  final String id;
+  final String title;
+  final String colorHex;
+
+  @override
+  bool operator ==(Object other) {
+    return other is BoardListItem &&
+        other.id == id &&
+        other.title == title &&
+        other.colorHex == colorHex;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, colorHex);
+}
+
+@immutable
 class ColumnViewData {
   ColumnViewData({required this.column, required List<CardViewData> cards})
     : cards = List<CardViewData>.unmodifiable(cards);
 
-  final ColumnModel column;
+  final ColumnInfo column;
   final List<CardViewData> cards;
 
   int get count => cards.length;
@@ -116,7 +173,7 @@ List<ColumnViewData> buildColumnViewData({
   return <ColumnViewData>[
     for (final column in board.orderedColumns)
       ColumnViewData(
-        column: column,
+        column: ColumnInfo.of(column),
         cards: <CardViewData>[
           for (final card in board.cardsIn(column.id))
             _cardViewData(

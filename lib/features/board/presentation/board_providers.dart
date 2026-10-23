@@ -81,8 +81,11 @@ final boardPresenceProvider = Provider<BoardPresence>(
   (ref) => ref.watch(boardSnapshotProvider).presence,
 );
 
-final boardListProvider = Provider<List<BoardSummary>>(
-  (ref) => ref.watch(boardSnapshotProvider).boards,
+final boardListProvider = Provider<List<BoardListItem>>(
+  (ref) => [
+    for (final summary in ref.watch(boardSnapshotProvider).boards)
+      BoardListItem.of(summary),
+  ],
 );
 
 final boardColumnsProvider = Provider<List<ColumnViewData>>((ref) {
