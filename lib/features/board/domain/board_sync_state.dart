@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-
+import '../../../core/equality/collection_equality.dart';
 import '../../../core/realtime/connection_status.dart';
 import 'apply_op.dart';
 import 'board_model.dart';
@@ -18,7 +17,6 @@ enum NackReason {
 
 enum CardSyncStatus { confirmed, pending, rejected }
 
-@immutable
 class OpRejection {
   const OpRejection({
     required this.reason,
@@ -57,7 +55,6 @@ class OpRejection {
   String toString() => 'OpRejection(${reason.name}, at $atSeq)';
 }
 
-@immutable
 class PendingOp {
   const PendingOp({
     required this.op,
@@ -76,6 +73,11 @@ class PendingOp {
   String get opId => op.opId;
 
   bool get isRejected => status == PendingOpStatus.rejected;
+
+  bool get isDescriptionConflict =>
+      isRejected &&
+      op is EditCardDescription &&
+      rejection?.reason == NackReason.versionConflict;
 
   PendingOp copyWith({
     BoardOp? op,
@@ -111,7 +113,6 @@ class PendingOp {
   String toString() => 'PendingOp($op, ${status.name})';
 }
 
-@immutable
 class BoardSyncState {
   BoardSyncState({
     required this.confirmed,
@@ -148,6 +149,24 @@ class BoardSyncState {
     }
     return status;
   }
+
+  OpRejection? blockingRejection(String cardId) {
+    for (final item in pending) {
+      if (item.op.cardId == cardId &&
+          item.isRejected &&
+          !item.isDescriptionConflict) {
+        return item.rejection;
+      }
+    }
+    return null;
+  }
+
+  bool hasBlockingRejection(String cardId) => pending.any(
+    (item) =>
+        item.op.cardId == cardId &&
+        item.isRejected &&
+        !item.isDescriptionConflict,
+  );
 
   OpRejection? cardRejection(String cardId) {
     for (final item in pending) {

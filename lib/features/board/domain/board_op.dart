@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-
-@immutable
 sealed class BoardOp {
   const BoardOp({required this.opId});
 
@@ -57,6 +54,7 @@ final class CreateCard extends BoardOp {
     this.description = '',
     this.afterId,
     this.beforeId,
+    this.at,
   });
 
   @override
@@ -67,6 +65,7 @@ final class CreateCard extends BoardOp {
   final String actorId;
   final String? afterId;
   final String? beforeId;
+  final DateTime? at;
 
   @override
   bool operator ==(Object other) {
@@ -78,7 +77,8 @@ final class CreateCard extends BoardOp {
         other.description == description &&
         other.actorId == actorId &&
         other.afterId == afterId &&
-        other.beforeId == beforeId;
+        other.beforeId == beforeId &&
+        other.at == at;
   }
 
   @override
@@ -91,6 +91,7 @@ final class CreateCard extends BoardOp {
     actorId,
     afterId,
     beforeId,
+    at,
   );
 
   @override
@@ -103,12 +104,14 @@ final class EditCardTitle extends BoardOp {
     required this.cardId,
     required this.title,
     required this.actorId,
+    this.at,
   });
 
   @override
   final String cardId;
   final String title;
   final String actorId;
+  final DateTime? at;
 
   @override
   bool operator ==(Object other) {
@@ -116,14 +119,58 @@ final class EditCardTitle extends BoardOp {
         other.opId == opId &&
         other.cardId == cardId &&
         other.title == title &&
-        other.actorId == actorId;
+        other.actorId == actorId &&
+        other.at == at;
   }
 
   @override
-  int get hashCode => Object.hash(opId, cardId, title, actorId);
+  int get hashCode => Object.hash(opId, cardId, title, actorId, at);
 
   @override
   String toString() => 'EditCardTitle($opId, $cardId)';
+}
+
+final class EditCardDescription extends BoardOp {
+  const EditCardDescription({
+    required super.opId,
+    required this.cardId,
+    required this.description,
+    required this.baseDescriptionVersion,
+    required this.actorId,
+    this.at,
+  });
+
+  @override
+  final String cardId;
+  final String description;
+  final int baseDescriptionVersion;
+  final String actorId;
+  final DateTime? at;
+
+  @override
+  bool operator ==(Object other) {
+    return other is EditCardDescription &&
+        other.opId == opId &&
+        other.cardId == cardId &&
+        other.description == description &&
+        other.baseDescriptionVersion == baseDescriptionVersion &&
+        other.actorId == actorId &&
+        other.at == at;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    opId,
+    cardId,
+    description,
+    baseDescriptionVersion,
+    actorId,
+    at,
+  );
+
+  @override
+  String toString() =>
+      'EditCardDescription($opId, $cardId, base d$baseDescriptionVersion)';
 }
 
 final class ArchiveCard extends BoardOp {
