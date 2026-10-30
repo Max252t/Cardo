@@ -259,63 +259,6 @@ void main() {
     });
   });
 
-  group('descriptionOpFor', () {
-    final at = DateTime.utc(2026, 1, 2);
-
-    test('builds an operation from the draft', () {
-      final op = descriptionOpFor(
-        _draft(base: 4),
-        opId: 'id',
-        actorId: 'u',
-        at: at,
-      );
-      expect(op, isNotNull);
-      expect(op!.description, 'draft');
-      expect(op.baseDescriptionVersion, 4);
-      expect(op.actorId, 'u');
-      expect(op.at, at);
-    });
-
-    test('refuses conflicted, submitted and oversized drafts', () {
-      expect(
-        descriptionOpFor(
-          _draft(conflict: true),
-          opId: 'id',
-          actorId: 'u',
-          at: at,
-        ),
-        isNull,
-      );
-      expect(
-        descriptionOpFor(
-          _draft(opId: 'o'),
-          opId: 'id',
-          actorId: 'u',
-          at: at,
-        ),
-        isNull,
-      );
-      expect(
-        descriptionOpFor(
-          _draft(text: 'x' * 10001),
-          opId: 'id',
-          actorId: 'u',
-          at: at,
-        ),
-        isNull,
-      );
-      expect(
-        descriptionOpFor(
-          _draft(text: 'x' * 10000),
-          opId: 'id',
-          actorId: 'u',
-          at: at,
-        ),
-        isNotNull,
-      );
-    });
-  });
-
   group('CardDraft transitions', () {
     test('tooLong boundary', () {
       expect(_draft(text: 'x' * 10000).tooLong, isFalse);

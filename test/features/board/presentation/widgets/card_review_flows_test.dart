@@ -240,7 +240,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Скопировать'), findsOneWidget);
-      expect(container.read(lostDraftProvider), isNull);
+      expect(container.read(lostDraftProvider), hasLength(1));
 
       await tester.tap(find.text('Скопировать'));
       await tester.pump();

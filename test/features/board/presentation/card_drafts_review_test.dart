@@ -140,7 +140,9 @@ void main() {
       await tester.pump(_tick);
 
       expect(container.read(cardDraftsProvider), isEmpty);
-      expect(container.read(lostDraftProvider)!.text, 'text for fresh');
+      final lost = container.read(lostDraftProvider).single;
+      expect(lost.text, 'text for fresh');
+      expect(lost.reason, LostDraftReason.createRejected);
       await tester.pump(const Duration(milliseconds: 200));
       container.dispose();
     });
@@ -156,11 +158,12 @@ void main() {
       container.read(boardNotifierProvider.notifier).archiveCard(_card);
 
       expect(container.read(cardDraftsProvider), isEmpty);
-      final lost = container.read(lostDraftProvider)!;
+      final lost = container.read(lostDraftProvider).single;
       expect(lost.cardId, _card);
       expect(lost.text, 'precious');
-      container.read(lostDraftProvider.notifier).clear();
-      expect(container.read(lostDraftProvider), isNull);
+      expect(lost.reason, LostDraftReason.archived);
+      container.read(lostDraftProvider.notifier).remove(lost);
+      expect(container.read(lostDraftProvider), isEmpty);
       container.dispose();
     });
 
@@ -168,7 +171,7 @@ void main() {
       final gateway = ControlledGateway();
       final container = _open(gateway);
       container.read(boardNotifierProvider.notifier).archiveCard(_card);
-      expect(container.read(lostDraftProvider), isNull);
+      expect(container.read(lostDraftProvider), isEmpty);
       container.dispose();
     });
   });
