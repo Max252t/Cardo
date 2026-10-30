@@ -29,6 +29,7 @@ Future<void> pumpBoard(
   RejectPolicy? rejectWhen,
   Duration delay = confirmDelay,
   TextDirection textDirection = TextDirection.ltr,
+  Locale locale = const Locale('ru'),
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -53,7 +54,7 @@ Future<void> pumpBoard(
         theme: brightness == Brightness.light
             ? buildLightTheme()
             : buildDarkTheme(),
-        locale: const Locale('ru'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, app) {

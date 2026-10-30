@@ -21,6 +21,7 @@ void main() {
             tester.view.physicalSize = sizeEntry.value;
             tester.view.devicePixelRatio = 1;
             tester.platformDispatcher.platformBrightnessTestValue = brightness;
+            tester.platformDispatcher.localesTestValue = const [Locale('ru')];
             tester.platformDispatcher.textScaleFactorTestValue = scale;
             addTearDown(() {
               tester.view.resetPhysicalSize();
@@ -49,6 +50,8 @@ void main() {
   }
 
   testWidgets('preview shows all component families', (tester) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('ru')];
+    addTearDown(tester.platformDispatcher.clearAllTestValues);
     tester.view.physicalSize = const Size(1280, 4000);
     tester.view.devicePixelRatio = 1;
     addTearDown(() {
