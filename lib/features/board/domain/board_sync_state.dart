@@ -79,6 +79,8 @@ class PendingOp {
       op is EditCardDescription &&
       rejection?.reason == NackReason.versionConflict;
 
+  bool get isBlocking => isRejected && !isDescriptionConflict;
+
   PendingOp copyWith({
     BoardOp? op,
     PendingOpStatus? status,
@@ -136,46 +138,38 @@ class BoardSyncState {
   List<PendingOp> get rejected =>
       pending.where((item) => item.isRejected).toList(growable: false);
 
-  CardSyncStatus cardStatus(String cardId) {
-    var status = CardSyncStatus.confirmed;
-    for (final item in pending) {
-      if (item.op.cardId != cardId) {
-        continue;
-      }
-      if (item.isRejected) {
-        return CardSyncStatus.rejected;
-      }
-      status = CardSyncStatus.pending;
-    }
-    return status;
-  }
-
-  OpRejection? blockingRejection(String cardId) {
+  PendingOp? _rejectedFor(String cardId, {bool blockingOnly = false}) {
     for (final item in pending) {
       if (item.op.cardId == cardId &&
           item.isRejected &&
-          !item.isDescriptionConflict) {
-        return item.rejection;
+          (!blockingOnly || item.isBlocking)) {
+        return item;
       }
     }
     return null;
   }
 
-  bool hasBlockingRejection(String cardId) => pending.any(
+  CardSyncStatus cardStatus(String cardId) {
+    if (_rejectedFor(cardId) != null) {
+      return CardSyncStatus.rejected;
+    }
+    return pending.any((item) => item.op.cardId == cardId)
+        ? CardSyncStatus.pending
+        : CardSyncStatus.confirmed;
+  }
+
+  OpRejection? blockingRejection(String cardId) =>
+      _rejectedFor(cardId, blockingOnly: true)?.rejection;
+
+  bool hasBlockingRejection(String cardId) =>
+      _rejectedFor(cardId, blockingOnly: true) != null;
+
+  OpRejection? cardRejection(String cardId) => _rejectedFor(cardId)?.rejection;
+
+  bool hasRejectedCreate(String cardId) => pending.any(
     (item) =>
-        item.op.cardId == cardId &&
-        item.isRejected &&
-        !item.isDescriptionConflict,
+        item.isRejected && item.op is CreateCard && item.op.cardId == cardId,
   );
-
-  OpRejection? cardRejection(String cardId) {
-    for (final item in pending) {
-      if (item.op.cardId == cardId && item.isRejected) {
-        return item.rejection;
-      }
-    }
-    return null;
-  }
 
   BoardSyncState copyWith({
     BoardModel? confirmed,

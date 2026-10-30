@@ -1,5 +1,4 @@
 import 'board_model.dart';
-import 'board_op.dart';
 import 'board_sync_state.dart';
 
 const Object _keep = Object();
@@ -87,6 +86,8 @@ class CardDraft {
 
   CardDraft withFlushRequested() => _with(flushRequested: true);
 
+  CardDraft withFlushCleared() => _with(flushRequested: false);
+
   @override
   bool operator ==(Object other) {
     return other is CardDraft &&
@@ -136,8 +137,7 @@ bool isDraftBlocked(CardDraft draft, BoardSyncState state) {
 }
 
 CardDraft? reconcileDraft(CardDraft draft, BoardSyncState state) {
-  final live = state.liveView.cardById(draft.cardId);
-  if (live == null || live.archived) {
+  if (state.liveView.activeCard(draft.cardId) == null) {
     return null;
   }
   final card = state.confirmed.cardById(draft.cardId);
@@ -181,7 +181,7 @@ CardDraft? _reconcileSubmitted(
       atSeq: item.rejection?.atSeq,
     );
   }
-  return draft.unsubmitted();
+  return draft.unsubmitted().withFlushCleared();
 }
 
 Map<String, CardDraft> reconcileDrafts(
@@ -192,23 +192,4 @@ Map<String, CardDraft> reconcileDrafts(
     for (final entry in drafts.entries)
       entry.key: ?reconcileDraft(entry.value, state),
   };
-}
-
-EditCardDescription? descriptionOpFor(
-  CardDraft draft, {
-  required String opId,
-  required String actorId,
-  required DateTime at,
-}) {
-  if (!draft.canSubmit) {
-    return null;
-  }
-  return EditCardDescription(
-    opId: opId,
-    cardId: draft.cardId,
-    description: draft.text,
-    baseDescriptionVersion: draft.baseDescriptionVersion,
-    actorId: actorId,
-    at: at,
-  );
 }

@@ -244,6 +244,11 @@ class BoardModel {
     return null;
   }
 
+  CardModel? activeCard(String id) {
+    final card = cardById(id);
+    return card == null || card.archived ? null : card;
+  }
+
   ColumnModel? columnById(String id) {
     for (final column in columns) {
       if (column.id == id) {
