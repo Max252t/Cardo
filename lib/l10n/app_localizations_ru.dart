@@ -404,6 +404,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Карточка в архиве. Ваш текст не сохранён.';
 
   @override
+  String get cardDraftLostCreateRejected =>
+      'Карточку не удалось создать. Ваш текст не сохранён.';
+
+  @override
   String get cardDraftLostCopy => 'Скопировать';
 
   @override

@@ -29,7 +29,7 @@ class CardMetaRow extends ConsumerWidget {
     final spacing = CardoSpacing.of(context);
     final l10n = AppLocalizations.of(context);
     final author = createdBy;
-    final when = cardAgeText(l10n, createdAt, ref.watch(nowProvider)());
+    final when = cardAgeText(l10n, createdAt, ref.watch(tickingNowProvider));
     return Row(
       spacing: spacing.cardGap,
       children: <Widget>[

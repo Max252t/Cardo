@@ -262,6 +262,8 @@
   "@cardConflictWaiting": {"description": "Подсказка баннера конфликта, пока не пришла актуальная версия описания"},
   "cardDraftLostArchived": "Карточка в архиве. Ваш текст не сохранён.",
   "@cardDraftLostArchived": {"description": "Snackbar: черновик описания потерян, потому что карточка ушла в архив"},
+  "cardDraftLostCreateRejected": "Карточку не удалось создать. Ваш текст не сохранён.",
+  "@cardDraftLostCreateRejected": {"description": "Snackbar: черновик описания потерян, потому что создание карточки отклонено"},
   "cardDraftLostCopy": "Скопировать",
   "@cardDraftLostCopy": {"description": "Действие snackbar: скопировать текст потерянного черновика"},
   "addCardTitle": "Новая карточка",

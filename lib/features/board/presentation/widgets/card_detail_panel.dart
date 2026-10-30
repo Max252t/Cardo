@@ -5,12 +5,11 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_providers.dart';
-import '../board_view_data.dart';
 import '../card_sheet_data.dart';
 import 'card_editor_body.dart';
+import 'card_editor_parts.dart';
 import 'card_editor_style.dart';
 import 'card_panel_actions.dart';
-import 'column_marker.dart';
 
 class CardDetailPanel extends ConsumerWidget {
   const CardDetailPanel({super.key, required this.cardId});
@@ -80,9 +79,8 @@ class _PanelTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = CardoColors.of(context);
-    final sizes = CardoSizes.of(context);
-    final radii = CardoRadii.of(context);
     final spacing = CardoSpacing.of(context);
+    final style = CardEditorStyle.of(context, CardEditorVariant.panel);
     final l10n = AppLocalizations.of(context);
     final column = data.column;
     return Row(
@@ -92,14 +90,17 @@ class _PanelTopBar extends ConsumerWidget {
           Flexible(
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: _PanelColumnChip(column: column),
+              child: CardColumnChip(column: column, style: style),
             ),
           )
         else
           const Spacer(),
         if (data.canEdit)
-          IconButton(
+          CardIconButton(
             tooltip: l10n.cardPanelArchive,
+            icon: LucideIcons.archive,
+            style: style,
+            foreground: style.quietForeground,
             onPressed: data.locked
                 ? null
                 : () {
@@ -108,70 +109,16 @@ class _PanelTopBar extends ConsumerWidget {
                         .archiveCard(data.cardId);
                     ref.read(selectedCardIdProvider.notifier).clear();
                   },
-            color: colors.textSecondary,
-            iconSize: sizes.iconButton,
-            icon: const Icon(LucideIcons.archive),
           ),
-        IconButton(
+        CardIconButton(
           tooltip: l10n.cardPanelClose,
+          icon: LucideIcons.x,
+          style: style,
+          foreground: colors.textPrimary,
+          background: style.closeBackground,
           onPressed: () => ref.read(selectedCardIdProvider.notifier).clear(),
-          style: IconButton.styleFrom(
-            backgroundColor: colors.card,
-            foregroundColor: colors.textPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radii.buttonSmall),
-            ),
-          ),
-          iconSize: sizes.iconButton,
-          icon: const Icon(LucideIcons.x),
         ),
       ],
-    );
-  }
-}
-
-class _PanelColumnChip extends StatelessWidget {
-  const _PanelColumnChip({required this.column});
-
-  final ColumnInfo column;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = CardoColors.of(context);
-    final typography = CardoTypography.of(context);
-    final sizes = CardoSizes.of(context);
-    final radii = CardoRadii.of(context);
-    final spacing = CardoSpacing.of(context);
-    return Container(
-      constraints: BoxConstraints(
-        minHeight: CardoLayout.of(context).panelChipHeight,
-      ),
-      padding: EdgeInsetsDirectional.symmetric(
-        horizontal: spacing.cardGap,
-        vertical: spacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: colors.card,
-        borderRadius: BorderRadius.circular(radii.badge),
-        border: Border.all(color: colors.cardBorder, width: sizes.hairline),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: spacing.sm,
-        children: <Widget>[
-          ColumnMarkerSquare(
-            marker: column.marker,
-            size: sizes.markerTab,
-            radius: radii.markerTab,
-          ),
-          Flexible(
-            child: Text(
-              column.title,
-              style: typography.caption.copyWith(color: colors.textPrimary),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

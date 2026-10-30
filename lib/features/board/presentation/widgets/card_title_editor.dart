@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../../domain/board_model.dart';
+import '../board_notifier.dart';
 import '../board_providers.dart';
 
 class CardTitleEditor extends ConsumerStatefulWidget {
@@ -28,11 +29,13 @@ class CardTitleEditor extends ConsumerStatefulWidget {
 class _CardTitleEditorState extends ConsumerState<CardTitleEditor> {
   final FocusNode _focus = FocusNode();
   TextEditingController? _controller;
+  late final BoardNotifier _board;
   bool _editing = false;
 
   @override
   void initState() {
     super.initState();
+    _board = ref.read(boardNotifierProvider.notifier);
     _focus.addListener(_onFocusChange);
   }
 
@@ -40,26 +43,35 @@ class _CardTitleEditorState extends ConsumerState<CardTitleEditor> {
   void didUpdateWidget(CardTitleEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (_editing && !widget.editable) {
-      final text = _controller?.text ?? widget.title;
-      final cardId = widget.cardId;
       _editing = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          ref
-              .read(boardNotifierProvider.notifier)
-              .editCardTitle(cardId: cardId, title: text);
-        }
-      });
+      _commit(_controller?.text ?? widget.title, deferred: true);
     }
   }
 
   @override
   void dispose() {
+    final pending = _editing ? (_controller?.text ?? widget.title) : null;
+    _editing = false;
     _focus
       ..removeListener(_onFocusChange)
       ..dispose();
     _controller?.dispose();
+    if (pending != null) {
+      _commit(pending, deferred: true);
+    }
     super.dispose();
+  }
+
+  void _commit(String text, {bool deferred = false}) {
+    final board = _board;
+    final cardId = widget.cardId;
+    if (!deferred) {
+      board.editCardTitle(cardId: cardId, title: text);
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      board.editCardTitle(cardId: cardId, title: text);
+    });
   }
 
   void _start() {
@@ -88,9 +100,7 @@ class _CardTitleEditorState extends ConsumerState<CardTitleEditor> {
     final text = _controller?.text ?? widget.title;
     setState(() => _editing = false);
     if (commit) {
-      ref
-          .read(boardNotifierProvider.notifier)
-          .editCardTitle(cardId: widget.cardId, title: text);
+      _commit(text);
     }
   }
 

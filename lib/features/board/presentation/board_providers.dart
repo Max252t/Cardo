@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -46,6 +48,18 @@ final boardGatewayProvider = Provider<BoardGateway>(
 final idGeneratorProvider = Provider<IdGenerator>((ref) => const Uuid().v7);
 
 final nowProvider = Provider<NowProvider>((ref) => DateTime.now);
+
+final tickingNowProvider = Provider.autoDispose<DateTime>((ref) {
+  final value = ref.watch(nowProvider)();
+  final elapsed = Duration(
+    seconds: value.second,
+    milliseconds: value.millisecond,
+    microseconds: value.microsecond,
+  );
+  final timer = Timer(CardoDurations.nowTick - elapsed, ref.invalidateSelf);
+  ref.onDispose(timer.cancel);
+  return value;
+});
 
 final boardSyncConfigProvider = Provider<BoardSyncConfig>(
   (ref) => const BoardSyncConfig(),

@@ -77,8 +77,8 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       return;
     }
     final view = state.liveView;
-    final card = view.cardById(cardId);
-    if (card == null || card.archived || view.columnById(toColumnId) == null) {
+    final card = view.activeCard(cardId);
+    if (card == null || view.columnById(toColumnId) == null) {
       return;
     }
     final current = view.cardsIn(toColumnId);
@@ -126,13 +126,12 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   }
 
   void editCardTitle({required String cardId, required String title}) {
+    if (!ref.mounted) {
+      return;
+    }
     final trimmed = title.trim();
-    final card = state.liveView.cardById(cardId);
-    if (!_canEdit ||
-        trimmed.isEmpty ||
-        card == null ||
-        card.archived ||
-        card.title == trimmed) {
+    final card = state.liveView.activeCard(cardId);
+    if (!_canEdit || trimmed.isEmpty || card == null || card.title == trimmed) {
       return;
     }
     _enqueue(
@@ -151,10 +150,8 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     required String description,
     required int baseDescriptionVersion,
   }) {
-    final card = state.liveView.cardById(cardId);
     if (!_canEdit ||
-        card == null ||
-        card.archived ||
+        state.liveView.activeCard(cardId) == null ||
         description.length > CardLimits.descriptionMaxLength) {
       return null;
     }
@@ -173,8 +170,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   }
 
   void archiveCard(String cardId) {
-    final card = state.liveView.cardById(cardId);
-    if (!_canEdit || card == null || card.archived) {
+    if (!_canEdit || state.liveView.activeCard(cardId) == null) {
       return;
     }
     _enqueue(ArchiveCard(opId: _newId(), cardId: cardId));

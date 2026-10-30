@@ -2,43 +2,55 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/equality/collection_equality.dart';
-import '../domain/board_model.dart';
 import '../domain/board_sync_state.dart';
 import '../domain/card_draft.dart';
 import 'board_providers.dart';
 
+enum LostDraftReason { archived, createRejected }
+
 @immutable
 class LostDraft {
-  const LostDraft({required this.cardId, required this.text});
+  const LostDraft({
+    required this.cardId,
+    required this.text,
+    required this.reason,
+  });
 
   final String cardId;
   final String text;
+  final LostDraftReason reason;
 
   @override
   bool operator ==(Object other) {
-    return other is LostDraft && other.cardId == cardId && other.text == text;
+    return other is LostDraft &&
+        other.cardId == cardId &&
+        other.text == text &&
+        other.reason == reason;
   }
 
   @override
-  int get hashCode => Object.hash(cardId, text);
+  int get hashCode => Object.hash(cardId, text, reason);
 }
 
-class LostDraftNotifier extends Notifier<LostDraft?> {
+class LostDraftNotifier extends Notifier<List<LostDraft>> {
   @override
-  LostDraft? build() => null;
+  List<LostDraft> build() => const <LostDraft>[];
 
-  void report(LostDraft draft) => state = draft;
+  void report(LostDraft draft) => state = <LostDraft>[...state, draft];
 
-  void clear() => state = null;
+  void remove(LostDraft draft) {
+    final index = state.indexOf(draft);
+    if (index >= 0) {
+      state = <LostDraft>[...state]..removeAt(index);
+    }
+  }
 }
 
-final lostDraftProvider = NotifierProvider<LostDraftNotifier, LostDraft?>(
+final lostDraftProvider = NotifierProvider<LostDraftNotifier, List<LostDraft>>(
   LostDraftNotifier.new,
 );
 
 class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
-  bool _saving = false;
-
   @override
   Map<String, CardDraft> build() {
     ref.listen<BoardSyncState>(
@@ -51,7 +63,7 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
   BoardSyncState get _board => ref.read(boardNotifierProvider);
 
   void edit(String cardId, String text) {
-    final card = _editableCard(_board.liveView, cardId);
+    final card = _board.liveView.activeCard(cardId);
     if (card == null || !ref.read(canEditBoardProvider)) {
       return;
     }
@@ -76,7 +88,7 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
   void save(String cardId) {
     final draft = state[cardId];
     final board = _board;
-    final card = _editableCard(board.liveView, cardId);
+    final card = board.liveView.activeCard(cardId);
     if (draft == null ||
         !draft.canSubmit ||
         card == null ||
@@ -88,27 +100,27 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
       _remove(cardId);
       return;
     }
-    _saving = true;
-    final String? opId;
-    try {
-      opId = ref
-          .read(boardNotifierProvider.notifier)
-          .editCardDescription(
-            cardId: cardId,
-            description: draft.text,
-            baseDescriptionVersion: draft.baseDescriptionVersion,
-          );
-    } finally {
-      _saving = false;
+    if (draft.flushRequested) {
+      _set(draft.withFlushCleared());
     }
+    final opId = ref
+        .read(boardNotifierProvider.notifier)
+        .editCardDescription(
+          cardId: cardId,
+          description: draft.text,
+          baseDescriptionVersion: draft.baseDescriptionVersion,
+        );
+    final current = state[cardId] ?? draft;
     if (opId != null) {
-      _put((state[cardId] ?? draft).submittedAs(opId));
+      _put(current.submittedAs(opId));
+    } else if (draft.flushRequested && state.containsKey(cardId)) {
+      _set(current.withFlushRequested());
     }
   }
 
   void overwrite(String cardId) {
     final draft = state[cardId];
-    final card = _editableCard(_board.confirmed, cardId);
+    final card = _board.confirmed.activeCard(cardId);
     if (draft == null ||
         !draft.conflict ||
         card == null ||
@@ -138,8 +150,12 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
     save(cardId);
   }
 
+  void _set(CardDraft draft) {
+    state = <String, CardDraft>{...state, draft.cardId: draft};
+  }
+
   void _put(CardDraft draft) {
-    _commit(<String, CardDraft>{...state, draft.cardId: draft}, _board);
+    _apply(<String, CardDraft>{...state, draft.cardId: draft}, _board);
   }
 
   void _remove(String cardId) {
@@ -152,13 +168,26 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
     if (state.isEmpty) {
       return;
     }
-    _commit(Map<String, CardDraft>.of(state), board);
+    _apply(Map<String, CardDraft>.of(state), board);
   }
 
-  void _commit(Map<String, CardDraft> candidate, BoardSyncState board) {
+  void _apply(Map<String, CardDraft> candidate, BoardSyncState board) {
+    final next = _reconcileAndReport(candidate, board);
+    _autoSend(<String>[
+      for (final entry in next.entries)
+        if (entry.value.flushRequested &&
+            entry.value.canSubmit &&
+            !isDraftBlocked(entry.value, board))
+          entry.key,
+    ]);
+  }
+
+  Map<String, CardDraft> _reconcileAndReport(
+    Map<String, CardDraft> candidate,
+    BoardSyncState board,
+  ) {
     final next = reconcileDrafts(candidate, board);
-    final previous = state;
-    if (!mapEquals(previous, next)) {
+    if (!mapEquals(state, next)) {
       state = next;
     }
     for (final entry in candidate.entries) {
@@ -166,22 +195,17 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
         _reportIfLost(entry.value, board);
       }
     }
-    if (_saving) {
-      return;
-    }
-    for (final entry in next.entries) {
-      final draft = entry.value;
-      if (draft.flushRequested &&
-          draft.canSubmit &&
-          !isDraftBlocked(draft, board)) {
-        save(entry.key);
-      }
+    return next;
+  }
+
+  void _autoSend(List<String> cardIds) {
+    for (final cardId in cardIds) {
+      save(cardId);
     }
   }
 
   void _reportIfLost(CardDraft draft, BoardSyncState board) {
-    final live = board.liveView.cardById(draft.cardId);
-    final gone = live == null || live.archived;
+    final gone = board.liveView.activeCard(draft.cardId) == null;
     if (!gone || draft.text.isEmpty) {
       return;
     }
@@ -191,7 +215,15 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
     }
     ref
         .read(lostDraftProvider.notifier)
-        .report(LostDraft(cardId: draft.cardId, text: draft.text));
+        .report(
+          LostDraft(
+            cardId: draft.cardId,
+            text: draft.text,
+            reason: board.hasRejectedCreate(draft.cardId)
+                ? LostDraftReason.createRejected
+                : LostDraftReason.archived,
+          ),
+        );
   }
 }
 
@@ -203,8 +235,3 @@ final cardDraftsProvider =
 final cardDraftProvider = Provider.autoDispose.family<CardDraft?, String>(
   (ref, cardId) => ref.watch(cardDraftsProvider.select((all) => all[cardId])),
 );
-
-CardModel? _editableCard(BoardModel board, String cardId) {
-  final card = board.cardById(cardId);
-  return card == null || card.archived ? null : card;
-}

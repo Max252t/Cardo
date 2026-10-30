@@ -664,6 +664,12 @@ abstract class AppLocalizations {
   /// **'Карточка в архиве. Ваш текст не сохранён.'**
   String get cardDraftLostArchived;
 
+  /// Snackbar: черновик описания потерян, потому что создание карточки отклонено
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточку не удалось создать. Ваш текст не сохранён.'**
+  String get cardDraftLostCreateRejected;
+
   /// Действие snackbar: скопировать текст потерянного черновика
   ///
   /// In ru, this message translates to:

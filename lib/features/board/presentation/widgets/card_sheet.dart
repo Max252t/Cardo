@@ -7,12 +7,11 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_providers.dart';
-import '../board_view_data.dart';
 import '../card_drafts.dart';
 import '../card_sheet_data.dart';
 import 'card_editor_body.dart';
+import 'card_editor_parts.dart';
 import 'card_editor_style.dart';
-import 'column_marker.dart';
 
 Future<void> showCardSheet(BuildContext context, String cardId) async {
   final sizes = CardoSizes.of(context);
@@ -131,6 +130,7 @@ class _SheetTopBar extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final colors = CardoColors.of(context);
+    final style = CardEditorStyle.of(context, CardEditorVariant.sheet);
     final l10n = AppLocalizations.of(context);
     final column = data.column;
     return Row(
@@ -140,111 +140,32 @@ class _SheetTopBar extends ConsumerWidget {
           Expanded(
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: _SheetColumnChip(column: column),
+              child: CardColumnChip(column: column, style: style),
             ),
           )
         else
           const Spacer(),
         if (data.canEdit)
-          _SheetIconButton(
+          CardIconButton(
             tooltip: l10n.cardPanelArchive,
             icon: LucideIcons.archive,
-            foreground: colors.textSoft,
+            style: style,
+            foreground: style.quietForeground,
             onPressed: data.locked
                 ? null
                 : () => ref
                       .read(boardNotifierProvider.notifier)
                       .archiveCard(cardId),
           ),
-        _SheetIconButton(
+        CardIconButton(
           tooltip: l10n.cardPanelClose,
           icon: LucideIcons.x,
+          style: style,
           foreground: colors.textPrimary,
-          background: colors.background,
+          background: style.closeBackground,
           onPressed: () => unawaited(Navigator.of(context).maybePop()),
         ),
       ],
-    );
-  }
-}
-
-class _SheetIconButton extends StatelessWidget {
-  const _SheetIconButton({
-    required this.tooltip,
-    required this.icon,
-    required this.foreground,
-    required this.onPressed,
-    this.background,
-  });
-
-  final String tooltip;
-  final IconData icon;
-  final Color foreground;
-  final Color? background;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final sizes = CardoSizes.of(context);
-    final size = Size.square(sizes.tapTarget);
-    return IconButton(
-      tooltip: tooltip,
-      onPressed: onPressed,
-      style: IconButton.styleFrom(
-        fixedSize: size,
-        minimumSize: size,
-        backgroundColor: background,
-        foregroundColor: foreground,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            CardoRadii.of(context).iconButton,
-          ),
-        ),
-      ),
-      iconSize: sizes.iconLarge,
-      icon: Icon(icon),
-    );
-  }
-}
-
-class _SheetColumnChip extends StatelessWidget {
-  const _SheetColumnChip({required this.column});
-
-  final ColumnInfo column;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = CardoColors.of(context);
-    final typography = CardoTypography.of(context);
-    final radii = CardoRadii.of(context);
-    final spacing = CardoSpacing.of(context);
-    final layout = CardoLayout.of(context);
-    return Container(
-      constraints: BoxConstraints(minHeight: layout.sheetChipHeight),
-      padding: EdgeInsetsDirectional.symmetric(
-        horizontal: spacing.badgePaddingHorizontal,
-      ),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: BorderRadius.circular(radii.chip),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: spacing.sm,
-        children: <Widget>[
-          ColumnMarkerSquare(
-            marker: column.marker,
-            size: layout.markerColumnDense,
-            radius: radii.markerTab,
-          ),
-          Flexible(
-            child: Text(
-              column.title,
-              style: typography.pill.copyWith(color: colors.textPrimary),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
