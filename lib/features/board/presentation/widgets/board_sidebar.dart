@@ -72,6 +72,7 @@ class SidebarBoardList extends ConsumerWidget {
     final connection = ref.watch(
       boardNotifierProvider.select((state) => state.connection),
     );
+    final navigation = ref.watch(boardNavigationProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: CardoLayout.of(context).sidebarItemGap,
@@ -95,6 +96,9 @@ class SidebarBoardList extends ConsumerWidget {
             board: board,
             active: board.id == activeId,
             connection: board.id == activeId ? connection : null,
+            onOpen: navigation.onOpenBoard == null
+                ? null
+                : () => navigation.onOpenBoard!(board.id),
           ),
         const SidebarNewBoardButton(),
       ],

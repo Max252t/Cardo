@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'Заголовок карточки'**
   String get cardTitleField;
 
+  /// Счётчик символов названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} / {limit}'**
+  String boardTitleCounter(int count, int limit);
+
   /// Счётчик символов описания
   ///
   /// In ru, this message translates to:
@@ -757,6 +763,522 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Понятно'**
   String get snackbarDismiss;
+
+  /// Кнопка повтора действия
+  ///
+  /// In ru, this message translates to:
+  /// **'Повторить'**
+  String get commonRetry;
+
+  /// Кнопка отмены
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get commonCancel;
+
+  /// Кнопка закрытия
+  ///
+  /// In ru, this message translates to:
+  /// **'Закрыть'**
+  String get commonClose;
+
+  /// Подпись индикатора загрузки
+  ///
+  /// In ru, this message translates to:
+  /// **'Загрузка…'**
+  String get commonLoading;
+
+  /// Заголовок экрана конфигурации
+  ///
+  /// In ru, this message translates to:
+  /// **'Не задан адрес сервера'**
+  String get configTitle;
+
+  /// Подсказка по настройке адреса сервера
+  ///
+  /// In ru, this message translates to:
+  /// **'Запустите приложение с --dart-define-from-file=env/local.json'**
+  String get configHint;
+
+  /// Подпись текущего значения адреса
+  ///
+  /// In ru, this message translates to:
+  /// **'Текущее значение'**
+  String get configCurrentValue;
+
+  /// Значение адреса, когда оно пустое
+  ///
+  /// In ru, this message translates to:
+  /// **'не задано'**
+  String get configValueEmpty;
+
+  /// Кнопка запуска демо без сервера
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть демо-доску'**
+  String get configOpenDemo;
+
+  /// Подпись на сплэше при восстановлении сессии
+  ///
+  /// In ru, this message translates to:
+  /// **'Восстанавливаем сессию…'**
+  String get splashRestoring;
+
+  /// Заголовок сплэша при недоступном сервере
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось подключиться'**
+  String get splashUnavailableTitle;
+
+  /// Ошибка: нет сети
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет соединения с сервером. Проверьте интернет и повторите.'**
+  String get errorNetworkOffline;
+
+  /// Ошибка: таймаут
+  ///
+  /// In ru, this message translates to:
+  /// **'Сервер не отвечает. Повторите попытку позже.'**
+  String get errorNetworkTimeout;
+
+  /// Ошибка: сервер занят или перегружен
+  ///
+  /// In ru, this message translates to:
+  /// **'Сервер занят. Повторите через несколько секунд.'**
+  String get errorBusy;
+
+  /// Ошибка 429 без Retry-After
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через минуту.'**
+  String get errorRateLimited;
+
+  /// Ошибка 429 с Retry-After в секундах
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через {seconds} с.'**
+  String errorRateLimitedSeconds(int seconds);
+
+  /// Ошибка 429 с Retry-After в минутах
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через {minutes} мин.'**
+  String errorRateLimitedMinutes(int minutes);
+
+  /// Ошибка 403
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет прав на это действие.'**
+  String get errorForbidden;
+
+  /// Ошибка 404
+  ///
+  /// In ru, this message translates to:
+  /// **'Не найдено. Возможно, доска удалена или у вас нет доступа.'**
+  String get errorNotFound;
+
+  /// Ошибка валидации на сервере
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте введённые данные.'**
+  String get errorValidation;
+
+  /// Неизвестная ошибка
+  ///
+  /// In ru, this message translates to:
+  /// **'Что-то пошло не так. Повторите попытку.'**
+  String get errorUnknown;
+
+  /// Сообщение на экране входа после истёкшей сессии
+  ///
+  /// In ru, this message translates to:
+  /// **'Сессия истекла, войдите снова.'**
+  String get errorSessionExpired;
+
+  /// Сообщение на экране входа после reuse refresh-токена
+  ///
+  /// In ru, this message translates to:
+  /// **'Мы завершили все сессии из соображений безопасности. Войдите заново.'**
+  String get errorSessionReused;
+
+  /// Подпись поля email
+  ///
+  /// In ru, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// Подпись поля пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Пароль'**
+  String get authPassword;
+
+  /// Подпись поля имени
+  ///
+  /// In ru, this message translates to:
+  /// **'Имя'**
+  String get authName;
+
+  /// Подсказка кнопки показа пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Показать пароль'**
+  String get authShowPassword;
+
+  /// Подсказка кнопки скрытия пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Скрыть пароль'**
+  String get authHidePassword;
+
+  /// Заголовок экрана входа
+  ///
+  /// In ru, this message translates to:
+  /// **'С возвращением'**
+  String get loginTitle;
+
+  /// Подзаголовок входа на узком экране
+  ///
+  /// In ru, this message translates to:
+  /// **'Доски команды уже ждут.'**
+  String get loginSubtitle;
+
+  /// Подзаголовок входа на широком экране
+  ///
+  /// In ru, this message translates to:
+  /// **'Войдите, чтобы открыть свои доски.'**
+  String get loginSubtitleWide;
+
+  /// Кнопка входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Войти'**
+  String get loginSubmit;
+
+  /// Кнопка перехода к регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get loginCreateAccount;
+
+  /// Вопрос под формой входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет аккаунта?'**
+  String get loginNoAccount;
+
+  /// Ссылка на регистрацию под формой входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать'**
+  String get loginCreateLink;
+
+  /// Ошибка неверных данных входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Неверный email или пароль.'**
+  String get loginInvalidCredentials;
+
+  /// Заголовок бренд-панели
+  ///
+  /// In ru, this message translates to:
+  /// **'Доски, которые двигаются вместе с командой'**
+  String get loginBrandHeadline;
+
+  /// Текст бренд-панели
+  ///
+  /// In ru, this message translates to:
+  /// **'Все видят изменения друг друга сразу. Работает и без сети — синхронизируем, как только связь вернётся.'**
+  String get loginBrandBody;
+
+  /// Заголовок экрана регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get registerTitle;
+
+  /// Подзаголовок регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Так вас увидят коллеги на досках.'**
+  String get registerSubtitle;
+
+  /// Кнопка регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get registerSubmit;
+
+  /// Вопрос под формой регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Уже есть аккаунт?'**
+  String get registerHaveAccount;
+
+  /// Ссылка на вход под формой регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Войти'**
+  String get registerSignIn;
+
+  /// Подсказка кнопки назад на регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Назад ко входу'**
+  String get registerBack;
+
+  /// Ошибка email_taken
+  ///
+  /// In ru, this message translates to:
+  /// **'Этот email уже зарегистрирован. Войдите или используйте другой адрес.'**
+  String get registerEmailTaken;
+
+  /// Подпись выбора цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Цвет аватара'**
+  String get avatarColorLabel;
+
+  /// Пометка необязательного выбора цвета
+  ///
+  /// In ru, this message translates to:
+  /// **'Необязательно'**
+  String get avatarColorOptional;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Синий'**
+  String get avatarColorBlue;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Зелёный'**
+  String get avatarColorGreen;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Фиолетовый'**
+  String get avatarColorViolet;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Малиновый'**
+  String get avatarColorPink;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Янтарный'**
+  String get avatarColorAmber;
+
+  /// Валидация: пустой email
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите email'**
+  String get fieldEmailRequired;
+
+  /// Валидация: неверный формат email
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте email'**
+  String get fieldEmailInvalid;
+
+  /// Валидация: пустое имя
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите имя'**
+  String get fieldNameRequired;
+
+  /// Валидация: пустой пароль
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите пароль'**
+  String get fieldPasswordRequired;
+
+  /// Валидация: короткий пароль
+  ///
+  /// In ru, this message translates to:
+  /// **'Минимум {min} символов'**
+  String fieldPasswordTooShort(int min);
+
+  /// Валидация: слишком длинное значение
+  ///
+  /// In ru, this message translates to:
+  /// **'Не больше {max} символов'**
+  String fieldTooLong(int max);
+
+  /// Заголовок списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Мои доски'**
+  String get boardsTitle;
+
+  /// Подсказка поиска по доскам
+  ///
+  /// In ru, this message translates to:
+  /// **'Найти доску'**
+  String get boardsSearchHint;
+
+  /// Кнопка создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая доска'**
+  String get boardsNew;
+
+  /// Количество досок
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} доска} few{{count} доски} many{{count} досок} other{{count} доски}}'**
+  String boardsCount(int count);
+
+  /// Заголовок пустого списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Здесь появятся ваши доски'**
+  String get boardsEmptyTitle;
+
+  /// Текст пустого списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Создайте первую доску — колонки и участников добавите уже на ней.'**
+  String get boardsEmptyBody;
+
+  /// Кнопка в пустом списке досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать доску'**
+  String get boardsEmptyAction;
+
+  /// Заголовок ошибки загрузки списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить доски'**
+  String get boardsLoadError;
+
+  /// Результат поиска без совпадений
+  ///
+  /// In ru, this message translates to:
+  /// **'Ничего не найдено'**
+  String get boardsNoResults;
+
+  /// Подсказка кнопки профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль'**
+  String get boardsProfile;
+
+  /// Время последнего изменения доски
+  ///
+  /// In ru, this message translates to:
+  /// **'изменено {when}'**
+  String boardUpdatedAt(String when);
+
+  /// Семантика плитки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска «{title}», {role}'**
+  String boardSemantic(String title, String role);
+
+  /// Заголовок создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая доска'**
+  String get newBoardTitle;
+
+  /// Подпись поля названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название'**
+  String get newBoardName;
+
+  /// Пояснение при создании доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы станете владельцем. Колонки и участников добавите уже на доске.'**
+  String get newBoardNote;
+
+  /// Кнопка создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать доску'**
+  String get newBoardSubmit;
+
+  /// Валидация: пустое название доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите название'**
+  String get newBoardRequired;
+
+  /// Заголовок профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль'**
+  String get profileTitle;
+
+  /// Подпись возврата из профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Мои доски'**
+  String get profileBack;
+
+  /// Кнопка сохранения профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get profileSave;
+
+  /// Snackbar после сохранения профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль сохранён'**
+  String get profileSaved;
+
+  /// Подпись email в профиле
+  ///
+  /// In ru, this message translates to:
+  /// **'Email'**
+  String get profileEmail;
+
+  /// Кнопка выхода
+  ///
+  /// In ru, this message translates to:
+  /// **'Выйти'**
+  String get profileSignOut;
+
+  /// Пояснение под кнопкой выхода
+  ///
+  /// In ru, this message translates to:
+  /// **'Выход завершает сессию только на этом устройстве'**
+  String get profileSignOutNote;
+
+  /// Подпись скелетона доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Загружаем доску…'**
+  String get boardLoadingTitle;
+
+  /// Заголовок ошибки загрузки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось открыть доску'**
+  String get boardLoadErrorTitle;
+
+  /// Кнопка возврата к списку из ошибки
+  ///
+  /// In ru, this message translates to:
+  /// **'К списку досок'**
+  String get boardLoadErrorToList;
+
+  /// Код ошибки загрузки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Код ошибки: {code}'**
+  String boardLoadErrorCode(String code);
 }
 
 class _AppLocalizationsDelegate

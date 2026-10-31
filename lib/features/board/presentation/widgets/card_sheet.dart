@@ -15,20 +15,21 @@ import 'card_editor_style.dart';
 
 Future<void> showCardSheet(BuildContext context, String cardId) async {
   final sizes = CardoSizes.of(context);
+  final container = ProviderScope.containerOf(context, listen: false);
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: false,
     constraints: BoxConstraints(maxWidth: sizes.previewMaxWidth),
-    builder: (context) => CardSheet(cardId: cardId),
+    builder: (context) => UncontrolledProviderScope(
+      container: container,
+      child: CardSheet(cardId: cardId),
+    ),
   );
   if (!context.mounted) {
     return;
   }
-  ProviderScope.containerOf(
-    context,
-    listen: false,
-  ).read(cardDraftsProvider.notifier).flush(cardId);
+  container.read(cardDraftsProvider.notifier).flush(cardId);
 }
 
 class CardSheet extends ConsumerWidget {

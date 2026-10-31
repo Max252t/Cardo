@@ -176,4 +176,5 @@ class BoardDragController extends Notifier<BoardDragState?> {
 final boardDragProvider =
     NotifierProvider<BoardDragController, BoardDragState?>(
       BoardDragController.new,
+      dependencies: [boardNotifierProvider],
     );

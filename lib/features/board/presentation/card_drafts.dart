@@ -48,6 +48,7 @@ class LostDraftNotifier extends Notifier<List<LostDraft>> {
 
 final lostDraftProvider = NotifierProvider<LostDraftNotifier, List<LostDraft>>(
   LostDraftNotifier.new,
+  dependencies: [boardGatewayProvider],
 );
 
 class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
@@ -230,8 +231,14 @@ class CardDraftsNotifier extends Notifier<Map<String, CardDraft>> {
 final cardDraftsProvider =
     NotifierProvider<CardDraftsNotifier, Map<String, CardDraft>>(
       CardDraftsNotifier.new,
+      dependencies: [
+        boardNotifierProvider,
+        canEditBoardProvider,
+        lostDraftProvider,
+      ],
     );
 
 final cardDraftProvider = Provider.autoDispose.family<CardDraft?, String>(
   (ref, cardId) => ref.watch(cardDraftsProvider.select((all) => all[cardId])),
+  dependencies: [cardDraftsProvider],
 );
