@@ -358,6 +358,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cardTitleField => 'Заголовок карточки';
 
   @override
+  String boardTitleCounter(int count, int limit) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return '$countString / $limitString';
+  }
+
+  @override
   String cardDescriptionCounter(int count, int limit) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -454,4 +466,297 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get snackbarDismiss => 'Понятно';
+
+  @override
+  String get commonRetry => 'Повторить';
+
+  @override
+  String get commonCancel => 'Отмена';
+
+  @override
+  String get commonClose => 'Закрыть';
+
+  @override
+  String get commonLoading => 'Загрузка…';
+
+  @override
+  String get configTitle => 'Не задан адрес сервера';
+
+  @override
+  String get configHint =>
+      'Запустите приложение с --dart-define-from-file=env/local.json';
+
+  @override
+  String get configCurrentValue => 'Текущее значение';
+
+  @override
+  String get configValueEmpty => 'не задано';
+
+  @override
+  String get configOpenDemo => 'Открыть демо-доску';
+
+  @override
+  String get splashRestoring => 'Восстанавливаем сессию…';
+
+  @override
+  String get splashUnavailableTitle => 'Не удалось подключиться';
+
+  @override
+  String get errorNetworkOffline =>
+      'Нет соединения с сервером. Проверьте интернет и повторите.';
+
+  @override
+  String get errorNetworkTimeout =>
+      'Сервер не отвечает. Повторите попытку позже.';
+
+  @override
+  String get errorBusy => 'Сервер занят. Повторите через несколько секунд.';
+
+  @override
+  String get errorRateLimited =>
+      'Слишком много попыток. Попробуйте через минуту.';
+
+  @override
+  String errorRateLimitedSeconds(int seconds) {
+    return 'Слишком много попыток. Попробуйте через $seconds с.';
+  }
+
+  @override
+  String errorRateLimitedMinutes(int minutes) {
+    return 'Слишком много попыток. Попробуйте через $minutes мин.';
+  }
+
+  @override
+  String get errorForbidden => 'Нет прав на это действие.';
+
+  @override
+  String get errorNotFound =>
+      'Не найдено. Возможно, доска удалена или у вас нет доступа.';
+
+  @override
+  String get errorValidation => 'Проверьте введённые данные.';
+
+  @override
+  String get errorUnknown => 'Что-то пошло не так. Повторите попытку.';
+
+  @override
+  String get errorSessionExpired => 'Сессия истекла, войдите снова.';
+
+  @override
+  String get errorSessionReused =>
+      'Мы завершили все сессии из соображений безопасности. Войдите заново.';
+
+  @override
+  String get authEmail => 'Email';
+
+  @override
+  String get authPassword => 'Пароль';
+
+  @override
+  String get authName => 'Имя';
+
+  @override
+  String get authShowPassword => 'Показать пароль';
+
+  @override
+  String get authHidePassword => 'Скрыть пароль';
+
+  @override
+  String get loginTitle => 'С возвращением';
+
+  @override
+  String get loginSubtitle => 'Доски команды уже ждут.';
+
+  @override
+  String get loginSubtitleWide => 'Войдите, чтобы открыть свои доски.';
+
+  @override
+  String get loginSubmit => 'Войти';
+
+  @override
+  String get loginCreateAccount => 'Создать аккаунт';
+
+  @override
+  String get loginNoAccount => 'Нет аккаунта?';
+
+  @override
+  String get loginCreateLink => 'Создать';
+
+  @override
+  String get loginInvalidCredentials => 'Неверный email или пароль.';
+
+  @override
+  String get loginBrandHeadline => 'Доски, которые двигаются вместе с командой';
+
+  @override
+  String get loginBrandBody =>
+      'Все видят изменения друг друга сразу. Работает и без сети — синхронизируем, как только связь вернётся.';
+
+  @override
+  String get registerTitle => 'Создать аккаунт';
+
+  @override
+  String get registerSubtitle => 'Так вас увидят коллеги на досках.';
+
+  @override
+  String get registerSubmit => 'Создать аккаунт';
+
+  @override
+  String get registerHaveAccount => 'Уже есть аккаунт?';
+
+  @override
+  String get registerSignIn => 'Войти';
+
+  @override
+  String get registerBack => 'Назад ко входу';
+
+  @override
+  String get registerEmailTaken =>
+      'Этот email уже зарегистрирован. Войдите или используйте другой адрес.';
+
+  @override
+  String get avatarColorLabel => 'Цвет аватара';
+
+  @override
+  String get avatarColorOptional => 'Необязательно';
+
+  @override
+  String get avatarColorBlue => 'Синий';
+
+  @override
+  String get avatarColorGreen => 'Зелёный';
+
+  @override
+  String get avatarColorViolet => 'Фиолетовый';
+
+  @override
+  String get avatarColorPink => 'Малиновый';
+
+  @override
+  String get avatarColorAmber => 'Янтарный';
+
+  @override
+  String get fieldEmailRequired => 'Введите email';
+
+  @override
+  String get fieldEmailInvalid => 'Проверьте email';
+
+  @override
+  String get fieldNameRequired => 'Введите имя';
+
+  @override
+  String get fieldPasswordRequired => 'Введите пароль';
+
+  @override
+  String fieldPasswordTooShort(int min) {
+    return 'Минимум $min символов';
+  }
+
+  @override
+  String fieldTooLong(int max) {
+    return 'Не больше $max символов';
+  }
+
+  @override
+  String get boardsTitle => 'Мои доски';
+
+  @override
+  String get boardsSearchHint => 'Найти доску';
+
+  @override
+  String get boardsNew => 'Новая доска';
+
+  @override
+  String boardsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count доски',
+      many: '$count досок',
+      few: '$count доски',
+      one: '$count доска',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardsEmptyTitle => 'Здесь появятся ваши доски';
+
+  @override
+  String get boardsEmptyBody =>
+      'Создайте первую доску — колонки и участников добавите уже на ней.';
+
+  @override
+  String get boardsEmptyAction => 'Создать доску';
+
+  @override
+  String get boardsLoadError => 'Не удалось загрузить доски';
+
+  @override
+  String get boardsNoResults => 'Ничего не найдено';
+
+  @override
+  String get boardsProfile => 'Профиль';
+
+  @override
+  String boardUpdatedAt(String when) {
+    return 'изменено $when';
+  }
+
+  @override
+  String boardSemantic(String title, String role) {
+    return 'Доска «$title», $role';
+  }
+
+  @override
+  String get newBoardTitle => 'Новая доска';
+
+  @override
+  String get newBoardName => 'Название';
+
+  @override
+  String get newBoardNote =>
+      'Вы станете владельцем. Колонки и участников добавите уже на доске.';
+
+  @override
+  String get newBoardSubmit => 'Создать доску';
+
+  @override
+  String get newBoardRequired => 'Введите название';
+
+  @override
+  String get profileTitle => 'Профиль';
+
+  @override
+  String get profileBack => 'Мои доски';
+
+  @override
+  String get profileSave => 'Сохранить';
+
+  @override
+  String get profileSaved => 'Профиль сохранён';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileSignOut => 'Выйти';
+
+  @override
+  String get profileSignOutNote =>
+      'Выход завершает сессию только на этом устройстве';
+
+  @override
+  String get boardLoadingTitle => 'Загружаем доску…';
+
+  @override
+  String get boardLoadErrorTitle => 'Не удалось открыть доску';
+
+  @override
+  String get boardLoadErrorToList => 'К списку досок';
+
+  @override
+  String boardLoadErrorCode(String code) {
+    return 'Код ошибки: $code';
+  }
 }

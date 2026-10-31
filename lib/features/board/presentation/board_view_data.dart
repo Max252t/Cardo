@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../shared/widgets/avatar_identity.dart';
+import '../../../theme/cardo_avatar_palette.dart';
 import '../domain/board_model.dart';
 import '../domain/board_session.dart';
 import '../domain/board_sync_state.dart';
@@ -87,7 +88,9 @@ class BoardListItem {
   factory BoardListItem.of(BoardSummary summary) => BoardListItem(
     id: summary.id,
     title: summary.title,
-    colorHex: summary.colorHex,
+    colorHex: summary.colorHex.isEmpty
+        ? CardoAvatarPalette.choiceFor(summary.id)
+        : summary.colorHex,
   );
 
   final String id;

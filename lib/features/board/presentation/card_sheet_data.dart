@@ -223,48 +223,52 @@ class CardSheetData {
   );
 }
 
-final cardSheetProvider = Provider.autoDispose.family<CardSheetData?, String>((
-  ref,
-  cardId,
-) {
-  final state = ref.watch(boardNotifierProvider);
-  final view = state.view;
-  final card = view.cardById(cardId);
-  if (card == null || card.archived) {
-    return null;
-  }
-  final live = state.liveView.cardById(cardId) ?? card;
-  final canEdit = ref.watch(canEditBoardProvider);
-  final draft = canEdit ? ref.watch(cardDraftProvider(cardId)) : null;
-  final column = view.columnById(card.columnId);
-  final creator = view.memberById(card.createdBy);
-  final conflictActor = draft?.conflictActorId;
-  return CardSheetData(
-    cardId: cardId,
-    title: card.title,
-    version: card.version,
-    createdAt: card.createdAt,
-    text: draft?.text ?? live.description,
-    canEdit: canEdit,
-    locked: state.hasBlockingRejection(cardId),
-    tooLong: draft?.tooLong ?? false,
-    hasDraft: draft != null && !draft.submitted,
-    moveTargets: <ColumnInfo>[
-      for (final other in view.orderedColumns)
-        if (other.id != card.columnId) ColumnInfo.of(other),
-    ],
-    column: column == null ? null : ColumnInfo.of(column),
-    createdBy: creator == null ? null : identityOf(creator),
-    conflict: draft != null && draft.conflict
-        ? CardConflictData(
-            actorName: conflictActor == null
-                ? null
-                : view.memberById(conflictActor)?.name,
-            resolvable: isConflictResolvable(draft, state),
-          )
-        : null,
-  );
-});
+final cardSheetProvider = Provider.autoDispose.family<CardSheetData?, String>(
+  (ref, cardId) {
+    final state = ref.watch(boardNotifierProvider);
+    final view = state.view;
+    final card = view.cardById(cardId);
+    if (card == null || card.archived) {
+      return null;
+    }
+    final live = state.liveView.cardById(cardId) ?? card;
+    final canEdit = ref.watch(canEditBoardProvider);
+    final draft = canEdit ? ref.watch(cardDraftProvider(cardId)) : null;
+    final column = view.columnById(card.columnId);
+    final creator = view.memberById(card.createdBy);
+    final conflictActor = draft?.conflictActorId;
+    return CardSheetData(
+      cardId: cardId,
+      title: card.title,
+      version: card.version,
+      createdAt: card.createdAt,
+      text: draft?.text ?? live.description,
+      canEdit: canEdit,
+      locked: state.hasBlockingRejection(cardId),
+      tooLong: draft?.tooLong ?? false,
+      hasDraft: draft != null && !draft.submitted,
+      moveTargets: <ColumnInfo>[
+        for (final other in view.orderedColumns)
+          if (other.id != card.columnId) ColumnInfo.of(other),
+      ],
+      column: column == null ? null : ColumnInfo.of(column),
+      createdBy: creator == null ? null : identityOf(creator),
+      conflict: draft != null && draft.conflict
+          ? CardConflictData(
+              actorName: conflictActor == null
+                  ? null
+                  : view.memberById(conflictActor)?.name,
+              resolvable: isConflictResolvable(draft, state),
+            )
+          : null,
+    );
+  },
+  dependencies: [
+    boardNotifierProvider,
+    canEditBoardProvider,
+    cardDraftProvider,
+  ],
+);
 
 final cardNackProvider = Provider.autoDispose.family<CardNackData?, String>((
   ref,
@@ -280,4 +284,4 @@ final cardNackProvider = Provider.autoDispose.family<CardNackData?, String>((
     rejection: rejection,
     actorName: actorId == null ? null : state.view.memberById(actorId)?.name,
   );
-});
+}, dependencies: [boardNotifierProvider]);

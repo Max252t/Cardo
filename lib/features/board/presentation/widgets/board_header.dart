@@ -103,7 +103,7 @@ class CompactHeaderBar extends ConsumerWidget {
       children: <Widget>[
         IconButton(
           tooltip: l10n.boardBack,
-          onPressed: () => showComingSoon(context),
+          onPressed: () => _goBack(context, ref),
           iconSize: layout.iconHeader,
           icon: const Icon(LucideIcons.chevronLeft),
         ),
@@ -140,6 +140,15 @@ class CompactHeaderBar extends ConsumerWidget {
       ],
     );
   }
+}
+
+void _goBack(BuildContext context, WidgetRef ref) {
+  final onBack = ref.read(boardNavigationProvider).onBack;
+  if (onBack == null) {
+    showComingSoon(context);
+    return;
+  }
+  onBack();
 }
 
 class ExpandedBoardHeader extends ConsumerWidget {

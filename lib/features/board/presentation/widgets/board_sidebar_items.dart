@@ -72,11 +72,13 @@ class SidebarBoardItem extends StatelessWidget {
     required this.board,
     required this.active,
     required this.connection,
+    this.onOpen,
   });
 
   final BoardListItem board;
   final bool active;
   final ConnectionStatus? connection;
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +98,7 @@ class SidebarBoardItem extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          onTap: active ? null : () => showComingSoon(context),
+          onTap: active ? null : (onOpen ?? () => showComingSoon(context)),
           borderRadius: radius,
           child: Container(
             constraints: BoxConstraints(minHeight: sizes.tapTarget),
@@ -135,11 +137,12 @@ class SidebarBoardItem extends StatelessWidget {
   }
 }
 
-class SidebarNewBoardButton extends StatelessWidget {
+class SidebarNewBoardButton extends ConsumerWidget {
   const SidebarNewBoardButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onNewBoard = ref.watch(boardNavigationProvider).onNewBoard;
     final colors = CardoColors.of(context);
     final typography = CardoTypography.of(context);
     final radii = CardoRadii.of(context);
@@ -147,7 +150,7 @@ class SidebarNewBoardButton extends StatelessWidget {
     final spacing = CardoSpacing.of(context);
     final layout = CardoLayout.of(context);
     return TextButton.icon(
-      onPressed: () => showComingSoon(context),
+      onPressed: onNewBoard ?? () => showComingSoon(context),
       icon: Icon(LucideIcons.plus, size: layout.iconDense),
       label: Text(AppLocalizations.of(context).boardNewBoard),
       style: TextButton.styleFrom(
@@ -181,50 +184,75 @@ class SidebarProfile extends ConsumerWidget {
         end: layout.sidebarPaddingHorizontal,
         bottom: layout.sidebarPaddingVertical,
       ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: BorderDirectional(
-            top: BorderSide(color: colors.line, width: sizes.hairline),
+      child: ProfileTapTarget(
+        onTap: ref.watch(boardNavigationProvider).onOpenProfile,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: BorderDirectional(
+              top: BorderSide(color: colors.line, width: sizes.hairline),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: spacing.sm,
+              vertical: spacing.cardGap,
+            ),
+            child: Row(
+              spacing: spacing.cardGap,
+              children: <Widget>[
+                CardoAvatar(
+                  identity: AvatarIdentity(
+                    name: user.name,
+                    colorHex: user.avatarColor,
+                  ),
+                  diameter: sizes.avatarProfile,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        user.name,
+                        style: typography.pill.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        user.email,
+                        style: typography.caption.copyWith(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Padding(
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: spacing.sm,
-            vertical: spacing.cardGap,
-          ),
-          child: Row(
-            spacing: spacing.cardGap,
-            children: <Widget>[
-              CardoAvatar(
-                identity: AvatarIdentity(
-                  name: user.name,
-                  colorHex: user.avatarColor,
-                ),
-                diameter: sizes.avatarProfile,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      user.name,
-                      style: typography.pill.copyWith(
-                        color: colors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      user.email,
-                      style: typography.caption.copyWith(
-                        color: colors.textSecondary,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+      ),
+    );
+  }
+}
+
+class ProfileTapTarget extends StatelessWidget {
+  const ProfileTapTarget({super.key, required this.onTap, required this.child});
+
+  final VoidCallback? onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final callback = onTap;
+    if (callback == null) {
+      return child;
+    }
+    return Semantics(
+      button: true,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(onTap: callback, child: child),
       ),
     );
   }

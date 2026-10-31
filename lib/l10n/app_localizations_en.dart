@@ -348,6 +348,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardTitleField => 'Card title';
 
   @override
+  String boardTitleCounter(int count, int limit) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return '$countString / $limitString';
+  }
+
+  @override
   String cardDescriptionCounter(int count, int limit) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
@@ -444,4 +456,295 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get snackbarDismiss => 'Got it';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonLoading => 'Loading…';
+
+  @override
+  String get configTitle => 'Server address is not set';
+
+  @override
+  String get configHint =>
+      'Run the app with --dart-define-from-file=env/local.json';
+
+  @override
+  String get configCurrentValue => 'Current value';
+
+  @override
+  String get configValueEmpty => 'not set';
+
+  @override
+  String get configOpenDemo => 'Open demo board';
+
+  @override
+  String get splashRestoring => 'Restoring your session…';
+
+  @override
+  String get splashUnavailableTitle => 'Couldn\'t connect';
+
+  @override
+  String get errorNetworkOffline =>
+      'Can\'t reach the server. Check your connection and try again.';
+
+  @override
+  String get errorNetworkTimeout =>
+      'The server isn\'t responding. Try again later.';
+
+  @override
+  String get errorBusy => 'The server is busy. Try again in a few seconds.';
+
+  @override
+  String get errorRateLimited => 'Too many attempts. Try again in a minute.';
+
+  @override
+  String errorRateLimitedSeconds(int seconds) {
+    return 'Too many attempts. Try again in $seconds s.';
+  }
+
+  @override
+  String errorRateLimitedMinutes(int minutes) {
+    return 'Too many attempts. Try again in $minutes min.';
+  }
+
+  @override
+  String get errorForbidden => 'You don\'t have permission to do that.';
+
+  @override
+  String get errorNotFound =>
+      'Not found. The board may have been deleted or you may not have access.';
+
+  @override
+  String get errorValidation => 'Check the data you entered.';
+
+  @override
+  String get errorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get errorSessionExpired => 'Your session expired. Sign in again.';
+
+  @override
+  String get errorSessionReused =>
+      'We ended all sessions for security reasons. Sign in again.';
+
+  @override
+  String get authEmail => 'Email';
+
+  @override
+  String get authPassword => 'Password';
+
+  @override
+  String get authName => 'Name';
+
+  @override
+  String get authShowPassword => 'Show password';
+
+  @override
+  String get authHidePassword => 'Hide password';
+
+  @override
+  String get loginTitle => 'Welcome back';
+
+  @override
+  String get loginSubtitle => 'Your team\'s boards are waiting.';
+
+  @override
+  String get loginSubtitleWide => 'Sign in to open your boards.';
+
+  @override
+  String get loginSubmit => 'Sign in';
+
+  @override
+  String get loginCreateAccount => 'Create account';
+
+  @override
+  String get loginNoAccount => 'No account yet?';
+
+  @override
+  String get loginCreateLink => 'Create one';
+
+  @override
+  String get loginInvalidCredentials => 'Wrong email or password.';
+
+  @override
+  String get loginBrandHeadline => 'Boards that move with your team';
+
+  @override
+  String get loginBrandBody =>
+      'Everyone sees each other\'s changes instantly. Works offline too — we sync as soon as you\'re back online.';
+
+  @override
+  String get registerTitle => 'Create account';
+
+  @override
+  String get registerSubtitle =>
+      'This is how teammates will see you on boards.';
+
+  @override
+  String get registerSubmit => 'Create account';
+
+  @override
+  String get registerHaveAccount => 'Already have an account?';
+
+  @override
+  String get registerSignIn => 'Sign in';
+
+  @override
+  String get registerBack => 'Back to sign in';
+
+  @override
+  String get registerEmailTaken =>
+      'This email is already registered. Sign in or use another address.';
+
+  @override
+  String get avatarColorLabel => 'Avatar color';
+
+  @override
+  String get avatarColorOptional => 'Optional';
+
+  @override
+  String get avatarColorBlue => 'Blue';
+
+  @override
+  String get avatarColorGreen => 'Green';
+
+  @override
+  String get avatarColorViolet => 'Violet';
+
+  @override
+  String get avatarColorPink => 'Pink';
+
+  @override
+  String get avatarColorAmber => 'Amber';
+
+  @override
+  String get fieldEmailRequired => 'Enter your email';
+
+  @override
+  String get fieldEmailInvalid => 'Check the email address';
+
+  @override
+  String get fieldNameRequired => 'Enter your name';
+
+  @override
+  String get fieldPasswordRequired => 'Enter your password';
+
+  @override
+  String fieldPasswordTooShort(int min) {
+    return 'At least $min characters';
+  }
+
+  @override
+  String fieldTooLong(int max) {
+    return 'No more than $max characters';
+  }
+
+  @override
+  String get boardsTitle => 'My boards';
+
+  @override
+  String get boardsSearchHint => 'Find a board';
+
+  @override
+  String get boardsNew => 'New board';
+
+  @override
+  String boardsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count boards',
+      one: '$count board',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardsEmptyTitle => 'Your boards will appear here';
+
+  @override
+  String get boardsEmptyBody =>
+      'Create your first board — you can add columns and members there.';
+
+  @override
+  String get boardsEmptyAction => 'Create a board';
+
+  @override
+  String get boardsLoadError => 'Couldn\'t load your boards';
+
+  @override
+  String get boardsNoResults => 'Nothing found';
+
+  @override
+  String get boardsProfile => 'Profile';
+
+  @override
+  String boardUpdatedAt(String when) {
+    return 'updated $when';
+  }
+
+  @override
+  String boardSemantic(String title, String role) {
+    return 'Board “$title”, $role';
+  }
+
+  @override
+  String get newBoardTitle => 'New board';
+
+  @override
+  String get newBoardName => 'Title';
+
+  @override
+  String get newBoardNote =>
+      'You\'ll be the owner. Add columns and members on the board itself.';
+
+  @override
+  String get newBoardSubmit => 'Create board';
+
+  @override
+  String get newBoardRequired => 'Enter a title';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileBack => 'My boards';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileSaved => 'Profile saved';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileSignOut => 'Sign out';
+
+  @override
+  String get profileSignOutNote =>
+      'Signing out ends the session on this device only';
+
+  @override
+  String get boardLoadingTitle => 'Loading the board…';
+
+  @override
+  String get boardLoadErrorTitle => 'Couldn\'t open the board';
+
+  @override
+  String get boardLoadErrorToList => 'Back to boards';
+
+  @override
+  String boardLoadErrorCode(String code) {
+    return 'Error code: $code';
+  }
 }
