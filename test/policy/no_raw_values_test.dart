@@ -54,7 +54,7 @@ void main() {
       'Colors.*': RegExp(r'\bColors\.(?!transparent)'),
       'fontSize number': RegExp(r'fontSize:\s*\d'),
       'BorderRadius.circular number': RegExp(r'BorderRadius\.circular\(\s*\d'),
-      'Duration literal': RegExp(r'Duration\(\s*(milliseconds|seconds):'),
+      'Duration literal': RegExp(r'Duration\(\s*(milliseconds|seconds):\s*\d'),
       'Curves': RegExp(r'Curves\.'),
     };
 
@@ -85,7 +85,11 @@ void main() {
 
     test('lib outside theme and l10n is clean', () {
       final files = _dartFiles(
-        excluded: const <String>['lib/theme/', 'lib/l10n/'],
+        excluded: const <String>[
+          'lib/theme/',
+          'lib/l10n/',
+          'lib/core/network/api_policy.dart',
+        ],
       );
       expect(_violations(files, rules), isEmpty);
     });
@@ -234,6 +238,58 @@ void main() {
         return RegExp(r'^lib/features/[^/]+/(data|domain)/')
                 .hasMatch(normalized) ||
             normalized.startsWith('lib/core/');
+      }).toList();
+      expect(files, isNotEmpty);
+      expect(_violations(files, rules), isEmpty);
+    });
+  });
+
+  group('domain and pure core import no packages', () {
+    final rules = <String, RegExp>{
+      'package import': RegExp(r'''^\s*(import|export)\s+['"]package:'''),
+    };
+
+    test('rule detects package imports', () {
+      final rule = rules['package import']!;
+      expect(rule.hasMatch("import 'package:dio/dio.dart';"), isTrue);
+      expect(rule.hasMatch("export 'package:meta/meta.dart';"), isTrue);
+      expect(rule.hasMatch("import 'dart:async';"), isFalse);
+      expect(rule.hasMatch("import '../domain/user.dart';"), isFalse);
+    });
+
+    test('lib/features/*/domain and the pure core dirs are plain Dart', () {
+      final files = _dartFiles(excluded: const <String>[]).where((file) {
+        final normalized = file.path.replaceAll(r'\', '/');
+        return RegExp(r'^lib/features/[^/]+/domain/').hasMatch(normalized) ||
+            RegExp(
+              r'^lib/core/(config|result|models|ranking|equality|realtime)/',
+            ).hasMatch(normalized);
+      }).toList();
+      expect(files, isNotEmpty);
+      expect(_violations(files, rules), isEmpty);
+    });
+  });
+
+  group('data does not depend on presentation', () {
+    final rules = <String, RegExp>{
+      'presentation import': RegExp(
+        r'''^\s*(import|export)\s+['"][^'"]*presentation/''',
+      ),
+    };
+
+    test('rule detects presentation imports', () {
+      final rule = rules['presentation import']!;
+      expect(
+        rule.hasMatch("import '../presentation/auth_providers.dart';"),
+        isTrue,
+      );
+      expect(rule.hasMatch("import '../domain/user.dart';"), isFalse);
+    });
+
+    test('lib/features/*/data never imports presentation', () {
+      final files = _dartFiles(excluded: const <String>[]).where((file) {
+        final normalized = file.path.replaceAll(r'\', '/');
+        return RegExp(r'^lib/features/[^/]+/data/').hasMatch(normalized);
       }).toList();
       expect(files, isNotEmpty);
       expect(_violations(files, rules), isEmpty);

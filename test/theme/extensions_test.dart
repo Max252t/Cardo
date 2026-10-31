@@ -21,6 +21,7 @@ const _swatchB = ConnectionSwatch(
 );
 
 void main() {
+  formTokensTests();
   final themes = <String, ThemeData>{
     'light': buildLightTheme(),
     'dark': buildDarkTheme(),
@@ -28,7 +29,7 @@ void main() {
 
   group('ThemeData extensions', () {
     themes.forEach((name, theme) {
-      test('$name has all 8 extensions', () {
+      test('$name has all 9 extensions', () {
         expect(theme.extension<CardoColors>(), isNotNull);
         expect(theme.extension<CardoTypography>(), isNotNull);
         expect(theme.extension<CardoRadii>(), isNotNull);
@@ -37,7 +38,8 @@ void main() {
         expect(theme.extension<CardoShadows>(), isNotNull);
         expect(theme.extension<CardoMotion>(), isNotNull);
         expect(theme.extension<CardoLayout>(), isNotNull);
-        expect(theme.extensions.length, 8);
+        expect(theme.extension<CardoFormTokens>(), isNotNull);
+        expect(theme.extensions.length, 9);
       });
     });
 
@@ -476,6 +478,29 @@ void main() {
 
     testWidgets('unchanged when animations enabled', (tester) async {
       expect(await resolve(tester, disable: false), duration);
+    });
+  });
+}
+
+void formTokensTests() {
+  group('CardoFormTokens', () {
+    test('copyWith overrides one slot and keeps the rest', () {
+      final copy = CardoFormTokens.standard.copyWith(swatch: 40);
+      expect(copy.swatch, 40);
+      expect(copy.heroHeight, CardoFormTokens.standard.heroHeight);
+    });
+
+    test('lerp interpolates and ignores foreign types', () {
+      final other = CardoFormTokens.standard.copyWith(swatch: 40);
+      final mid = CardoFormTokens.standard.lerp(other, 0.5);
+      expect(mid.swatch, (CardoFormTokens.standard.swatch + 40) / 2);
+      expect(
+        identical(
+          CardoFormTokens.standard.lerp(null, 0.5),
+          CardoFormTokens.standard,
+        ),
+        isTrue,
+      );
     });
   });
 }

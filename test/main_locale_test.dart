@@ -1,6 +1,7 @@
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/data/fake_board_gateway.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
+import 'package:cardo/features/board/presentation/board_screen.dart';
 import 'package:cardo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,7 @@ Future<void> _pumpApp(WidgetTester tester, List<Locale> locales) async {
           ),
         ),
       ],
-      child: const CardoApp(),
+      child: const CardoApp(home: BoardScreen()),
     ),
   );
   await tester.pump();
