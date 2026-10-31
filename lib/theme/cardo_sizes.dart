@@ -45,6 +45,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
     required this.dropPlaceholderDense,
     required this.sheetHandleWidth,
     required this.sheetHandleHeight,
+    required this.avatarMeta,
+    required this.iconLarge,
     required this.previewMaxWidth,
   });
 
@@ -89,6 +91,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
     dropPlaceholderDense: 52,
     sheetHandleWidth: 40,
     sheetHandleHeight: 5,
+    avatarMeta: 24,
+    iconLarge: 20,
     previewMaxWidth: 720,
   );
 
@@ -132,6 +136,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
   final double dropPlaceholderDense;
   final double sheetHandleWidth;
   final double sheetHandleHeight;
+  final double avatarMeta;
+  final double iconLarge;
   final double previewMaxWidth;
 
   static CardoSizes of(BuildContext context) {
@@ -194,6 +200,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
     double? dropPlaceholderDense,
     double? sheetHandleWidth,
     double? sheetHandleHeight,
+    double? avatarMeta,
+    double? iconLarge,
     double? previewMaxWidth,
   }) {
     return CardoSizes(
@@ -237,6 +245,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
       dropPlaceholderDense: dropPlaceholderDense ?? this.dropPlaceholderDense,
       sheetHandleWidth: sheetHandleWidth ?? this.sheetHandleWidth,
       sheetHandleHeight: sheetHandleHeight ?? this.sheetHandleHeight,
+      avatarMeta: avatarMeta ?? this.avatarMeta,
+      iconLarge: iconLarge ?? this.iconLarge,
       previewMaxWidth: previewMaxWidth ?? this.previewMaxWidth,
     );
   }
@@ -288,6 +298,8 @@ class CardoSizes extends ThemeExtension<CardoSizes> {
       dropPlaceholderDense: l(dropPlaceholderDense, other.dropPlaceholderDense),
       sheetHandleWidth: l(sheetHandleWidth, other.sheetHandleWidth),
       sheetHandleHeight: l(sheetHandleHeight, other.sheetHandleHeight),
+      avatarMeta: l(avatarMeta, other.avatarMeta),
+      iconLarge: l(iconLarge, other.iconLarge),
       previewMaxWidth: l(previewMaxWidth, other.previewMaxWidth),
     );
   }

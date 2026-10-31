@@ -6,7 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_model.dart';
+import '../board_view_data.dart';
 import '../board_providers.dart';
 import 'add_card_dialog.dart';
 import 'column_marker.dart';
@@ -19,7 +19,7 @@ class BoardColumnHeader extends StatelessWidget {
     required this.dense,
   });
 
-  final ColumnModel column;
+  final ColumnInfo column;
   final int count;
   final bool dense;
 

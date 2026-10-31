@@ -29,31 +29,41 @@ String nackMessage(
 
 bool nackHasDismiss(NackReason reason) => reason == NackReason.versionConflict;
 
-void showBoardSnackbar(
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? showBoardSnackbar(
   BuildContext context, {
   required String message,
   IconData icon = LucideIcons.circleAlert,
   bool withDismiss = false,
+  String? actionLabel,
+  VoidCallback? onAction,
+  bool replaceCurrent = true,
+  Duration duration = CardoDurations.snackbar,
 }) {
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) {
-    return;
+    return null;
   }
   final l10n = AppLocalizations.of(context);
-  messenger
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        duration: CardoDurations.snackbar,
-        content: BoardSnackbarContent(message: message, icon: icon),
-        action: withDismiss
-            ? SnackBarAction(
-                label: l10n.snackbarDismiss,
-                onPressed: messenger.hideCurrentSnackBar,
-              )
-            : null,
-      ),
-    );
+  if (replaceCurrent) {
+    messenger.hideCurrentSnackBar();
+  }
+  return messenger.showSnackBar(
+    SnackBar(
+      duration: duration,
+      persist:
+          (actionLabel != null && onAction != null || withDismiss) &&
+          MediaQuery.accessibleNavigationOf(context),
+      content: BoardSnackbarContent(message: message, icon: icon),
+      action: actionLabel != null && onAction != null
+          ? SnackBarAction(label: actionLabel, onPressed: onAction)
+          : withDismiss
+          ? SnackBarAction(
+              label: l10n.snackbarDismiss,
+              onPressed: messenger.hideCurrentSnackBar,
+            )
+          : null,
+    ),
+  );
 }
 
 void showComingSoon(BuildContext context) {

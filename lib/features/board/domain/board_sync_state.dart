@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-
+import '../../../core/equality/collection_equality.dart';
 import '../../../core/realtime/connection_status.dart';
 import 'apply_op.dart';
 import 'board_model.dart';
@@ -18,7 +17,6 @@ enum NackReason {
 
 enum CardSyncStatus { confirmed, pending, rejected }
 
-@immutable
 class OpRejection {
   const OpRejection({
     required this.reason,
@@ -57,7 +55,6 @@ class OpRejection {
   String toString() => 'OpRejection(${reason.name}, at $atSeq)';
 }
 
-@immutable
 class PendingOp {
   const PendingOp({
     required this.op,
@@ -76,6 +73,13 @@ class PendingOp {
   String get opId => op.opId;
 
   bool get isRejected => status == PendingOpStatus.rejected;
+
+  bool get isDescriptionConflict =>
+      isRejected &&
+      op is EditCardDescription &&
+      rejection?.reason == NackReason.versionConflict;
+
+  bool get isBlocking => isRejected && !isDescriptionConflict;
 
   PendingOp copyWith({
     BoardOp? op,
@@ -111,7 +115,6 @@ class PendingOp {
   String toString() => 'PendingOp($op, ${status.name})';
 }
 
-@immutable
 class BoardSyncState {
   BoardSyncState({
     required this.confirmed,
@@ -135,28 +138,38 @@ class BoardSyncState {
   List<PendingOp> get rejected =>
       pending.where((item) => item.isRejected).toList(growable: false);
 
-  CardSyncStatus cardStatus(String cardId) {
-    var status = CardSyncStatus.confirmed;
+  PendingOp? _rejectedFor(String cardId, {bool blockingOnly = false}) {
     for (final item in pending) {
-      if (item.op.cardId != cardId) {
-        continue;
-      }
-      if (item.isRejected) {
-        return CardSyncStatus.rejected;
-      }
-      status = CardSyncStatus.pending;
-    }
-    return status;
-  }
-
-  OpRejection? cardRejection(String cardId) {
-    for (final item in pending) {
-      if (item.op.cardId == cardId && item.isRejected) {
-        return item.rejection;
+      if (item.op.cardId == cardId &&
+          item.isRejected &&
+          (!blockingOnly || item.isBlocking)) {
+        return item;
       }
     }
     return null;
   }
+
+  CardSyncStatus cardStatus(String cardId) {
+    if (_rejectedFor(cardId) != null) {
+      return CardSyncStatus.rejected;
+    }
+    return pending.any((item) => item.op.cardId == cardId)
+        ? CardSyncStatus.pending
+        : CardSyncStatus.confirmed;
+  }
+
+  OpRejection? blockingRejection(String cardId) =>
+      _rejectedFor(cardId, blockingOnly: true)?.rejection;
+
+  bool hasBlockingRejection(String cardId) =>
+      _rejectedFor(cardId, blockingOnly: true) != null;
+
+  OpRejection? cardRejection(String cardId) => _rejectedFor(cardId)?.rejection;
+
+  bool hasRejectedCreate(String cardId) => pending.any(
+    (item) =>
+        item.isRejected && item.op is CreateCard && item.op.cardId == cardId,
+  );
 
   BoardSyncState copyWith({
     BoardModel? confirmed,

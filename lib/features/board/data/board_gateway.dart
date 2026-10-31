@@ -6,3 +6,7 @@ abstract interface class BoardGateway {
 
   Future<OpOutcome> submit(BoardOp op);
 }
+
+abstract interface class BoardRemoteFeed implements BoardGateway {
+  Stream<RemoteCardUpdate> get remoteUpdates;
+}

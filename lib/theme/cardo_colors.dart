@@ -59,6 +59,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
     required this.avatarOverflowText,
     required this.outlineMuted,
     required this.sidebarField,
+    required this.scrim,
+    required this.conflictIcon,
     required this.tabActiveCount,
   });
 
@@ -139,6 +141,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
     avatarOverflowText: CardoPrimitives.neutral3B414D,
     outlineMuted: CardoPrimitives.neutralB4BAC4,
     sidebarField: CardoPrimitives.neutralEEF0F3,
+    scrim: Color.fromRGBO(17, 19, 24, 0.48),
+    conflictIcon: CardoPrimitives.amber7A4C00,
     tabActiveCount: CardoPrimitives.neutralC9CED6,
   );
 
@@ -219,6 +223,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
     avatarOverflowText: CardoPrimitives.neutralC3C7CF,
     outlineMuted: CardoPrimitives.neutral3A3E4A,
     sidebarField: CardoPrimitives.neutral1B1D24,
+    scrim: Color.fromRGBO(17, 19, 24, 0.48),
+    conflictIcon: CardoPrimitives.amberF2C25E,
     tabActiveCount: CardoPrimitives.neutral5B616E,
   );
 
@@ -274,6 +280,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
   final Color avatarOverflowText;
   final Color outlineMuted;
   final Color sidebarField;
+  final Color scrim;
+  final Color conflictIcon;
   final Color tabActiveCount;
 
   static CardoColors of(BuildContext context) {
@@ -350,6 +358,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
     Color? avatarOverflowText,
     Color? outlineMuted,
     Color? sidebarField,
+    Color? scrim,
+    Color? conflictIcon,
     Color? tabActiveCount,
   }) {
     return CardoColors(
@@ -407,6 +417,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
       avatarOverflowText: avatarOverflowText ?? this.avatarOverflowText,
       outlineMuted: outlineMuted ?? this.outlineMuted,
       sidebarField: sidebarField ?? this.sidebarField,
+      scrim: scrim ?? this.scrim,
+      conflictIcon: conflictIcon ?? this.conflictIcon,
       tabActiveCount: tabActiveCount ?? this.tabActiveCount,
     );
   }
@@ -476,6 +488,8 @@ class CardoColors extends ThemeExtension<CardoColors> {
       avatarOverflowText: c(avatarOverflowText, other.avatarOverflowText),
       outlineMuted: c(outlineMuted, other.outlineMuted),
       sidebarField: c(sidebarField, other.sidebarField),
+      scrim: c(scrim, other.scrim),
+      conflictIcon: c(conflictIcon, other.conflictIcon),
       tabActiveCount: c(tabActiveCount, other.tabActiveCount),
     );
   }

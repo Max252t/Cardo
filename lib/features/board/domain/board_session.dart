@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
-
+import '../../../core/equality/collection_equality.dart';
 import '../../../core/realtime/connection_status.dart';
 import 'board_model.dart';
 import 'board_sync_state.dart';
 
-@immutable
 class CurrentUser {
   const CurrentUser({
     required this.userId,
@@ -31,7 +29,6 @@ class CurrentUser {
   int get hashCode => Object.hash(userId, name, email, avatarColor);
 }
 
-@immutable
 class BoardSummary {
   const BoardSummary({
     required this.id,
@@ -55,7 +52,6 @@ class BoardSummary {
   int get hashCode => Object.hash(id, title, colorHex);
 }
 
-@immutable
 class BoardPresence {
   BoardPresence({
     required List<String> onlineUserIds,
@@ -82,7 +78,6 @@ class BoardPresence {
   );
 }
 
-@immutable
 class BoardSnapshot {
   BoardSnapshot({
     required this.board,
@@ -118,7 +113,29 @@ class BoardSnapshot {
   );
 }
 
-@immutable
+class RemoteCardUpdate {
+  const RemoteCardUpdate({
+    required this.card,
+    required this.seq,
+    required this.actorId,
+  });
+
+  final CardModel card;
+  final int seq;
+  final String actorId;
+
+  @override
+  bool operator ==(Object other) {
+    return other is RemoteCardUpdate &&
+        other.card == card &&
+        other.seq == seq &&
+        other.actorId == actorId;
+  }
+
+  @override
+  int get hashCode => Object.hash(card, seq, actorId);
+}
+
 sealed class OpOutcome {
   const OpOutcome();
 }

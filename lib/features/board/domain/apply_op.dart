@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 import '../../../core/ranking/rank.dart';
 import 'board_model.dart';
 import 'board_op.dart';
 
-@immutable
 class CardAnchors {
   const CardAnchors({this.afterId, this.beforeId});
 
@@ -68,13 +65,33 @@ BoardModel applyOp(BoardModel board, BoardOp op) {
     MoveCard() => _move(board, op),
     CreateCard() => _create(board, op),
     EditCardTitle() => _editTitle(board, op),
+    EditCardDescription() => _editDescription(board, op),
     ArchiveCard() => _archive(board, op),
   };
+}
+
+BoardModel applyRemoteCard(BoardModel board, CardModel remote) {
+  final card = board.cardById(remote.id);
+  if (card == null || card.archived) {
+    return board;
+  }
+  return _replaceCard(
+    board,
+    card.copyWith(
+      description: remote.description,
+      descriptionVersion: remote.descriptionVersion,
+      updatedBy: remote.updatedBy,
+      updatedAt: remote.updatedAt,
+      version: remote.version > card.version ? remote.version : card.version,
+    ),
+  );
 }
 
 BoardModel applyOps(BoardModel board, Iterable<BoardOp> ops) {
   return ops.fold(board, applyOp);
 }
+
+final DateTime _epoch = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
 
 BoardModel _replaceCard(BoardModel board, CardModel updated) {
   return board.copyWith(
@@ -135,6 +152,8 @@ BoardModel _create(BoardModel board, CreateCard op) {
     rank: rankAtIndex(target, index),
     createdBy: op.actorId,
     updatedBy: op.actorId,
+    createdAt: op.at ?? _epoch,
+    updatedAt: op.at ?? _epoch,
   );
   return board.copyWith(cards: <CardModel>[...board.cards, card]);
 }
@@ -149,7 +168,25 @@ BoardModel _editTitle(BoardModel board, EditCardTitle op) {
     card.copyWith(
       title: op.title,
       updatedBy: op.actorId,
+      updatedAt: op.at ?? card.updatedAt,
       version: card.version + 1,
+    ),
+  );
+}
+
+BoardModel _editDescription(BoardModel board, EditCardDescription op) {
+  final card = board.cardById(op.cardId);
+  if (card == null || card.archived) {
+    return board;
+  }
+  return _replaceCard(
+    board,
+    card.copyWith(
+      description: op.description,
+      updatedBy: op.actorId,
+      updatedAt: op.at ?? card.updatedAt,
+      version: card.version + 1,
+      descriptionVersion: card.descriptionVersion + 1,
     ),
   );
 }

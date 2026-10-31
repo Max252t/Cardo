@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/card_tile.dart';
 import '../../../../theme/cardo_theme.dart';
-import '../../domain/board_model.dart';
 import '../../domain/board_sync_state.dart';
 import '../board_drag_controller.dart';
 import '../board_providers.dart';
@@ -79,7 +78,7 @@ class BoardCardItem extends ConsumerWidget {
   final int index;
   final bool dense;
   final bool canEdit;
-  final List<ColumnModel> otherColumns;
+  final List<ColumnInfo> otherColumns;
   final CardDragHooks hooks;
   final ValueChanged<String> onTap;
   final double bottomGap;

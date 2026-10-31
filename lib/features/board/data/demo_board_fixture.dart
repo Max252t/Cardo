@@ -9,6 +9,8 @@ const String _violetHex = '#7C4DEB';
 const String _pinkHex = '#D23A6E';
 const String _amberHex = '#F2A516';
 
+final DateTime demoReferenceTime = DateTime.utc(2026, 1, 15, 12);
+
 abstract final class DemoIds {
   static const String board = 'b-launch';
   static const String elena = 'u-elena';
@@ -31,6 +33,8 @@ class _Seed {
     this.author = DemoIds.elena,
     this.description = '',
     this.version = 1,
+    this.age = const Duration(days: 2),
+    this.updatedAge,
   });
 
   final String id;
@@ -38,6 +42,8 @@ class _Seed {
   final String author;
   final String description;
   final int version;
+  final Duration age;
+  final Duration? updatedAge;
 }
 
 const String _handshakeDescription =
@@ -69,12 +75,15 @@ const Map<String, List<_Seed>> _seeds = <String, List<_Seed>>{
       author: DemoIds.maxim,
       description: _handshakeDescription,
       version: 14,
+      age: Duration(days: 1),
+      updatedAge: Duration(minutes: 40),
     ),
     _Seed(
       DemoIds.rankCard,
       'Fractional indexing для rank',
       author: DemoIds.anya,
       version: 3,
+      age: Duration(days: 3),
     ),
     _Seed(
       DemoIds.readOnlyCard,
@@ -82,6 +91,7 @@ const Map<String, List<_Seed>> _seeds = <String, List<_Seed>>{
       author: DemoIds.anya,
       description: 'Viewer видит доску без «+» и без перетаскивания.',
       version: 5,
+      age: Duration(hours: 5),
     ),
     _Seed(DemoIds.syncStateCard, 'BoardSyncState: confirmed + pending'),
   ],
@@ -118,7 +128,11 @@ const List<(String, String, ColumnMarker)> _columns =
       (DemoIds.done, 'Готово', ColumnMarker.done),
     ];
 
-BoardModel demoBoard({BoardRole currentUserRole = BoardRole.editor}) {
+BoardModel demoBoard({
+  BoardRole currentUserRole = BoardRole.editor,
+  DateTime? now,
+}) {
+  final reference = (now ?? demoReferenceTime).toUtc();
   final columnRanks = ranksSequence(_columns.length);
   final columns = <ColumnModel>[
     for (var i = 0; i < _columns.length; i++)
@@ -145,6 +159,8 @@ BoardModel demoBoard({BoardRole currentUserRole = BoardRole.editor}) {
           version: seed.version,
           createdBy: seed.author,
           updatedBy: seed.author,
+          createdAt: reference.subtract(seed.age),
+          updatedAt: reference.subtract(seed.updatedAge ?? seed.age),
         ),
       );
     }
@@ -180,9 +196,10 @@ BoardModel demoBoard({BoardRole currentUserRole = BoardRole.editor}) {
 
 BoardSnapshot demoBoardSnapshot({
   BoardRole currentUserRole = BoardRole.editor,
+  DateTime? now,
 }) {
   return BoardSnapshot(
-    board: demoBoard(currentUserRole: currentUserRole),
+    board: demoBoard(currentUserRole: currentUserRole, now: now),
     currentUser: const CurrentUser(
       userId: DemoIds.elena,
       name: 'Елена',

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -47,6 +49,18 @@ final idGeneratorProvider = Provider<IdGenerator>((ref) => const Uuid().v7);
 
 final nowProvider = Provider<NowProvider>((ref) => DateTime.now);
 
+final tickingNowProvider = Provider.autoDispose<DateTime>((ref) {
+  final value = ref.watch(nowProvider)();
+  final elapsed = Duration(
+    seconds: value.second,
+    milliseconds: value.millisecond,
+    microseconds: value.microsecond,
+  );
+  final timer = Timer(CardoDurations.nowTick - elapsed, ref.invalidateSelf);
+  ref.onDispose(timer.cancel);
+  return value;
+});
+
 final boardSyncConfigProvider = Provider<BoardSyncConfig>(
   (ref) => const BoardSyncConfig(),
 );
@@ -81,8 +95,11 @@ final boardPresenceProvider = Provider<BoardPresence>(
   (ref) => ref.watch(boardSnapshotProvider).presence,
 );
 
-final boardListProvider = Provider<List<BoardSummary>>(
-  (ref) => ref.watch(boardSnapshotProvider).boards,
+final boardListProvider = Provider<List<BoardListItem>>(
+  (ref) => [
+    for (final summary in ref.watch(boardSnapshotProvider).boards)
+      BoardListItem.of(summary),
+  ],
 );
 
 final boardColumnsProvider = Provider<List<ColumnViewData>>((ref) {

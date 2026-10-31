@@ -2,6 +2,7 @@ import 'dart:ui' show Tristate;
 
 import 'package:cardo/core/models/board_role.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
+import 'package:cardo/features/board/presentation/widgets/card_sheet.dart';
 import 'package:cardo/features/board/presentation/widgets/column_tabs.dart';
 import 'package:cardo/features/board/presentation/widgets/compact_board.dart';
 import 'package:cardo/features/board/presentation/widgets/scrolling_board.dart';
@@ -134,7 +135,7 @@ void main() {
       await tester.tap(find.text('Rate limit на логин: 5 попыток в минуту'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('Описания пока нет'), findsOneWidget);
+      expect(find.byType(CardSheet), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
@@ -208,7 +209,7 @@ void main() {
       expect(find.text('Сохранить'), findsOneWidget);
       expect(find.text('Переместить'), findsOneWidget);
       expect(find.byTooltip('В архив'), findsOneWidget);
-      expect(find.text('Создал Аня'), findsOneWidget);
+      expect(find.text('Создал Аня · 3 дня назад'), findsOneWidget);
       expect(find.text('v3'), findsOneWidget);
       expect(containerOf(tester).read(selectedCardIdProvider), 'c-rank');
 
