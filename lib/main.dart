@@ -6,6 +6,7 @@ import 'features/board/data/fake_board_gateway.dart';
 import 'features/board/presentation/board_providers.dart';
 import 'features/board/presentation/board_screen.dart';
 import 'l10n/app_localizations.dart';
+import 'shared/locale/resolve_app_locale.dart';
 import 'theme/cardo_theme.dart';
 
 void main() {
@@ -41,6 +42,7 @@ class CardoApp extends StatelessWidget {
       themeAnimationStyle: AnimationStyle.noAnimation,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      localeListResolutionCallback: resolveAppLocale,
       debugShowCheckedModeBanner: false,
       home: home,
     );
