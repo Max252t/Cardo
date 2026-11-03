@@ -118,6 +118,29 @@ class OpSender {
     return holder != null && holder != op.opId;
   }
 
+  int _nextSendable() {
+    final heldCards = <String>{};
+    final heldColumns = <String>{};
+    for (var i = 0; i < _queue.length; i++) {
+      final op = _queue[i];
+      final cardId = op.cardId;
+      final held =
+          _isBlocked(op) ||
+          (cardId != null && heldCards.contains(cardId)) ||
+          heldColumns.any(op.referencesColumn);
+      if (!held) {
+        return i;
+      }
+      if (cardId != null) {
+        heldCards.add(cardId);
+      }
+      if (op is CreateColumn) {
+        heldColumns.add(op.columnId);
+      }
+    }
+    return -1;
+  }
+
   void _refillByClock() {
     final elapsed = now().difference(_lastRefill);
     final earned = elapsed.inMicroseconds ~/ refill.inMicroseconds;
@@ -130,7 +153,7 @@ class OpSender {
   void _drain() {
     _refillByClock();
     while (!_disposed && !_paused && _tokens > 0) {
-      final index = _queue.indexWhere((op) => !_isBlocked(op));
+      final index = _nextSendable();
       if (index < 0) {
         break;
       }
@@ -161,7 +184,7 @@ class OpSender {
         _paused ||
         _refillTimer != null ||
         _tokens > 0 ||
-        !_queue.any((op) => !_isBlocked(op))) {
+        _nextSendable() < 0) {
       return;
     }
     _refillTimer = scheduler.after(refill, () {

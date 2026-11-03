@@ -1,11 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/rune_length_formatter.dart';
+import '../../../../shared/widgets/single_line_formatter.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../../domain/board_model.dart';
 import '../board_providers.dart';
@@ -21,7 +21,8 @@ class CardComposer extends ConsumerStatefulWidget {
   ConsumerState<CardComposer> createState() => _CardComposerState();
 }
 
-class _CardComposerState extends ConsumerState<CardComposer> {
+class _CardComposerState extends ConsumerState<CardComposer>
+    with WidgetsBindingObserver {
   late final TextEditingController _title;
   late final TextEditingController _description;
   final FocusNode _titleFocus = FocusNode();
@@ -30,6 +31,7 @@ class _CardComposerState extends ConsumerState<CardComposer> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final draft = ref.read(cardInlineProvider);
     _title = TextEditingController(text: draft.composerTitle);
     _description = TextEditingController(text: draft.composerDescription);
@@ -38,18 +40,16 @@ class _CardComposerState extends ConsumerState<CardComposer> {
         return;
       }
       _titleFocus.requestFocus();
-      unawaited(
-        Scrollable.ensureVisible(
-          context,
-          duration: Duration.zero,
-          alignment: 1,
-        ),
-      );
+      _reveal();
     });
   }
 
   @override
+  void didChangeMetrics() => _reveal();
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _title.dispose();
     _description.dispose();
     _titleFocus.dispose();
@@ -68,13 +68,17 @@ class _CardComposerState extends ConsumerState<CardComposer> {
     }
     final open = ref.read(cardInlineProvider).composerDescriptionOpen;
     final description = open ? _description.text.trim() : '';
-    ref
+    final created = ref
         .read(boardNotifierProvider.notifier)
         .createCard(
           columnId: widget.columnId,
           title: _title.text,
           description: description,
         );
+    if (!created) {
+      _titleFocus.requestFocus();
+      return;
+    }
     _title.clear();
     _description.clear();
     _inline.clearComposerText();
@@ -84,14 +88,14 @@ class _CardComposerState extends ConsumerState<CardComposer> {
 
   void _reveal() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        unawaited(
-          Scrollable.ensureVisible(
-            context,
-            duration: Duration.zero,
-            alignment: 1,
-          ),
-        );
+      if (!mounted) {
+        return;
+      }
+      final position = Scrollable.maybeOf(context)?.position;
+      if (position != null &&
+          position.axis == Axis.vertical &&
+          position.hasContentDimensions) {
+        position.jumpTo(position.maxScrollExtent);
       }
     });
   }
@@ -160,6 +164,7 @@ class _CardComposerState extends ConsumerState<CardComposer> {
                   hint: l10n.addCardHint,
                   style: fieldStyle,
                   limit: CardLimits.titleMaxLength,
+                  singleLine: true,
                   maxLines: 4,
                   action: TextInputAction.done,
                   onChanged: (value) {
@@ -177,6 +182,7 @@ class _CardComposerState extends ConsumerState<CardComposer> {
                       color: colors.textPrimary,
                     ),
                     limit: CardLimits.descriptionMaxLength,
+                    singleLine: false,
                     maxLines: 6,
                     action: TextInputAction.newline,
                     onChanged: (value) {
@@ -259,6 +265,7 @@ class _ComposerField extends StatelessWidget {
     required this.hint,
     required this.style,
     required this.limit,
+    required this.singleLine,
     required this.maxLines,
     required this.action,
     required this.onChanged,
@@ -270,6 +277,7 @@ class _ComposerField extends StatelessWidget {
   final String hint;
   final TextStyle style;
   final int limit;
+  final bool singleLine;
   final int maxLines;
   final TextInputAction action;
   final ValueChanged<String> onChanged;
@@ -286,7 +294,10 @@ class _ComposerField extends StatelessWidget {
       keyboardType: multiline ? TextInputType.multiline : TextInputType.text,
       textInputAction: action,
       textCapitalization: TextCapitalization.sentences,
-      inputFormatters: <TextInputFormatter>[RuneLimitFormatter(limit)],
+      inputFormatters: <TextInputFormatter>[
+        if (singleLine) const SingleLineFormatter(),
+        RuneLengthLimitingFormatter(limit),
+      ],
       onChanged: onChanged,
       onEditingComplete: onSubmit,
       style: style,

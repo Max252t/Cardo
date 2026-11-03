@@ -44,8 +44,8 @@ NackReason? validateOp(BoardModel board, BoardOp op, {BoardRole? role}) {
       if (board.columnById(op.columnId) == null) {
         return NackReason.notFound;
       }
-      if (op.title.length > CardLimits.titleMaxLength ||
-          op.description.length > CardLimits.descriptionMaxLength) {
+      if (op.title.runes.length > CardLimits.titleMaxLength ||
+          op.description.runes.length > CardLimits.descriptionMaxLength) {
         return NackReason.validationError;
       }
       return null;
@@ -54,7 +54,7 @@ NackReason? validateOp(BoardModel board, BoardOp op, {BoardRole? role}) {
       if (card == null || card.archived) {
         return NackReason.notFound;
       }
-      return op.title.length > CardLimits.titleMaxLength
+      return op.title.runes.length > CardLimits.titleMaxLength
           ? NackReason.validationError
           : null;
     case EditCardDescription():
@@ -62,7 +62,7 @@ NackReason? validateOp(BoardModel board, BoardOp op, {BoardRole? role}) {
       if (card == null || card.archived) {
         return NackReason.notFound;
       }
-      if (op.description.length > CardLimits.descriptionMaxLength) {
+      if (op.description.runes.length > CardLimits.descriptionMaxLength) {
         return NackReason.validationError;
       }
       if (card.descriptionVersion != op.baseDescriptionVersion) {
@@ -73,14 +73,14 @@ NackReason? validateOp(BoardModel board, BoardOp op, {BoardRole? role}) {
       final card = board.cardById(op.cardId);
       return card == null || card.archived ? NackReason.notFound : null;
     case CreateColumn():
-      return op.title.length > ColumnLimits.titleMaxLength
+      return op.title.runes.length > ColumnLimits.titleMaxLength
           ? NackReason.validationError
           : null;
     case RenameColumn():
       if (board.columnById(op.columnId) == null) {
         return NackReason.notFound;
       }
-      return op.title.length > ColumnLimits.titleMaxLength
+      return op.title.runes.length > ColumnLimits.titleMaxLength
           ? NackReason.validationError
           : null;
     case MoveColumn():

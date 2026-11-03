@@ -32,6 +32,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
     required this.plusBadge,
     required this.plusIcon,
     required this.emptyPaddingHorizontal,
+    required this.emptyBodyLineHeight,
+    required this.sampleLineRadius,
   });
 
   static const CardoColumnTokens standard = CardoColumnTokens(
@@ -62,6 +64,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
     plusBadge: 30,
     plusIcon: 16,
     emptyPaddingHorizontal: 24,
+    emptyBodyLineHeight: 1.45,
+    sampleLineRadius: 4,
   );
 
   final double newFieldWidth;
@@ -91,6 +95,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
   final double plusBadge;
   final double plusIcon;
   final double emptyPaddingHorizontal;
+  final double emptyBodyLineHeight;
+  final double sampleLineRadius;
 
   static CardoColumnTokens of(BuildContext context) {
     final extension = Theme.of(context).extension<CardoColumnTokens>();
@@ -130,6 +136,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
     double? plusBadge,
     double? plusIcon,
     double? emptyPaddingHorizontal,
+    double? emptyBodyLineHeight,
+    double? sampleLineRadius,
   }) {
     return CardoColumnTokens(
       newFieldWidth: newFieldWidth ?? this.newFieldWidth,
@@ -160,6 +168,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
       plusIcon: plusIcon ?? this.plusIcon,
       emptyPaddingHorizontal:
           emptyPaddingHorizontal ?? this.emptyPaddingHorizontal,
+      emptyBodyLineHeight: emptyBodyLineHeight ?? this.emptyBodyLineHeight,
+      sampleLineRadius: sampleLineRadius ?? this.sampleLineRadius,
     );
   }
 
@@ -200,6 +210,8 @@ class CardoColumnTokens extends ThemeExtension<CardoColumnTokens> {
         emptyPaddingHorizontal,
         other.emptyPaddingHorizontal,
       ),
+      emptyBodyLineHeight: mix(emptyBodyLineHeight, other.emptyBodyLineHeight),
+      sampleLineRadius: mix(sampleLineRadius, other.sampleLineRadius),
     );
   }
 }

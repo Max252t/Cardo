@@ -1,9 +1,14 @@
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show immutable, mapEquals;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/board_model.dart';
 import 'board_providers.dart';
+
+typedef ComposerDraft = ({
+  String title,
+  String description,
+  bool descriptionOpen,
+});
 
 @immutable
 class CardInlineState {
@@ -14,6 +19,7 @@ class CardInlineState {
     this.composerDescriptionOpen = false,
     this.editingCardId,
     this.editingTitle = '',
+    this.composerDrafts = const <String, ComposerDraft>{},
   });
 
   final String? composerColumnId;
@@ -22,11 +28,16 @@ class CardInlineState {
   final bool composerDescriptionOpen;
   final String? editingCardId;
   final String editingTitle;
+  final Map<String, ComposerDraft> composerDrafts;
+
+  bool get composerHasText =>
+      composerTitle.isNotEmpty || composerDescription.isNotEmpty;
 
   CardInlineState withoutComposer() {
     return CardInlineState(
       editingCardId: editingCardId,
       editingTitle: editingTitle,
+      composerDrafts: composerDrafts,
     );
   }
 
@@ -36,6 +47,7 @@ class CardInlineState {
       composerTitle: composerTitle,
       composerDescription: composerDescription,
       composerDescriptionOpen: composerDescriptionOpen,
+      composerDrafts: composerDrafts,
     );
   }
 
@@ -51,6 +63,19 @@ class CardInlineState {
       composerDescriptionOpen: descriptionOpen ?? composerDescriptionOpen,
       editingCardId: editingCardId,
       editingTitle: editingTitle,
+      composerDrafts: composerDrafts,
+    );
+  }
+
+  CardInlineState withEditing(String? cardId, String title) {
+    return CardInlineState(
+      composerColumnId: composerColumnId,
+      composerTitle: composerTitle,
+      composerDescription: composerDescription,
+      composerDescriptionOpen: composerDescriptionOpen,
+      editingCardId: cardId,
+      editingTitle: title,
+      composerDrafts: composerDrafts,
     );
   }
 
@@ -62,7 +87,8 @@ class CardInlineState {
         other.composerDescription == composerDescription &&
         other.composerDescriptionOpen == composerDescriptionOpen &&
         other.editingCardId == editingCardId &&
-        other.editingTitle == editingTitle;
+        other.editingTitle == editingTitle &&
+        mapEquals(other.composerDrafts, composerDrafts);
   }
 
   @override
@@ -73,6 +99,10 @@ class CardInlineState {
     composerDescriptionOpen,
     editingCardId,
     editingTitle,
+    Object.hashAllUnordered(<int>[
+      for (final entry in composerDrafts.entries)
+        Object.hash(entry.key, entry.value),
+    ]),
   );
 }
 
@@ -81,13 +111,27 @@ class CardInlineNotifier extends Notifier<CardInlineState> {
   CardInlineState build() => const CardInlineState();
 
   void openComposer(String columnId) {
-    if (state.composerColumnId == columnId) {
+    final current = state.composerColumnId;
+    if (current == columnId) {
       return;
     }
+    final drafts = <String, ComposerDraft>{...state.composerDrafts};
+    if (current != null && state.composerHasText) {
+      drafts[current] = (
+        title: state.composerTitle,
+        description: state.composerDescription,
+        descriptionOpen: state.composerDescriptionOpen,
+      );
+    }
+    final restored = drafts.remove(columnId);
     state = CardInlineState(
       composerColumnId: columnId,
+      composerTitle: restored?.title ?? '',
+      composerDescription: restored?.description ?? '',
+      composerDescriptionOpen: restored?.descriptionOpen ?? false,
       editingCardId: state.editingCardId,
       editingTitle: state.editingTitle,
+      composerDrafts: drafts,
     );
   }
 
@@ -118,6 +162,7 @@ class CardInlineNotifier extends Notifier<CardInlineState> {
       composerDescriptionOpen: state.composerDescriptionOpen,
       editingCardId: state.editingCardId,
       editingTitle: state.editingTitle,
+      composerDrafts: state.composerDrafts,
     );
   }
 
@@ -125,14 +170,7 @@ class CardInlineNotifier extends Notifier<CardInlineState> {
     if (state.editingCardId == cardId) {
       return;
     }
-    state = CardInlineState(
-      composerColumnId: state.composerColumnId,
-      composerTitle: state.composerTitle,
-      composerDescription: state.composerDescription,
-      composerDescriptionOpen: state.composerDescriptionOpen,
-      editingCardId: cardId,
-      editingTitle: title,
-    );
+    state = state.withEditing(cardId, title);
   }
 
   void setEditingTitle(String title) {
@@ -140,14 +178,7 @@ class CardInlineNotifier extends Notifier<CardInlineState> {
     if (id == null) {
       return;
     }
-    state = CardInlineState(
-      composerColumnId: state.composerColumnId,
-      composerTitle: state.composerTitle,
-      composerDescription: state.composerDescription,
-      composerDescriptionOpen: state.composerDescriptionOpen,
-      editingCardId: id,
-      editingTitle: title,
-    );
+    state = state.withEditing(id, title);
   }
 
   void stopEditing() {
@@ -160,28 +191,6 @@ final cardInlineProvider =
       CardInlineNotifier.new,
       dependencies: [boardGatewayProvider],
     );
-
-class RuneLimitFormatter extends TextInputFormatter {
-  const RuneLimitFormatter(this.limit);
-
-  final int limit;
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final runes = newValue.text.runes;
-    if (runes.length <= limit) {
-      return newValue;
-    }
-    final text = String.fromCharCodes(runes.take(limit));
-    return TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
-  }
-}
 
 bool isValidCardTitle(String raw) {
   final trimmed = raw.trim();

@@ -7,6 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/rune_length_formatter.dart';
+import '../../../../shared/widgets/single_line_formatter.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../../domain/op_limits.dart';
 import '../board_providers.dart';
@@ -66,6 +67,12 @@ class ColumnMenuSheet extends ConsumerWidget {
         }
       },
     );
+    ref.listen<bool>(canEditBoardProvider, (previous, canEdit) {
+      if (!canEdit && context.mounted) {
+        draft.discarded = true;
+        unawaited(Navigator.of(context).maybePop());
+      }
+    });
     ref.listen<bool>(
       boardNotifierProvider.select((state) => state.ended != null),
       (previous, ended) {
@@ -194,6 +201,7 @@ class _NameFieldState extends State<_NameField> {
               textInputAction: TextInputAction.done,
               textCapitalization: TextCapitalization.sentences,
               inputFormatters: <TextInputFormatter>[
+                const SingleLineFormatter(),
                 const RuneLengthLimitingFormatter(ColumnLimits.titleMaxLength),
               ],
               style: typography.paragraph.copyWith(

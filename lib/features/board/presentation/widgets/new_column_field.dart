@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/rune_length_formatter.dart';
+import '../../../../shared/widgets/single_line_formatter.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../../domain/op_limits.dart';
 
@@ -105,6 +106,7 @@ class _NewColumnFieldState extends State<NewColumnField> {
                     textInputAction: TextInputAction.done,
                     textCapitalization: TextCapitalization.sentences,
                     inputFormatters: <TextInputFormatter>[
+                      const SingleLineFormatter(),
                       const RuneLengthLimitingFormatter(
                         ColumnLimits.titleMaxLength,
                       ),

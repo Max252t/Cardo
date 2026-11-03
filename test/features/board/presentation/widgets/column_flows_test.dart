@@ -105,7 +105,7 @@ void main() {
       ]);
       expect(_dotsCount(tester), 5);
       expect(_dotsIndex(tester), 4);
-      expect(find.text('Колонка пуста', skipOffstage: false), findsOneWidget);
+      expect(find.text('Колонка пуста'), findsOneWidget);
       expect(find.text('Добавить карточку'), findsWidgets);
       expect(find.byType(NewColumnField), findsNothing);
       expect(tester.takeException(), isNull);
@@ -355,7 +355,7 @@ void main() {
         expect(_titles(tester).last, 'Идеи');
         expect(find.text('Идеи'), findsOneWidget);
         expect(find.byType(NewColumnField), findsNothing);
-        expect(find.text('Колонка пуста', skipOffstage: false), findsOneWidget);
+        expect(find.text('Колонка пуста'), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pump(const Duration(seconds: 1));
         await _finish(tester);
@@ -432,7 +432,7 @@ void main() {
         gateway: FakeBoardGateway(confirmDelay: confirmDelay),
       );
       await _create(tester, 'Ideas', 'Column');
-      expect(find.text('Column is empty', skipOffstage: false), findsOneWidget);
+      expect(find.text('Column is empty'), findsOneWidget);
 
       await _selectTab(tester, 'Ревью');
       await _openMenu(tester, DemoIds.review);

@@ -59,15 +59,6 @@ List<CreateCard> _creates(WidgetTester tester) {
 
 void main() {
   group('rune limit and validation', () {
-    test('formatter truncates by runes', () {
-      const formatter = RuneLimitFormatter(3);
-      final result = formatter.formatEditUpdate(
-        TextEditingValue.empty,
-        const TextEditingValue(text: '😀😀😀😀'),
-      );
-      expect(result.text.runes.length, 3);
-    });
-
     test('title validity trims, requires text, counts runes', () {
       expect(isValidCardTitle('   '), isFalse);
       expect(isValidCardTitle('  a  '), isTrue);

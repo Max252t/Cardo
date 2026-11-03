@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/rune_length_formatter.dart';
+import '../../../../shared/widgets/single_line_formatter.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../../domain/board_model.dart';
 import '../board_providers.dart';
@@ -117,7 +119,8 @@ class _CardInlineTitleEditorState extends ConsumerState<CardInlineTitleEditor> {
                   textInputAction: TextInputAction.done,
                   textCapitalization: TextCapitalization.sentences,
                   inputFormatters: const <TextInputFormatter>[
-                    RuneLimitFormatter(CardLimits.titleMaxLength),
+                    SingleLineFormatter(),
+                    RuneLengthLimitingFormatter(CardLimits.titleMaxLength),
                   ],
                   onChanged: (value) => ref
                       .read(cardInlineProvider.notifier)

@@ -50,7 +50,7 @@ class ColumnEmptyState extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: typography.message.copyWith(
                     color: colors.textSecondary,
-                    height: 1.45,
+                    height: tokens.emptyBodyLineHeight,
                   ),
                 ),
               ],
@@ -163,9 +163,7 @@ class _SampleLine extends StatelessWidget {
         height: tokens.sampleLineHeight,
         decoration: BoxDecoration(
           color: CardoColors.of(context).line,
-          borderRadius: BorderRadius.circular(
-            CardoRadii.of(context).markerColumn + 1,
-          ),
+          borderRadius: BorderRadius.circular(tokens.sampleLineRadius),
         ),
       ),
     );

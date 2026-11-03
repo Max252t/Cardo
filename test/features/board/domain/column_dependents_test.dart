@@ -88,6 +88,96 @@ void main() {
       expect(state.dependsOnRejectedColumnCreate(moveOp('a1', colB)), isFalse);
     });
 
+    test('operations on cards created in the column are held back too', () {
+      const edit = EditCardTitle(
+        opId: 'edit',
+        cardId: 'k1',
+        title: 'T2',
+        actorId: 'u1',
+      );
+      const archive = ArchiveCard(opId: 'arch', cardId: 'k1');
+      const description = EditCardDescription(
+        opId: 'edit-d',
+        cardId: 'k1',
+        description: 'D',
+        baseDescriptionVersion: 0,
+        actorId: 'u1',
+      );
+      const foreign = ArchiveCard(opId: 'foreign', cardId: 'a1');
+      final move = moveOp('k1', colB, opId: 'move-out');
+      final state = _state(<PendingOp>[
+        _item(_createNew, rejected: true),
+        _item(_dependents.first),
+        _item(edit),
+        _item(archive),
+        _item(description),
+        _item(move),
+        _item(foreign),
+      ]);
+
+      for (final op in <BoardOp>[edit, archive, description, move]) {
+        expect(state.dependsOnRejectedColumnCreate(op), isTrue, reason: '$op');
+      }
+      expect(state.dependsOnRejectedColumnCreate(foreign), isFalse);
+      expect(state.dependentOpIds(_createNew), <String>{
+        'card',
+        'edit',
+        'arch',
+        'edit-d',
+        'move-out',
+      });
+    });
+
+    test('dependents follow columns created after the rejected one', () {
+      const rename = RenameColumn(opId: 'rn', columnId: 'col-next', title: 'R');
+      final state = _state(<PendingOp>[
+        _item(_createNew, rejected: true),
+        _item(_dependents.last),
+        _item(rename),
+      ]);
+
+      expect(state.dependsOnRejectedColumnCreate(rename), isTrue);
+    });
+
+    test('logging the rejection lists the edits of created cards', () {
+      final state = _state(<PendingOp>[
+        _item(_createNew, rejected: true),
+        _item(_dependents.first),
+        _item(
+          const EditCardTitle(
+            opId: 'edit',
+            cardId: 'k1',
+            title: 'T2',
+            actorId: 'u1',
+          ),
+        ),
+      ]).withRejectionLogged('cc');
+
+      expect(state.rejections.entries.length, 3);
+    });
+
+    test('stale CreateColumn drops the edits of cards created in it', () {
+      final old = DateTime.utc(2025, 1, 1);
+      final state = _state(<PendingOp>[
+        PendingOp(
+          op: _createNew,
+          status: PendingOpStatus.queued,
+          createdAt: old,
+        ),
+        _item(_dependents.first),
+        _item(
+          const EditCardTitle(
+            opId: 'edit',
+            cardId: 'k1',
+            title: 'T2',
+            actorId: 'u1',
+          ),
+        ),
+      ]).withoutStale(_t, const Duration(hours: 1));
+
+      expect(state.pending, isEmpty);
+    });
+
     test('an accepted CreateColumn holds nothing back', () {
       final state = _state(<PendingOp>[
         _item(_createNew),

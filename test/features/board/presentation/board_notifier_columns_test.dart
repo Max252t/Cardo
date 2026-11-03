@@ -279,6 +279,56 @@ void main() {
     });
   });
 
+  group('column then card chain', () {
+    testWidgets('edit, move and archive reach the server in order', (
+      tester,
+    ) async {
+      final gateway = FakeBoardGateway(
+        initial: demoBoardSnapshot(),
+        confirmDelay: const Duration(milliseconds: 20),
+      );
+      final container = await _open(tester, gateway: gateway);
+      final notifier = container.read(boardNotifierProvider.notifier);
+      final columnId = notifier.createColumn('Идеи')!;
+      notifier.createCard(columnId: columnId, title: 'Первая');
+      final cardId = _read(container).liveView.cardsIn(columnId).single.id;
+      notifier.editCardTitle(cardId: cardId, title: 'Вторая');
+      notifier.moveCard(cardId: cardId, toColumnId: DemoIds.review);
+      notifier.archiveCard(cardId);
+
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 30));
+      }
+
+      final state = _read(container);
+      expect(state.rejections.entries, isEmpty);
+      expect(state.pending, isEmpty);
+      expect(gateway.serverBoard.activeCard(cardId), isNull);
+      await _close(tester, container);
+    });
+
+    testWidgets('a title edit lands on the new card', (tester) async {
+      final gateway = FakeBoardGateway(
+        initial: demoBoardSnapshot(),
+        confirmDelay: const Duration(milliseconds: 20),
+      );
+      final container = await _open(tester, gateway: gateway);
+      final notifier = container.read(boardNotifierProvider.notifier);
+      final columnId = notifier.createColumn('Идеи')!;
+      notifier.createCard(columnId: columnId, title: 'Первая');
+      final cardId = _read(container).liveView.cardsIn(columnId).single.id;
+      notifier.editCardTitle(cardId: cardId, title: 'Вторая');
+
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 30));
+      }
+
+      expect(_read(container).rejections.entries, isEmpty);
+      expect(gateway.serverBoard.cardById(cardId)?.title, 'Вторая');
+      await _close(tester, container);
+    });
+  });
+
   group('rejected CreateColumn', () {
     testWidgets('drops the operations that depend on the new column', (
       tester,
@@ -318,6 +368,49 @@ void main() {
       await tester.pump(_hold * 2);
       expect(_read(container).pending, isEmpty);
       expect(_read(container).liveView.columnById(columnId), isNull);
+      await _close(tester, container);
+    });
+
+    testWidgets('edits and moves of the new card are dropped without a '
+        'second nack', (tester) async {
+      var nacks = 0;
+      final gateway = FakeBoardGateway(
+        initial: demoBoardSnapshot(),
+        confirmDelay: const Duration(milliseconds: 20),
+        rejectWhen: (op) {
+          if (op is CreateColumn) {
+            return const OpRejection(reason: NackReason.forbidden);
+          }
+          nacks++;
+          return null;
+        },
+      );
+      final container = await _open(tester, gateway: gateway);
+      final notifier = container.read(boardNotifierProvider.notifier);
+      final columnId = notifier.createColumn('Идеи')!;
+      notifier.createCard(columnId: columnId, title: 'Первая');
+      final cardId = _read(container).liveView.cardsIn(columnId).single.id;
+      notifier.editCardTitle(cardId: cardId, title: 'Вторая');
+      notifier.moveCard(cardId: cardId, toColumnId: DemoIds.review);
+
+      await tester.pump(const Duration(milliseconds: 30));
+      await tester.pump(const Duration(milliseconds: 30));
+
+      final held = _read(container);
+      expect(held.pending.where((item) => item.isRejected).length, 1);
+      expect(
+        held.rejections.entries.map((entry) => entry.kind),
+        containsAll(<RejectedOpKind>[
+          RejectedOpKind.createColumn,
+          RejectedOpKind.create,
+        ]),
+      );
+      expect(nacks, 0);
+      expect(gateway.serverBoard.cardById(cardId), isNull);
+
+      await tester.pump(_hold * 2);
+      expect(_read(container).pending, isEmpty);
+      expect(_read(container).liveView.cardById(cardId), isNull);
       await _close(tester, container);
     });
 

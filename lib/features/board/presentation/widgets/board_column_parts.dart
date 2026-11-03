@@ -99,6 +99,7 @@ class ColumnFooter extends StatelessWidget {
     required this.insets,
     required this.bottomInset,
     this.empty = false,
+    this.emptyHidden = false,
   });
 
   final String columnId;
@@ -107,6 +108,7 @@ class ColumnFooter extends StatelessWidget {
   final ColumnInsets insets;
   final double bottomInset;
   final bool empty;
+  final bool emptyHidden;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +119,17 @@ class ColumnFooter extends StatelessWidget {
         bottom: insets.vertical + bottomInset,
       ),
       child: empty
-          ? ColumnEmptyState(columnId: columnId, dense: dense, canEdit: canEdit)
+          ? Visibility(
+              visible: !emptyHidden,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: ColumnEmptyState(
+                columnId: columnId,
+                dense: dense,
+                canEdit: canEdit,
+              ),
+            )
           : Align(
               alignment: AlignmentDirectional.topStart,
               child: canEdit

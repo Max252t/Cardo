@@ -86,7 +86,8 @@ class BoardColumnView extends ConsumerWidget {
         canEdit: canEdit,
         insets: insets,
         bottomInset: bottomInset,
-        empty: data.cards.isEmpty && drag?.hoverIndex == null,
+        empty: data.cards.isEmpty,
+        emptyHidden: drag?.hoverIndex != null,
       ),
     );
     return ColumnFrame(

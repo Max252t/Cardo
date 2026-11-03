@@ -132,7 +132,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     );
   }
 
-  void createCard({
+  bool createCard({
     required String columnId,
     required String title,
     String description = '',
@@ -141,11 +141,11 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     if (!_canEdit ||
         trimmed.isEmpty ||
         trimmed.runes.length > CardLimits.titleMaxLength ||
-        description.length > CardLimits.descriptionMaxLength) {
-      return;
+        description.runes.length > CardLimits.descriptionMaxLength) {
+      return false;
     }
     if (state.liveView.columnById(columnId) == null) {
-      return;
+      return false;
     }
     final existing = state.liveView.cardsIn(columnId);
     _enqueue(
@@ -160,6 +160,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         at: _now(),
       ),
     );
+    return true;
   }
 
   void editCardTitle({required String cardId, required String title}) {
@@ -193,7 +194,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   }) {
     if (!_canEdit ||
         state.liveView.activeCard(cardId) == null ||
-        description.length > CardLimits.descriptionMaxLength) {
+        description.runes.length > CardLimits.descriptionMaxLength) {
       return null;
     }
     final opId = _newId();
@@ -631,18 +632,13 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     if (item == null) {
       return;
     }
-    final op = item.op;
+    final dependents = state.dependentOpIds(item.op);
     state = state.copyWith(
-      pending: state.pending.where((other) {
-        if (other.opId == opId) {
-          return false;
-        }
-        return switch (op) {
-          CreateCard() => other.op.cardId != op.cardId,
-          CreateColumn() => !other.op.referencesColumn(op.columnId),
-          _ => true,
-        };
-      }).toList(),
+      pending: state.pending
+          .where(
+            (other) => other.opId != opId && !dependents.contains(other.opId),
+          )
+          .toList(),
     );
   }
 
