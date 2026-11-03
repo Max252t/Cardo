@@ -1280,23 +1280,233 @@ abstract class AppLocalizations {
   /// **'Код ошибки: {code}'**
   String boardLoadErrorCode(String code);
 
-  /// Сообщение после выхода с доски, когда участника исключили
+  /// Офлайн-баннер: число неотправленных изменений
   ///
   /// In ru, this message translates to:
-  /// **'Доступ к доске закрыт. Вас убрали из участников доски «{title}».'**
-  String boardEndedRemoved(String title);
+  /// **'Нет сети · {count, plural, one{{count} изменение ждёт} few{{count} изменения ждут} many{{count} изменений ждут} other{{count} изменения ждут}}'**
+  String syncOfflineBanner(int count);
 
-  /// Сообщение после выхода с доски, когда её удалили
+  /// Сводка после переподключения: заголовок
   ///
   /// In ru, this message translates to:
-  /// **'Доска удалена. Владелец удалил доску «{title}».'**
-  String boardEndedDeleted(String title);
+  /// **'{count, plural, one{{count} изменение не удалось применить} few{{count} изменения не удалось применить} many{{count} изменений не удалось применить} other{{count} изменения не удалось применить}}'**
+  String syncSummaryTitle(int count);
 
-  /// Сообщение после выхода с доски, когда сервер отказал в подключении
+  /// Сводка после переподключения: пояснение, когда часть изменений сохранена
   ///
   /// In ru, this message translates to:
-  /// **'Доступ к доске закрыт, или она удалена.'**
-  String get boardEndedAccessLost;
+  /// **'Пока вас не было, доска изменилась. Остальное отправлено.'**
+  String get syncSummaryBody;
+
+  /// Сводка после переподключения: пояснение, когда ничего не сохранено
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вас не было, доска изменилась.'**
+  String get syncSummaryBodyAllFailed;
+
+  /// Сводка: скрыть
+  ///
+  /// In ru, this message translates to:
+  /// **'Скрыть'**
+  String get syncSummaryHide;
+
+  /// Сводка: открыть список неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Подробнее'**
+  String get syncSummaryDetails;
+
+  /// Список неприменённых изменений: заголовок
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} изменение не применилось} few{{count} изменения не применились} many{{count} изменений не применилось} other{{count} изменения не применились}}'**
+  String rejectedTitle(int count);
+
+  /// Список неприменённых изменений: подзаголовок без сохранённых
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вы были офлайн, доска поменялась.'**
+  String get rejectedSubtitle;
+
+  /// Список неприменённых изменений: подзаголовок с числом сохранённых
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вы были офлайн, доска поменялась. {saved, plural, one{Сохранено ещё {saved} изменение.} few{Сохранено ещё {saved} изменения.} many{Сохранено ещё {saved} изменений.} other{Сохранено ещё {saved} изменения.}}'**
+  String rejectedSubtitleSaved(int saved);
+
+  /// Метка шторки неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Неприменённые изменения'**
+  String get rejectedSemantic;
+
+  /// Закрыть список неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Понятно'**
+  String get rejectedClose;
+
+  /// Перейти к карточке на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Показать на доске'**
+  String get rejectedShowOnBoard;
+
+  /// Скопировать текст неприменённого изменения
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать текст'**
+  String get rejectedCopyText;
+
+  /// Подтверждение копирования
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировано'**
+  String get rejectedCopied;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'перемещение'**
+  String get rejectedKindMove;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'создание'**
+  String get rejectedKindCreate;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'правка названия'**
+  String get rejectedKindEditTitle;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'правка описания'**
+  String get rejectedKindEditDescription;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'архивация'**
+  String get rejectedKindArchive;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'новая колонка'**
+  String get rejectedKindCreateColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'переименование колонки'**
+  String get rejectedKindRenameColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'сдвиг колонки'**
+  String get rejectedKindMoveColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'архивация колонки'**
+  String get rejectedKindArchiveColumn;
+
+  /// Название карточки по умолчанию
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка'**
+  String get rejectedSubjectCard;
+
+  /// Название колонки по умолчанию
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка'**
+  String get rejectedSubjectColumn;
+
+  /// Описание создания карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая карточка «{title}»'**
+  String rejectedSubjectNewCard(String title);
+
+  /// Описание создания колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая колонка «{title}»'**
+  String rejectedSubjectNewColumn(String title);
+
+  /// Описание перемещения карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'{title} → {column}'**
+  String rejectedSubjectMove(String title, String column);
+
+  /// Причина: изменение устарело
+  ///
+  /// In ru, this message translates to:
+  /// **'Изменение слишком долго ждало отправки и было отменено.'**
+  String get rejectedDropStale;
+
+  /// Причина: цель изменения удалена
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточки или колонки, к которым относилось изменение, больше нет на доске.'**
+  String get rejectedDropGone;
+
+  /// Диалог: заголовок при исключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт'**
+  String get boardEndedRemovedTitle;
+
+  /// Диалог: текст при исключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Вас убрали из участников доски «{title}». Ваши несохранённые изменения на ней отменены.'**
+  String boardEndedRemovedBody(String title);
+
+  /// Диалог: заголовок при удалении доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска удалена'**
+  String get boardEndedDeletedTitle;
+
+  /// Диалог: текст при удалении доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Владелец удалил доску «{title}».'**
+  String boardEndedDeletedBody(String title);
+
+  /// Диалог: общий текст, когда сервер отказал в подключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт, или она удалена. Ваши несохранённые изменения на ней отменены.'**
+  String get boardEndedAccessLostBody;
+
+  /// Диалог: кнопка перехода к списку досок
+  ///
+  /// In ru, this message translates to:
+  /// **'К моим доскам'**
+  String get boardEndedAction;
+
+  /// Диалог: заголовок блока несохранённого текста
+  ///
+  /// In ru, this message translates to:
+  /// **'Несохранённый текст'**
+  String get boardEndedUnsavedHeading;
+
+  /// Snackbar: сервер шлёт незнакомые сообщения
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновите приложение: сервер использует новые возможности.'**
+  String get protocolUpdateApp;
 }
 
 class _AppLocalizationsDelegate

@@ -749,16 +749,164 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String boardEndedRemoved(String title) {
-    return 'Access to the board was revoked. You were removed from “$title”.';
+  String syncOfflineBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes waiting',
+      one: '$count change waiting',
+    );
+    return 'No connection · $_temp0';
   }
 
   @override
-  String boardEndedDeleted(String title) {
-    return 'The board was deleted. The owner deleted “$title”.';
+  String syncSummaryTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes could not be applied',
+      one: '$count change could not be applied',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get boardEndedAccessLost =>
-      'Access to the board was revoked or it was deleted.';
+  String get syncSummaryBody =>
+      'The board changed while you were away. Everything else was sent.';
+
+  @override
+  String get syncSummaryBodyAllFailed =>
+      'The board changed while you were away.';
+
+  @override
+  String get syncSummaryHide => 'Hide';
+
+  @override
+  String get syncSummaryDetails => 'Details';
+
+  @override
+  String rejectedTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes not applied',
+      one: '$count change not applied',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rejectedSubtitle => 'The board changed while you were offline.';
+
+  @override
+  String rejectedSubtitleSaved(int saved) {
+    String _temp0 = intl.Intl.pluralLogic(
+      saved,
+      locale: localeName,
+      other: '$saved other changes were saved.',
+      one: '$saved other change was saved.',
+    );
+    return 'The board changed while you were offline. $_temp0';
+  }
+
+  @override
+  String get rejectedSemantic => 'Changes that weren\'t applied';
+
+  @override
+  String get rejectedClose => 'Got it';
+
+  @override
+  String get rejectedShowOnBoard => 'Show on board';
+
+  @override
+  String get rejectedCopyText => 'Copy text';
+
+  @override
+  String get rejectedCopied => 'Copied';
+
+  @override
+  String get rejectedKindMove => 'move';
+
+  @override
+  String get rejectedKindCreate => 'create';
+
+  @override
+  String get rejectedKindEditTitle => 'rename';
+
+  @override
+  String get rejectedKindEditDescription => 'description edit';
+
+  @override
+  String get rejectedKindArchive => 'archive';
+
+  @override
+  String get rejectedKindCreateColumn => 'new column';
+
+  @override
+  String get rejectedKindRenameColumn => 'column rename';
+
+  @override
+  String get rejectedKindMoveColumn => 'column move';
+
+  @override
+  String get rejectedKindArchiveColumn => 'column archive';
+
+  @override
+  String get rejectedSubjectCard => 'Card';
+
+  @override
+  String get rejectedSubjectColumn => 'Column';
+
+  @override
+  String rejectedSubjectNewCard(String title) {
+    return 'New card “$title”';
+  }
+
+  @override
+  String rejectedSubjectNewColumn(String title) {
+    return 'New column “$title”';
+  }
+
+  @override
+  String rejectedSubjectMove(String title, String column) {
+    return '$title → $column';
+  }
+
+  @override
+  String get rejectedDropStale =>
+      'The change waited too long to be sent and was discarded.';
+
+  @override
+  String get rejectedDropGone =>
+      'The card or column this change belonged to is no longer on the board.';
+
+  @override
+  String get boardEndedRemovedTitle => 'Access to the board is closed';
+
+  @override
+  String boardEndedRemovedBody(String title) {
+    return 'You were removed from the members of “$title”. Your unsaved changes there were discarded.';
+  }
+
+  @override
+  String get boardEndedDeletedTitle => 'Board deleted';
+
+  @override
+  String boardEndedDeletedBody(String title) {
+    return 'The owner deleted “$title”.';
+  }
+
+  @override
+  String get boardEndedAccessLostBody =>
+      'Access to the board was revoked or it was deleted. Your unsaved changes there were discarded.';
+
+  @override
+  String get boardEndedAction => 'To my boards';
+
+  @override
+  String get boardEndedUnsavedHeading => 'Unsaved text';
+
+  @override
+  String get protocolUpdateApp =>
+      'Update the app: the server uses newer features.';
 }

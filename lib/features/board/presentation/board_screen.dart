@@ -8,6 +8,10 @@ import 'board_providers.dart';
 import 'card_sheet_data.dart';
 import 'widgets/board_header.dart';
 import 'widgets/board_end_listener.dart';
+import 'widgets/board_resume_listener.dart';
+import 'widgets/protocol_issue_listener.dart';
+import 'widgets/rejected_ops_sheet.dart';
+import 'widgets/sync_summary_card.dart';
 import 'widgets/board_notices_listener.dart';
 import 'widgets/board_sidebar.dart';
 import 'widgets/card_detail_panel.dart';
@@ -24,20 +28,49 @@ class BoardScreen extends ConsumerWidget {
     final layout = CardoLayout.of(context);
     final windowClass = layout.windowClassFor(MediaQuery.sizeOf(context).width);
     return BoardEndListener(
-      child: BoardNoticesListener(
-        child: Scaffold(
-          body: switch (windowClass) {
-            CardoWindowClass.compact => CompactBoard(
-              onCardTap: (cardId) => _openPreview(context, ref, cardId),
+      child: BoardResumeListener(
+        child: ProtocolIssueListener(
+          child: BoardNoticesListener(
+            child: Scaffold(
+              body: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  switch (windowClass) {
+                    CardoWindowClass.compact => CompactBoard(
+                      onCardTap: (cardId) => _openPreview(context, ref, cardId),
+                    ),
+                    CardoWindowClass.medium => MediumBoardLayout(
+                      onCardTap: (cardId) => _openPreview(context, ref, cardId),
+                    ),
+                    CardoWindowClass.expanded => const ExpandedBoardLayout(),
+                  },
+                  SyncSummaryOverlay(
+                    onDetails: () =>
+                        unawaited(_showRejected(context, ref, windowClass)),
+                  ),
+                ],
+              ),
             ),
-            CardoWindowClass.medium => MediumBoardLayout(
-              onCardTap: (cardId) => _openPreview(context, ref, cardId),
-            ),
-            CardoWindowClass.expanded => const ExpandedBoardLayout(),
-          },
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _showRejected(
+    BuildContext context,
+    WidgetRef ref,
+    CardoWindowClass windowClass,
+  ) async {
+    final cardId = await showRejectedOps(context);
+    if (cardId == null || !context.mounted) {
+      return;
+    }
+    if (windowClass == CardoWindowClass.expanded) {
+      ref.read(selectedCardIdProvider.notifier).select(cardId);
+    } else {
+      _openPreview(context, ref, cardId);
+    }
   }
 
   void _openPreview(BuildContext context, WidgetRef ref, String cardId) {

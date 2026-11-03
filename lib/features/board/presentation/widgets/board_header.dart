@@ -12,6 +12,7 @@ import '../board_providers.dart';
 import '../board_view_data.dart';
 import 'board_header_actions.dart';
 import 'board_snackbar.dart';
+import 'offline_banner.dart';
 
 class BoardTitle extends ConsumerWidget {
   const BoardTitle({super.key, required this.large});
@@ -66,11 +67,19 @@ class CompactBoardHeader extends ConsumerWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: spacing.md,
             children: <Widget>[
               const CompactHeaderBar(),
-              if (!canEdit) const ViewerBanner(),
-              ?banner,
+              const OfflineBanner(),
+              if (!canEdit)
+                Padding(
+                  padding: EdgeInsetsDirectional.only(top: spacing.md),
+                  child: const ViewerBanner(),
+                ),
+              if (banner != null)
+                Padding(
+                  padding: EdgeInsetsDirectional.only(top: spacing.md),
+                  child: banner,
+                ),
             ],
           ),
         ),
@@ -177,7 +186,6 @@ class ExpandedBoardHeader extends ConsumerWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: spacing.md,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -186,7 +194,12 @@ class ExpandedBoardHeader extends ConsumerWidget {
                 Flexible(child: ExpandedHeaderActions(canEdit: canEdit)),
               ],
             ),
-            if (!canEdit) const ViewerBanner(),
+            const OfflineBanner(),
+            if (!canEdit)
+              Padding(
+                padding: EdgeInsetsDirectional.only(top: spacing.md),
+                child: const ViewerBanner(),
+              ),
           ],
         ),
       ),
