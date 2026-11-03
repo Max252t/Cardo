@@ -47,6 +47,15 @@ class CardSheet extends ConsumerWidget {
         unawaited(Navigator.of(context).maybePop());
       }
     });
+    ref.listen<bool>(
+      boardNotifierProvider.select((state) => state.ended != null),
+      (previous, ended) {
+        final route = ModalRoute.of(context);
+        if (ended && context.mounted && route != null) {
+          Navigator.of(context).removeRoute(route);
+        }
+      },
+    );
     final title = ref.watch(
       cardSheetProvider(cardId).select((data) => data?.title),
     );

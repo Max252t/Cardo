@@ -761,15 +761,171 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String boardEndedRemoved(String title) {
-    return 'Доступ к доске закрыт. Вас убрали из участников доски «$title».';
+  String syncOfflineBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения ждут',
+      many: '$count изменений ждут',
+      few: '$count изменения ждут',
+      one: '$count изменение ждёт',
+    );
+    return 'Нет сети · $_temp0';
   }
 
   @override
-  String boardEndedDeleted(String title) {
-    return 'Доска удалена. Владелец удалил доску «$title».';
+  String syncSummaryTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения не удалось применить',
+      many: '$count изменений не удалось применить',
+      few: '$count изменения не удалось применить',
+      one: '$count изменение не удалось применить',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get boardEndedAccessLost => 'Доступ к доске закрыт, или она удалена.';
+  String get syncSummaryBody =>
+      'Пока вас не было, доска изменилась. Остальное отправлено.';
+
+  @override
+  String get syncSummaryBodyAllFailed => 'Пока вас не было, доска изменилась.';
+
+  @override
+  String get syncSummaryHide => 'Скрыть';
+
+  @override
+  String get syncSummaryDetails => 'Подробнее';
+
+  @override
+  String rejectedTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения не применились',
+      many: '$count изменений не применилось',
+      few: '$count изменения не применились',
+      one: '$count изменение не применилось',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rejectedSubtitle => 'Пока вы были офлайн, доска поменялась.';
+
+  @override
+  String rejectedSubtitleSaved(int saved) {
+    String _temp0 = intl.Intl.pluralLogic(
+      saved,
+      locale: localeName,
+      other: 'Сохранено ещё $saved изменения.',
+      many: 'Сохранено ещё $saved изменений.',
+      few: 'Сохранено ещё $saved изменения.',
+      one: 'Сохранено ещё $saved изменение.',
+    );
+    return 'Пока вы были офлайн, доска поменялась. $_temp0';
+  }
+
+  @override
+  String get rejectedSemantic => 'Неприменённые изменения';
+
+  @override
+  String get rejectedClose => 'Понятно';
+
+  @override
+  String get rejectedShowOnBoard => 'Показать на доске';
+
+  @override
+  String get rejectedCopyText => 'Скопировать текст';
+
+  @override
+  String get rejectedCopied => 'Скопировано';
+
+  @override
+  String get rejectedKindMove => 'перемещение';
+
+  @override
+  String get rejectedKindCreate => 'создание';
+
+  @override
+  String get rejectedKindEditTitle => 'правка названия';
+
+  @override
+  String get rejectedKindEditDescription => 'правка описания';
+
+  @override
+  String get rejectedKindArchive => 'архивация';
+
+  @override
+  String get rejectedKindCreateColumn => 'новая колонка';
+
+  @override
+  String get rejectedKindRenameColumn => 'переименование колонки';
+
+  @override
+  String get rejectedKindMoveColumn => 'сдвиг колонки';
+
+  @override
+  String get rejectedKindArchiveColumn => 'архивация колонки';
+
+  @override
+  String get rejectedSubjectCard => 'Карточка';
+
+  @override
+  String get rejectedSubjectColumn => 'Колонка';
+
+  @override
+  String rejectedSubjectNewCard(String title) {
+    return 'Новая карточка «$title»';
+  }
+
+  @override
+  String rejectedSubjectNewColumn(String title) {
+    return 'Новая колонка «$title»';
+  }
+
+  @override
+  String rejectedSubjectMove(String title, String column) {
+    return '$title → $column';
+  }
+
+  @override
+  String get rejectedDropStale =>
+      'Изменение слишком долго ждало отправки и было отменено.';
+
+  @override
+  String get rejectedDropGone =>
+      'Карточки или колонки, к которым относилось изменение, больше нет на доске.';
+
+  @override
+  String get boardEndedRemovedTitle => 'Доступ к доске закрыт';
+
+  @override
+  String boardEndedRemovedBody(String title) {
+    return 'Вас убрали из участников доски «$title». Ваши несохранённые изменения на ней отменены.';
+  }
+
+  @override
+  String get boardEndedDeletedTitle => 'Доска удалена';
+
+  @override
+  String boardEndedDeletedBody(String title) {
+    return 'Владелец удалил доску «$title».';
+  }
+
+  @override
+  String get boardEndedAccessLostBody =>
+      'Доступ к доске закрыт, или она удалена. Ваши несохранённые изменения на ней отменены.';
+
+  @override
+  String get boardEndedAction => 'К моим доскам';
+
+  @override
+  String get boardEndedUnsavedHeading => 'Несохранённый текст';
+
+  @override
+  String get protocolUpdateApp =>
+      'Обновите приложение: сервер использует новые возможности.';
 }

@@ -21,6 +21,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   final Map<String, int> _rateRetries = <String, int>{};
   late final OpSender _sender;
   bool _resyncing = false;
+  bool _hasBeenReady = false;
 
   @override
   BoardSyncState build() {
@@ -58,6 +59,14 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   String get _actorId => ref.read(currentUserProvider).userId;
 
   void retryConnection() => _gateway.retryNow();
+
+  void dismissSummary() {
+    state = state.dismissedSummary();
+  }
+
+  void acknowledgeRejections() {
+    state = state.acknowledgedRejections();
+  }
 
   void moveCard({
     required String cardId,
@@ -218,7 +227,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         state = state.withoutOps(opIds.toSet());
         _releaseBarriers();
       case SnapshotSignal(:final board):
-        state = state.replaceConfirmed(board).rebased();
+        state = state.afterSnapshot(board);
         _resolveActors();
         _releaseBarriers();
         if (!_resyncing) {
@@ -234,6 +243,14 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         ref.read(boardPresenceProvider.notifier).leave(userId);
       case EndedSignal(:final reason):
         _end(reason);
+    }
+    _settle();
+  }
+
+  void _settle() {
+    final next = state.settleBatch();
+    if (!identical(next, state)) {
+      state = next;
     }
   }
 
@@ -260,9 +277,10 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     if (state.ended != null) {
       return;
     }
+    final reconnect = _hasBeenReady;
+    _hasBeenReady = true;
     state = state
-        .withoutStale(_now(), RealtimePolicy.pendingMaxAge)
-        .rebased()
+        .afterReady(_now(), RealtimePolicy.pendingMaxAge, reconnect: reconnect)
         .copyWith(
           connection: ConnectionStatus.connected,
           clearReconnectSeconds: true,
@@ -327,6 +345,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
             limit: textLimitOf(op),
           ),
         );
+        _settle();
         return SendOutcome.sent;
     }
   }
@@ -401,6 +420,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     }
     final me = _actorId;
     var changed = false;
+    var log = state.rejections;
     final next = <PendingOp>[];
     for (final item in state.pending) {
       final rejection = item.rejection;
@@ -415,6 +435,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         final author = state.confirmed.cardById(cardId)?.updatedBy;
         if (author != null && author != me) {
           changed = true;
+          log = log.withActor(item.opId, author);
           next.add(item.copyWith(rejection: rejection.withActor(author)));
           continue;
         }
@@ -422,7 +443,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       next.add(item);
     }
     if (changed) {
-      state = state.copyWith(pending: next);
+      state = state.copyWith(pending: next, rejections: log);
     }
   }
 
@@ -480,17 +501,19 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       _scheduleRetry(item, config.retryDelay);
       return;
     }
-    state = state.copyWith(
-      pending: <PendingOp>[
-        for (final other in state.pending)
-          other.opId == opId
-              ? other.copyWith(
-                  status: PendingOpStatus.rejected,
-                  rejection: rejection,
-                )
-              : other,
-      ],
-    );
+    state = state
+        .copyWith(
+          pending: <PendingOp>[
+            for (final other in state.pending)
+              other.opId == opId
+                  ? other.copyWith(
+                      status: PendingOpStatus.rejected,
+                      rejection: rejection,
+                    )
+                  : other,
+          ],
+        )
+        .withRejectionLogged(opId);
     _nackTimers[opId]?.cancel();
     _nackTimers[opId] = Timer(config.nackHold, () => _dropRejected(opId));
   }

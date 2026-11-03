@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../l10n/app_localizations.dart';
+import '../../../boards/presentation/boards_providers.dart';
 import '../../domain/board_sync_state.dart';
 import '../board_providers.dart';
-import 'board_snackbar.dart';
+import '../sync_views.dart';
+import 'board_ended_dialog.dart';
 
 class BoardEndListener extends ConsumerWidget {
   const BoardEndListener({super.key, required this.child});
@@ -25,18 +28,22 @@ class BoardEndListener extends ConsumerWidget {
   }
 
   void _leave(BuildContext context, WidgetRef ref, BoardEndReason reason) {
-    final l10n = AppLocalizations.of(context);
-    final title = ref.read(boardViewProvider).title;
-    final message = switch (reason) {
-      BoardEndReason.removed => l10n.boardEndedRemoved(title),
-      BoardEndReason.boardDeleted => l10n.boardEndedDeleted(title),
-      BoardEndReason.accessLost => l10n.boardEndedAccessLost,
-      BoardEndReason.sessionEnded || BoardEndReason.unsupported => null,
-    };
-    if (message == null) {
+    if (reason == BoardEndReason.sessionEnded ||
+        reason == BoardEndReason.unsupported) {
       return;
     }
-    showBoardSnackbar(context, message: message);
-    ref.read(boardNavigationProvider).onBack?.call();
+    final onBack = ref.read(boardNavigationProvider).onBack;
+    unawaited(
+      showBoardEndedDialog(
+        context,
+        reason: reason,
+        boardTitle: ref.read(boardViewProvider).title,
+        unsaved: ref.read(unsavedTextsProvider),
+        onLeave: () {
+          ref.invalidate(boardsListProvider);
+          onBack?.call();
+        },
+      ),
+    );
   }
 }

@@ -39,8 +39,16 @@ List<BoardNotice> noticesBetween(
     for (final item in previous?.pending ?? const <PendingOp>[])
       item.opId: item,
   };
+  final grouped = <String>{
+    ...?previous?.batch?.ids,
+    ...?next.batch?.ids,
+    ...?next.summary?.failedIds,
+  };
   final notices = <BoardNotice>[];
   for (final item in next.pending) {
+    if (grouped.contains(item.opId)) {
+      continue;
+    }
     final old = before[item.opId];
     final rejection = item.rejection;
     if (item.isRejected && rejection != null && !(old?.isRejected ?? false)) {

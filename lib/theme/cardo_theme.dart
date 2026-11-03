@@ -11,5 +11,6 @@ export 'cardo_shadows.dart';
 export 'cardo_sizes.dart';
 export 'cardo_spacing.dart';
 export 'cardo_swatches.dart';
+export 'cardo_sync_tokens.dart';
 export 'cardo_typography.dart';
 export 'font_licenses.dart';
