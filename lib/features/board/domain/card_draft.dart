@@ -165,6 +165,9 @@ CardDraft? _reconcileSubmitted(
 ) {
   final item = state.pending.where((other) => other.opId == opId).firstOrNull;
   if (item == null) {
+    if (state.abandoned.contains(opId) && card.description != draft.text) {
+      return draft.unsubmitted().withFlushCleared();
+    }
     return card.description == draft.text
         ? null
         : reconcileDraft(

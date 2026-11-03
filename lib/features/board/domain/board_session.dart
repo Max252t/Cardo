@@ -1,7 +1,6 @@
 import '../../../core/equality/collection_equality.dart';
 import '../../../core/realtime/connection_status.dart';
 import 'board_model.dart';
-import 'board_sync_state.dart';
 
 class CurrentUser {
   const CurrentUser({
@@ -52,6 +51,32 @@ class BoardSummary {
   int get hashCode => Object.hash(id, title, colorHex);
 }
 
+class PresenceUser {
+  const PresenceUser({
+    required this.userId,
+    required this.name,
+    required this.avatarColor,
+  });
+
+  final String userId;
+  final String name;
+  final String avatarColor;
+
+  @override
+  bool operator ==(Object other) {
+    return other is PresenceUser &&
+        other.userId == userId &&
+        other.name == name &&
+        other.avatarColor == avatarColor;
+  }
+
+  @override
+  int get hashCode => Object.hash(userId, name, avatarColor);
+
+  @override
+  String toString() => 'PresenceUser($userId)';
+}
+
 class BoardPresence {
   BoardPresence({
     required List<String> onlineUserIds,
@@ -61,6 +86,10 @@ class BoardPresence {
 
   final List<String> onlineUserIds;
   final Map<String, String> editingByCard;
+
+  BoardPresence withOnline(List<String> userIds) {
+    return BoardPresence(onlineUserIds: userIds, editingByCard: editingByCard);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -111,56 +140,4 @@ class BoardSnapshot {
     presence,
     connection,
   );
-}
-
-class RemoteCardUpdate {
-  const RemoteCardUpdate({
-    required this.card,
-    required this.seq,
-    required this.actorId,
-  });
-
-  final CardModel card;
-  final int seq;
-  final String actorId;
-
-  @override
-  bool operator ==(Object other) {
-    return other is RemoteCardUpdate &&
-        other.card == card &&
-        other.seq == seq &&
-        other.actorId == actorId;
-  }
-
-  @override
-  int get hashCode => Object.hash(card, seq, actorId);
-}
-
-sealed class OpOutcome {
-  const OpOutcome();
-}
-
-final class OpConfirmed extends OpOutcome {
-  const OpConfirmed({required this.seq});
-
-  final int seq;
-
-  @override
-  bool operator ==(Object other) => other is OpConfirmed && other.seq == seq;
-
-  @override
-  int get hashCode => seq.hashCode;
-}
-
-final class OpRejected extends OpOutcome {
-  const OpRejected(this.rejection);
-
-  final OpRejection rejection;
-
-  @override
-  bool operator ==(Object other) =>
-      other is OpRejected && other.rejection == rejection;
-
-  @override
-  int get hashCode => rejection.hashCode;
 }

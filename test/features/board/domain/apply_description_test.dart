@@ -1,4 +1,6 @@
+import 'package:cardo/features/board/domain/apply_event.dart';
 import 'package:cardo/features/board/domain/apply_op.dart';
+import 'package:cardo/features/board/domain/board_event.dart';
 import 'package:cardo/features/board/domain/board_model.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,27 +97,32 @@ void main() {
     });
   });
 
-  group('applyRemoteCard', () {
-    CardModel remote({
-      String text = 'remote',
+  group('applyEvent card.edited', () {
+    CardEditedEvent remote({
+      String? text = 'remote',
+      String? title,
       int descriptionVersion = 5,
       int version = 9,
-      String updatedBy = 'u2',
-      DateTime? updatedAt,
+      String actorId = 'u2',
+      DateTime? serverTs,
+      int seq = 11,
+      String cardId = 'a1',
     }) {
-      return makeCard('a1', colC, 'zzz').copyWith(
+      return CardEditedEvent(
+        seq: seq,
+        serverTs: serverTs ?? DateTime.utc(2026, 5, 5),
+        actorId: actorId,
+        cardId: cardId,
         description: text,
-        descriptionVersion: descriptionVersion,
+        title: title,
         version: version,
-        updatedBy: updatedBy,
-        updatedAt: updatedAt ?? DateTime.utc(2026, 5, 5),
-        title: 'Remote title',
+        descriptionVersion: descriptionVersion,
       );
     }
 
     test('applies description, versions and author only', () {
       final before = board.cardById('a1')!;
-      final next = applyRemoteCard(board, remote()).cardById('a1')!;
+      final next = applyEvent(board, remote()).cardById('a1')!;
       expect(next.description, 'remote');
       expect(next.descriptionVersion, 5);
       expect(next.version, 9);
@@ -128,33 +135,46 @@ void main() {
       expect(next.createdAt, before.createdAt);
     });
 
-    test('takes the larger version', () {
+    test('the event version is authoritative', () {
       final ahead = applyOp(
         applyOp(board, moveOp('a1', colB, baseVersion: 1, opId: 'm1')),
         moveOp('a1', colA, baseVersion: 2, opId: 'm2'),
       );
       expect(ahead.cardById('a1')!.version, 3);
-      final next = applyRemoteCard(ahead, remote(version: 2));
-      expect(next.cardById('a1')!.version, 3);
+      final next = applyEvent(ahead, remote(version: 4));
+      expect(next.cardById('a1')!.version, 4);
       expect(next.cardById('a1')!.description, 'remote');
     });
 
-    test('unknown card changes nothing', () {
-      final stranger = remote().copyWith(id: 'zz');
-      expect(applyRemoteCard(board, stranger), board);
+    test('a title-only edit keeps the description', () {
+      final next = applyEvent(board, remote(text: null, title: 'Renamed'));
+      expect(next.cardById('a1')!.title, 'Renamed');
+      expect(
+        next.cardById('a1')!.description,
+        board.cardById('a1')!.description,
+      );
     });
 
-    test('archived card changes nothing', () {
+    test('unknown card changes only the seq', () {
+      final next = applyEvent(board, remote(cardId: 'zz'));
+      expect(next, board.copyWith(seq: 11));
+    });
+
+    test('an archived card stays archived', () {
       final archived = applyOp(
         board,
         const ArchiveCard(opId: 'a', cardId: 'a1'),
       );
-      expect(applyRemoteCard(archived, remote()), archived);
+      expect(applyEvent(archived, remote()).cardById('a1')!.archived, isTrue);
     });
 
     test('does not touch other cards', () {
-      final next = applyRemoteCard(board, remote());
+      final next = applyEvent(board, remote());
       expect(next.cardById('a2'), board.cardById('a2'));
+    });
+
+    test('advances the board seq', () {
+      expect(applyEvent(board, remote(seq: 42)).seq, 42);
     });
   });
 }

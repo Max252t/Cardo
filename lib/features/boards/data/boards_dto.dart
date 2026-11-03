@@ -1,5 +1,7 @@
 import '../../../core/models/board_role.dart';
 import '../../../core/network/json_fields.dart';
+import '../../board/data/realtime/event_codec.dart';
+import '../../board/domain/board_event.dart';
 import '../../board/domain/board_model.dart';
 import '../domain/board_info.dart';
 
@@ -31,21 +33,11 @@ List<BoardInfo> boardListFromJson(Object? raw) {
   ];
 }
 
-ColumnMarker columnMarkerAt(int index, int count) {
-  if (index == 0) {
-    return ColumnMarker.backlog;
-  }
-  if (index == count - 1) {
-    return ColumnMarker.done;
-  }
-  return index == 1 ? ColumnMarker.inProgress : ColumnMarker.review;
-}
-
 ServerBoard serverBoardFromJson(Object? raw) {
   final json = asJsonMap(raw, 'snapshot');
   final seq = readInt(json, 'seq');
   final info = boardInfoFromJson(json['board'], seq: seq);
-  final parsedColumns = <ColumnModel>[
+  final columns = withColumnMarkers(<ColumnModel>[
     for (final item in readObjectList(json, 'columns'))
       ColumnModel(
         id: readNonEmptyString(item, 'id'),
@@ -54,13 +46,7 @@ ServerBoard serverBoardFromJson(Object? raw) {
         version: readInt(item, 'version'),
         marker: ColumnMarker.backlog,
       ),
-  ]..sort((a, b) => a.rank.compareTo(b.rank));
-  final columns = <ColumnModel>[
-    for (var i = 0; i < parsedColumns.length; i++)
-      parsedColumns[i].copyWith(
-        marker: columnMarkerAt(i, parsedColumns.length),
-      ),
-  ];
+  ]);
   final cards = <CardModel>[
     for (final item in readObjectList(json, 'cards'))
       CardModel(
@@ -105,4 +91,21 @@ String _lenientColor(String value) {
   } on FormatException {
     return value;
   }
+}
+
+EventsPage eventsPageFromJson(Object? raw) {
+  final json = asJsonMap(raw, 'events page');
+  final events = <BoardEvent>[];
+  for (final item in readObjectList(json, 'events')) {
+    try {
+      events.add(decodeEvent(item));
+    } on FormatException {
+      continue;
+    }
+  }
+  return EventsPage(
+    events: events,
+    seq: readInt(json, 'seq'),
+    hasMore: readBool(json, 'has_more'),
+  );
 }

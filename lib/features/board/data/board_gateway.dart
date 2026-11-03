@@ -1,12 +1,24 @@
 import '../domain/board_op.dart';
 import '../domain/board_session.dart';
+import 'realtime/protocol_issue.dart';
+import 'sync_signal.dart';
+
+enum SendOutcome { sent, notConnected, tooLarge }
 
 abstract interface class BoardGateway {
   BoardSnapshot snapshot();
 
-  Future<OpOutcome> submit(BoardOp op);
-}
+  Stream<SyncSignal> get signals;
 
-abstract interface class BoardRemoteFeed implements BoardGateway {
-  Stream<RemoteCardUpdate> get remoteUpdates;
+  Stream<ProtocolIssue> get issues;
+
+  void connect();
+
+  SendOutcome send(BoardOp op);
+
+  void retryNow();
+
+  Future<void> close();
+
+  Future<void> dispose();
 }

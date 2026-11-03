@@ -759,4 +759,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String boardLoadErrorCode(String code) {
     return 'Код ошибки: $code';
   }
+
+  @override
+  String boardEndedRemoved(String title) {
+    return 'Доступ к доске закрыт. Вас убрали из участников доски «$title».';
+  }
+
+  @override
+  String boardEndedDeleted(String title) {
+    return 'Доска удалена. Владелец удалил доску «$title».';
+  }
+
+  @override
+  String get boardEndedAccessLost => 'Доступ к доске закрыт, или она удалена.';
 }

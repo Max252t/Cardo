@@ -46,9 +46,7 @@ void main() {
       expect(app.server.count('PATCH /api/me'), 1);
     });
 
-    testWidgets('the open board keeps the snapshot user until it is reloaded', (
-      tester,
-    ) async {
+    testWidgets('the open board follows the live session user', (tester) async {
       final app = await pumpCardoApp(
         tester,
         variant: ruDesktop,
@@ -62,9 +60,9 @@ void main() {
       );
       await pumpFrames(tester);
 
-      expect(boardContainer(tester).read(currentUserProvider).name, 'Anna');
-      expect(sidebarText('Anna'), findsOneWidget);
-      expect(sidebarText('Bea'), findsNothing);
+      expect(boardContainer(tester).read(currentUserProvider).name, 'Bea');
+      expect(sidebarText('Bea'), findsOneWidget);
+      expect(sidebarText('Anna'), findsNothing);
       expect(app.server.count(snapshotKey), 1);
 
       app.router.go('/boards');
@@ -104,7 +102,8 @@ void main() {
         ) as SessionSignedIn).user.displayName,
         'Bea',
       );
-      expect(sidebarText('Anna'), findsOneWidget);
+      expect(sidebarText('Bea'), findsOneWidget);
+      expect(sidebarText('Anna'), findsNothing);
     });
   });
 

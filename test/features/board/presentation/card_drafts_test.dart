@@ -2,7 +2,6 @@ import 'package:cardo/core/models/board_role.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/domain/board_model.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/domain/card_draft.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/board_fixtures.dart';
-import '../helpers/controlled_remote_gateway.dart';
 
 const String _card = DemoIds.handshakeCard;
 const Duration _tick = Duration(milliseconds: 1);
@@ -138,7 +136,7 @@ void main() {
       expect(_sheet(container).text, 'saved text');
       expect(_board(container).cardStatus(_card), CardSyncStatus.pending);
 
-      gateway.calls.single.completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls.single.confirm(1285);
       await _settle(tester);
 
       expect(container.read(cardDraftsProvider), isEmpty);
@@ -181,7 +179,7 @@ void main() {
       _drafts(container).edit(_card, 'first and second');
       expect(_draft(container)!.submitted, isTrue);
 
-      gateway.calls.single.completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls.single.confirm(1285);
       await _settle(tester);
 
       final draft = _draft(container)!;
@@ -236,9 +234,7 @@ void main() {
       container
           .read(boardNotifierProvider.notifier)
           .moveCardToColumnEnd(cardId: _card, toColumnId: DemoIds.review);
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await _settle(tester);
       expect(_board(container).cardStatus(_card), CardSyncStatus.rejected);
       expect(_sheet(container).locked, isTrue);
@@ -260,9 +256,7 @@ void main() {
       final container = _open(gateway);
       _drafts(container).edit(_card, 'draft');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await _settle(tester);
       final draft = _draft(container)!;
       expect(draft.submitted, isFalse);
@@ -283,13 +277,8 @@ void main() {
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(
-        const OpRejected(
-          OpRejection(
-            reason: NackReason.versionConflict,
-            actorId: DemoIds.maxim,
-          ),
-        ),
+      gateway.calls.single.rejectWith(
+        OpRejection(reason: NackReason.versionConflict, actorId: DemoIds.maxim),
       );
       await _settle(tester);
 
@@ -313,7 +302,7 @@ void main() {
     testWidgets('a remote edit during editing raises a conflict', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 2);
@@ -331,7 +320,7 @@ void main() {
     testWidgets('a remote edit with the same text is not a conflict', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'same');
       gateway.pushDescription(_card, 'same', descriptionVersion: 2);
@@ -344,7 +333,7 @@ void main() {
     testWidgets('a remote edit without a draft changes only the text', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 2);
       expect(container.read(cardDraftsProvider), isEmpty);
@@ -355,7 +344,7 @@ void main() {
     testWidgets('overwrite sends the draft on top of the actual version', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 2);
@@ -372,7 +361,7 @@ void main() {
       expect(draft.submitted, isTrue);
       expect(_sheet(container).conflict, isNull);
 
-      gateway.calls.single.completer.complete(const OpConfirmed(seq: 1286));
+      gateway.calls.single.confirm(1286);
       await _settle(tester);
       expect(container.read(cardDraftsProvider), isEmpty);
       expect(_board(container).confirmed.cardById(_card)!.description, 'mine');
@@ -384,17 +373,12 @@ void main() {
     testWidgets('overwrite after a nack uses the pushed version', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(
-        const OpRejected(
-          OpRejection(
-            reason: NackReason.versionConflict,
-            actorId: DemoIds.maxim,
-          ),
-        ),
+      gateway.calls.single.rejectWith(
+        OpRejection(reason: NackReason.versionConflict, actorId: DemoIds.maxim),
       );
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 3);
       await _settle(tester);
@@ -422,7 +406,7 @@ void main() {
     });
 
     testWidgets('discard brings back the server text', (tester) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 2);
@@ -439,7 +423,7 @@ void main() {
     });
 
     testWidgets('flush does not send a conflicted draft', (tester) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       gateway.pushDescription(_card, 'theirs', descriptionVersion: 2);
@@ -491,7 +475,7 @@ void main() {
       final container = _open(gateway);
       _drafts(container).edit(_card, 'kept');
       container.read(boardNotifierProvider.notifier).archiveCard(_card);
-      gateway.calls.single.completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls.single.confirm(1285);
       await _settle(tester);
       expect(container.read(cardDraftsProvider), isEmpty);
       expect(container.read(cardSheetProvider(_card)), isNull);
@@ -581,20 +565,20 @@ void main() {
     testWidgets('remote updates move confirmed state and seq forward', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       gateway.pushDescription(
         _card,
         'theirs',
         descriptionVersion: 2,
-        seq: 1290,
+        seq: 1285,
       );
       final state = _board(container);
-      expect(state.lastSeq, 1290);
-      expect(state.confirmed.seq, 1290);
+      expect(state.lastSeq, 1285);
+      expect(state.confirmed.seq, 1285);
       expect(state.confirmed.cardById(_card)!.description, 'theirs');
       gateway.pushDescription(_card, 'older', descriptionVersion: 2, seq: 1280);
-      expect(_board(container).lastSeq, 1290);
+      expect(_board(container).lastSeq, 1285);
       await gateway.dispose();
       container.dispose();
     });

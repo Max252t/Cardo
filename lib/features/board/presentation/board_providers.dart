@@ -12,6 +12,7 @@ import '../domain/board_model.dart';
 import '../domain/board_session.dart';
 import '../domain/board_sync_state.dart';
 import 'board_notifier.dart';
+import 'board_presence.dart';
 import 'board_view_data.dart';
 
 export '../../../shared/time/now_provider.dart';
@@ -76,6 +77,7 @@ final boardNotifierProvider = NotifierProvider<BoardNotifier, BoardSyncState>(
     boardGatewayProvider,
     boardSnapshotProvider,
     currentUserProvider,
+    boardPresenceProvider,
   ],
 );
 
@@ -84,10 +86,12 @@ final boardViewProvider = Provider<BoardModel>(
   dependencies: [boardNotifierProvider],
 );
 
-final currentUserProvider = Provider<CurrentUser>(
-  (ref) => ref.watch(boardSnapshotProvider).currentUser,
-  dependencies: [boardSnapshotProvider],
-);
+final liveUserProvider = Provider<CurrentUser?>((ref) => null);
+
+final currentUserProvider = Provider<CurrentUser>((ref) {
+  final live = ref.watch(liveUserProvider);
+  return live ?? ref.watch(boardSnapshotProvider).currentUser;
+}, dependencies: [boardSnapshotProvider, liveUserProvider]);
 
 final currentRoleProvider = Provider<BoardRole>((ref) {
   final userId = ref.watch(currentUserProvider).userId;
@@ -100,18 +104,31 @@ final canEditBoardProvider = Provider<bool>(
   dependencies: [currentRoleProvider],
 );
 
-final boardPresenceProvider = Provider<BoardPresence>(
-  (ref) => ref.watch(boardSnapshotProvider).presence,
-  dependencies: [boardSnapshotProvider],
-);
+final boardPresenceProvider =
+    NotifierProvider<BoardPresenceNotifier, BoardPresence>(
+      BoardPresenceNotifier.new,
+      dependencies: [boardSnapshotProvider],
+    );
 
-final boardListProvider = Provider<List<BoardListItem>>(
-  (ref) => [
+final boardListProvider = Provider<List<BoardListItem>>((ref) {
+  final (currentId, currentTitle) = ref.watch(
+    boardNotifierProvider.select(
+      (state) => (state.confirmed.id, state.confirmed.title),
+    ),
+  );
+  return [
     for (final summary in ref.watch(boardSnapshotProvider).boards)
-      BoardListItem.of(summary),
-  ],
-  dependencies: [boardSnapshotProvider],
-);
+      BoardListItem.of(
+        summary.id == currentId
+            ? BoardSummary(
+                id: summary.id,
+                title: currentTitle,
+                colorHex: summary.colorHex,
+              )
+            : summary,
+      ),
+  ];
+}, dependencies: [boardSnapshotProvider, boardNotifierProvider]);
 
 final boardColumnsProvider = Provider<List<ColumnViewData>>(
   (ref) {

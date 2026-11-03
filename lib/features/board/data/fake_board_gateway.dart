@@ -1,162 +1,110 @@
-import 'dart:async';
+import 'dart:math' as math;
 
-import '../domain/apply_op.dart';
+import '../../../core/models/board_role.dart';
+import '../../../core/realtime/connection_status.dart';
+import '../../../core/realtime/scheduler.dart';
 import '../domain/board_model.dart';
 import '../domain/board_op.dart';
 import '../domain/board_session.dart';
 import '../domain/board_sync_state.dart';
-import 'board_gateway.dart';
 import 'demo_board_fixture.dart';
+import 'fake/fake_board_server.dart';
+import 'fake/server_ops.dart';
+import 'realtime/board_sync_engine.dart';
+import 'realtime/realtime_credentials.dart';
+import 'server_board_gateway.dart';
 
-typedef RejectPolicy = OpRejection? Function(BoardOp op);
+export 'fake/fake_board_server.dart' show RejectPolicy;
 
-class FakeBoardGateway implements BoardRemoteFeed {
-  FakeBoardGateway({
+class FakeBoardGateway extends ServerBoardGateway {
+  factory FakeBoardGateway({
     BoardSnapshot? initial,
-    required this.confirmDelay,
-    this.rejectWhen,
-    this.announceConflicts = true,
-  }) : _initial = initial ?? demoBoardSnapshot() {
-    _server = _initial.board;
-  }
-
-  final BoardSnapshot _initial;
-  final Duration confirmDelay;
-  final RejectPolicy? rejectWhen;
-  final bool announceConflicts;
-  final Map<String, OpOutcome> _processed = <String, OpOutcome>{};
-  late BoardModel _server;
-  final StreamController<RemoteCardUpdate> _remote =
-      StreamController<RemoteCardUpdate>.broadcast(sync: true);
-
-  @override
-  Stream<RemoteCardUpdate> get remoteUpdates => _remote.stream;
-
-  Future<void> dispose() => _remote.close();
-
-  BoardModel get serverBoard => _server;
-
-  @override
-  BoardSnapshot snapshot() {
-    return BoardSnapshot(
-      board: _server,
-      currentUser: _initial.currentUser,
-      boards: _initial.boards,
-      presence: _initial.presence,
-      connection: _initial.connection,
+    required Duration confirmDelay,
+    RejectPolicy? rejectWhen,
+    bool announceConflicts = true,
+    Scheduler scheduler = const SystemScheduler(),
+    math.Random? random,
+    DateTime Function()? now,
+  }) {
+    final base = initial ?? demoBoardSnapshot();
+    final server = FakeBoardServer(
+      initial: base.board,
+      currentUserId: base.currentUser.userId,
+      latency: confirmDelay,
+      scheduler: scheduler,
+      now: now,
+      rejectWhen: rejectWhen,
+      announceConflicts: announceConflicts,
+      online: <PresenceUser>[
+        for (final userId in base.presence.onlineUserIds)
+          if (base.board.memberById(userId) case final member?)
+            PresenceUser(
+              userId: member.userId,
+              name: member.name,
+              avatarColor: member.avatarColor,
+            ),
+      ],
     );
+    final snapshot = BoardSnapshot(
+      board: base.board,
+      currentUser: base.currentUser,
+      boards: base.boards,
+      presence: base.presence,
+      connection: ConnectionStatus.syncing,
+    );
+    final engine = BoardSyncEngine(
+      boardId: base.board.id,
+      currentUser: base.currentUser,
+      wsBaseUri: Uri(scheme: 'ws', host: 'fake.invalid'),
+      transport: server,
+      credentials: StaticCredentials(),
+      catchUp: server,
+      initialSeq: base.board.seq,
+      scheduler: scheduler,
+      now: now,
+      random: random ?? math.Random(7),
+    );
+    return FakeBoardGateway._(server, snapshot, engine);
   }
 
-  @override
-  Future<OpOutcome> submit(BoardOp op) async {
-    await Future<void>.delayed(confirmDelay);
-    final forced = rejectWhen?.call(op);
-    if (forced != null) {
-      return OpRejected(forced.withSeq(_server.seq));
-    }
-    final replay = _processed[op.opId];
-    if (replay != null) {
-      return replay;
-    }
-    final outcome = _process(op);
-    _processed[op.opId] = outcome;
-    return outcome;
-  }
+  FakeBoardGateway._(
+    this.server,
+    BoardSnapshot snapshot,
+    BoardSyncEngine engine,
+  ) : super(snapshot, engine);
 
-  OpOutcome _process(BoardOp op) {
-    final reason = validate(_server, op);
-    if (reason != null) {
-      if (announceConflicts) {
-        _announceConflict(op, reason);
-      }
-      return OpRejected(
-        OpRejection(
-          reason: reason,
-          atSeq: _server.seq,
-          actorId: reason == NackReason.versionConflict
-              ? _conflictActor(op)
-              : null,
-          limit: reason == NackReason.validationError ? _limitOf(op) : null,
-        ),
-      );
-    }
-    final seq = _server.seq + 1;
-    _server = applyOp(_server, op).copyWith(seq: seq);
-    if (op is MoveCard) {
-      _movers[op.cardId] = actorId;
-    }
-    if (op is EditCardDescription) {
-      _describers[op.cardId] = actorId;
-    }
-    return OpConfirmed(seq: seq);
-  }
+  final FakeBoardServer server;
 
-  final Map<String, String> _movers = <String, String>{};
-  final Map<String, String> _describers = <String, String>{};
+  BoardModel get serverBoard => server.board;
 
-  void _announceConflict(BoardOp op, NackReason reason) {
-    if (op is! EditCardDescription || reason != NackReason.versionConflict) {
-      return;
-    }
-    final author = _conflictActor(op);
-    if (author != null) {
-      _publish(op.cardId, author);
-    }
-  }
+  String get actorId => snapshot().currentUser.userId;
 
-  void publishCard(String cardId) {
-    final card = _server.cardById(cardId);
-    final author = _describers[cardId] ?? card?.updatedBy;
-    if (author != null) {
-      _publish(cardId, author);
-    }
-  }
-
-  void _publish(String cardId, String actorId) {
-    final card = _server.cardById(cardId);
-    if (card != null) {
-      _remote.add(
-        RemoteCardUpdate(card: card, seq: _server.seq, actorId: actorId),
-      );
-    }
-  }
-
-  static int _limitOf(BoardOp op) {
-    return op is EditCardDescription
-        ? CardLimits.descriptionMaxLength
-        : CardLimits.titleMaxLength;
-  }
-
-  String? _conflictActor(BoardOp op) {
-    if (op is EditCardDescription) {
-      return _describers[op.cardId] ?? _server.cardById(op.cardId)?.updatedBy;
-    }
-    return _lastMover(op.cardId);
-  }
-
-  String get actorId => _initial.currentUser.userId;
-
-  String? _lastMover(String cardId) {
-    return _movers[cardId] ?? _server.cardById(cardId)?.updatedBy;
-  }
+  static NackReason? validate(
+    BoardModel board,
+    BoardOp op, {
+    BoardRole? role,
+  }) => validateOp(board, op, role: role);
 
   void simulateRemoteMove({
     required String cardId,
     required String toColumnId,
     required String actorId,
+    bool deliver = true,
   }) {
-    final card = _server.cardById(cardId);
+    final card = server.board.cardById(cardId);
     if (card == null) {
       return;
     }
-    final op = MoveCard(
-      opId: 'remote-$cardId-${_server.seq}',
-      cardId: cardId,
-      toColumnId: toColumnId,
-      baseVersion: card.version,
+    server.commitRemote(
+      MoveCard(
+        opId: 'remote-$cardId-${server.seq}',
+        cardId: cardId,
+        toColumnId: toColumnId,
+        baseVersion: card.version,
+      ),
+      actorId: actorId,
+      deliver: deliver,
     );
-    _server = applyOp(_server, op).copyWith(seq: _server.seq + 1);
-    _movers[cardId] = actorId;
   }
 
   void simulateRemoteDescriptionEdit({
@@ -165,68 +113,22 @@ class FakeBoardGateway implements BoardRemoteFeed {
     required String actorId,
     bool deliver = false,
   }) {
-    final card = _server.cardById(cardId);
+    final card = server.board.cardById(cardId);
     if (card == null || card.archived) {
       return;
     }
-    final op = EditCardDescription(
-      opId: 'remote-$cardId-${_server.seq}',
-      cardId: cardId,
-      description: text,
-      baseDescriptionVersion: card.descriptionVersion,
+    server.commitRemote(
+      EditCardDescription(
+        opId: 'remote-$cardId-${server.seq}',
+        cardId: cardId,
+        description: text,
+        baseDescriptionVersion: card.descriptionVersion,
+        actorId: actorId,
+      ),
       actorId: actorId,
+      deliver: deliver,
     );
-    _server = applyOp(_server, op).copyWith(seq: _server.seq + 1);
-    _describers[cardId] = actorId;
-    if (deliver) {
-      _publish(cardId, actorId);
-    }
   }
 
-  static NackReason? validate(BoardModel board, BoardOp op) {
-    switch (op) {
-      case MoveCard():
-        final card = board.cardById(op.cardId);
-        if (card == null || card.archived) {
-          return NackReason.notFound;
-        }
-        if (board.columnById(op.toColumnId) == null) {
-          return NackReason.notFound;
-        }
-        if (card.version != op.baseVersion) {
-          return NackReason.versionConflict;
-        }
-        return null;
-      case CreateCard():
-        if (board.columnById(op.columnId) == null) {
-          return NackReason.notFound;
-        }
-        if (op.title.length > CardLimits.titleMaxLength) {
-          return NackReason.validationError;
-        }
-        return null;
-      case EditCardTitle():
-        final card = board.cardById(op.cardId);
-        if (card == null || card.archived) {
-          return NackReason.notFound;
-        }
-        return op.title.length > CardLimits.titleMaxLength
-            ? NackReason.validationError
-            : null;
-      case EditCardDescription():
-        final card = board.cardById(op.cardId);
-        if (card == null || card.archived) {
-          return NackReason.notFound;
-        }
-        if (op.description.length > CardLimits.descriptionMaxLength) {
-          return NackReason.validationError;
-        }
-        if (card.descriptionVersion != op.baseDescriptionVersion) {
-          return NackReason.versionConflict;
-        }
-        return null;
-      case ArchiveCard():
-        return board.cardById(op.cardId) == null ? NackReason.notFound : null;
-    }
-  }
+  void publishCard(String cardId) => server.flushHeld();
 }

@@ -57,3 +57,47 @@ String normalizeAvatarColor(String value) {
   }
   return '#${match.group(1)!.toUpperCase()}';
 }
+
+String? readOptionalString(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) {
+    return null;
+  }
+  if (value is String) {
+    return value;
+  }
+  throw FormatException('Invalid string field "$key"');
+}
+
+int? readOptionalInt(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return value;
+  }
+  throw FormatException('Invalid integer field "$key"');
+}
+
+bool readBool(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value is bool) {
+    return value;
+  }
+  throw FormatException('Missing boolean field "$key"');
+}
+
+List<String> readStringList(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value is! List<dynamic>) {
+    throw FormatException('Missing array field "$key"');
+  }
+  return <String>[
+    for (final item in value)
+      if (item is String)
+        item
+      else
+        throw FormatException('Invalid item in "$key"'),
+  ];
+}

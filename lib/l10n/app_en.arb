@@ -196,5 +196,8 @@
   "boardLoadingTitle": "Loading the board…",
   "boardLoadErrorTitle": "Couldn't open the board",
   "boardLoadErrorToList": "Back to boards",
-  "boardLoadErrorCode": "Error code: {code}"
+  "boardLoadErrorCode": "Error code: {code}",
+  "boardEndedRemoved": "Access to the board was revoked. You were removed from “{title}”.",
+  "boardEndedDeleted": "The board was deleted. The owner deleted “{title}”.",
+  "boardEndedAccessLost": "Access to the board was revoked or it was deleted."
 }

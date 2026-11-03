@@ -89,6 +89,7 @@ void main() {
           'lib/theme/',
           'lib/l10n/',
           'lib/core/network/api_policy.dart',
+          'lib/core/realtime/realtime_policy.dart',
         ],
       );
       expect(_violations(files, rules), isEmpty);

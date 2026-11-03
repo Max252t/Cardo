@@ -3,7 +3,7 @@ sealed class BoardOp {
 
   final String opId;
 
-  String get cardId;
+  String? get cardId => null;
 }
 
 final class MoveCard extends BoardOp {
@@ -189,4 +189,111 @@ final class ArchiveCard extends BoardOp {
 
   @override
   String toString() => 'ArchiveCard($opId, $cardId)';
+}
+
+final class CreateColumn extends BoardOp {
+  const CreateColumn({
+    required super.opId,
+    required this.columnId,
+    required this.title,
+    this.afterId,
+    this.beforeId,
+  });
+
+  final String columnId;
+  final String title;
+  final String? afterId;
+  final String? beforeId;
+
+  @override
+  bool operator ==(Object other) {
+    return other is CreateColumn &&
+        other.opId == opId &&
+        other.columnId == columnId &&
+        other.title == title &&
+        other.afterId == afterId &&
+        other.beforeId == beforeId;
+  }
+
+  @override
+  int get hashCode => Object.hash(opId, columnId, title, afterId, beforeId);
+
+  @override
+  String toString() => 'CreateColumn($opId, $columnId)';
+}
+
+final class RenameColumn extends BoardOp {
+  const RenameColumn({
+    required super.opId,
+    required this.columnId,
+    required this.title,
+  });
+
+  final String columnId;
+  final String title;
+
+  @override
+  bool operator ==(Object other) {
+    return other is RenameColumn &&
+        other.opId == opId &&
+        other.columnId == columnId &&
+        other.title == title;
+  }
+
+  @override
+  int get hashCode => Object.hash(opId, columnId, title);
+
+  @override
+  String toString() => 'RenameColumn($opId, $columnId)';
+}
+
+final class MoveColumn extends BoardOp {
+  const MoveColumn({
+    required super.opId,
+    required this.columnId,
+    required this.baseVersion,
+    this.afterId,
+    this.beforeId,
+  });
+
+  final String columnId;
+  final int baseVersion;
+  final String? afterId;
+  final String? beforeId;
+
+  @override
+  bool operator ==(Object other) {
+    return other is MoveColumn &&
+        other.opId == opId &&
+        other.columnId == columnId &&
+        other.baseVersion == baseVersion &&
+        other.afterId == afterId &&
+        other.beforeId == beforeId;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(opId, columnId, baseVersion, afterId, beforeId);
+
+  @override
+  String toString() => 'MoveColumn($opId, $columnId, base v$baseVersion)';
+}
+
+final class ArchiveColumn extends BoardOp {
+  const ArchiveColumn({required super.opId, required this.columnId});
+
+  final String columnId;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ArchiveColumn &&
+        other.opId == opId &&
+        other.columnId == columnId;
+  }
+
+  @override
+  int get hashCode => Object.hash(opId, columnId);
+
+  @override
+  String toString() => 'ArchiveColumn($opId, $columnId)';
 }

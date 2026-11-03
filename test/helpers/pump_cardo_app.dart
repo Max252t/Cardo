@@ -3,6 +3,8 @@ import 'package:cardo/app/cardo_app.dart';
 import 'package:cardo/core/config/app_config.dart';
 import 'package:cardo/features/auth/domain/auth_tokens.dart';
 import 'package:cardo/features/auth/presentation/auth_providers.dart';
+import 'package:cardo/features/board/data/realtime/realtime_transport.dart';
+import 'package:cardo/features/board/presentation/realtime_providers.dart';
 import 'package:cardo/l10n/app_localizations.dart';
 import 'package:cardo/shared/providers/app_config_provider.dart';
 import 'package:cardo/shared/time/now_provider.dart';
@@ -13,6 +15,7 @@ import 'package:go_router/go_router.dart';
 
 import 'api_json.dart';
 import 'fake_server.dart';
+import 'hanging_transport.dart';
 import 'memory_token_store.dart';
 
 const Size compactPhone = Size(375, 812);
@@ -84,6 +87,7 @@ Future<AppHandle> pumpCardoApp(
   bool settle = true,
   DateTime Function()? clock,
   RefreshCredential? credential,
+  RealtimeTransport? transport,
 }) async {
   final fake = server ?? FakeServer();
   final store = MemoryTokenStore(
@@ -101,6 +105,9 @@ Future<AppHandle> pumpCardoApp(
         appConfigProvider.overrideWithValue(AppConfig.parse(config)),
         dioAdapterProvider.overrideWithValue(fake.adapter),
         tokenStoreProvider.overrideWithValue(store),
+        realtimeTransportProvider.overrideWithValue(
+          transport ?? HangingTransport(),
+        ),
         nowProvider.overrideWithValue(clock ?? () => appNow),
       ],
       child: const CardoApp(),

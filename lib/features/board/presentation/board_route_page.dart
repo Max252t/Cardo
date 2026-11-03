@@ -7,34 +7,71 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../core/result/result.dart';
+import '../../../shared/providers/app_config_provider.dart';
+import '../../auth/domain/user.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../boards/presentation/boards_providers.dart';
 import '../../boards/presentation/widgets/boards_body.dart';
-import '../data/rest_board_gateway.dart';
+import '../data/realtime/realtime_credentials.dart';
+import '../data/server_board_gateway.dart';
 import '../domain/board_session.dart';
 import 'board_load_views.dart';
 import 'board_providers.dart';
 import 'board_scope.dart';
 import 'board_screen.dart';
+import 'realtime_providers.dart';
 
-final restBoardGatewayProvider = FutureProvider.autoDispose
-    .family<Result<RestBoardGateway, ApiFailure>, String>((ref, boardId) async {
+CurrentUser currentUserOf(User user) {
+  return CurrentUser(
+    userId: user.id,
+    name: user.displayName,
+    email: user.email,
+    avatarColor: user.avatarColor,
+  );
+}
+
+final sessionCurrentUserProvider = Provider<CurrentUser?>((ref) {
+  final user = ref.watch(sessionUserProvider);
+  return user == null ? null : currentUserOf(user);
+});
+
+final serverBoardGatewayProvider = FutureProvider.autoDispose
+    .family<Result<ServerBoardGateway, ApiFailure>, String>((
+      ref,
+      boardId,
+    ) async {
       final user = ref.read(sessionUserProvider);
+      final wsBase = ref.read(appConfigProvider).wsBaseUri;
       if (user == null) {
-        return const Failure<RestBoardGateway, ApiFailure>(
+        return const Failure<ServerBoardGateway, ApiFailure>(
           UnauthorizedFailure(UnauthorizedKind.missing),
         );
       }
-      return RestBoardGateway.load(
+      if (wsBase == null) {
+        return const Failure<ServerBoardGateway, ApiFailure>(UnknownFailure());
+      }
+      final result = await ServerBoardGateway.load(
         api: ref.watch(boardsApiProvider),
         boardId: boardId,
-        currentUser: CurrentUser(
-          userId: user.id,
-          name: user.displayName,
-          email: user.email,
-          avatarColor: user.avatarColor,
+        currentUser: currentUserOf(user),
+        realtime: RealtimeSettings(
+          transport: ref.read(realtimeTransportProvider),
+          credentials: TokenManagerCredentials(ref.read(tokenManagerProvider)),
+          wsBaseUri: wsBase,
+          scheduler: ref.read(realtimeSchedulerProvider),
+          now: ref.read(nowProvider),
+          random: ref.read(realtimeRandomProvider),
         ),
       );
+      if (result is Success<ServerBoardGateway, ApiFailure>) {
+        final gateway = result.value;
+        if (ref.mounted) {
+          ref.onDispose(() => unawaited(gateway.dispose()));
+        } else {
+          unawaited(gateway.dispose());
+        }
+      }
+      return result;
     });
 
 class BoardRoutePage extends ConsumerWidget {
@@ -46,16 +83,17 @@ class BoardRoutePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = GoRouter.of(context);
     void goToList() => router.go(AppRoutes.boards);
-    void retry() => ref.invalidate(restBoardGatewayProvider(boardId));
-    final async = ref.watch(restBoardGatewayProvider(boardId));
+    void retry() => ref.invalidate(serverBoardGatewayProvider(boardId));
+    final async = ref.watch(serverBoardGatewayProvider(boardId));
     if (async.isLoading) {
       return BoardLoadingView(onBack: goToList);
     }
     return switch (async) {
       AsyncData(:final value) => switch (value) {
-        Success<RestBoardGateway, ApiFailure>(:final value) => BoardScope(
+        Success<ServerBoardGateway, ApiFailure>(:final value) => BoardScope(
           key: ObjectKey(value),
           gateway: value,
+          liveUser: sessionCurrentUserProvider,
           navigation: BoardNavigation(
             onBack: goToList,
             onOpenBoard: (id) => router.go(AppRoutes.board(id)),
@@ -64,7 +102,7 @@ class BoardRoutePage extends ConsumerWidget {
           ),
           child: const BoardScreen(),
         ),
-        Failure<RestBoardGateway, ApiFailure>(:final failure) =>
+        Failure<ServerBoardGateway, ApiFailure>(:final failure) =>
           BoardLoadErrorView(
             failure: failure,
             onRetry: retry,

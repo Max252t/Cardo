@@ -1,7 +1,6 @@
 import 'package:cardo/features/board/domain/board_model.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/domain/card_draft.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/board_fixtures.dart';
-import '../helpers/controlled_remote_gateway.dart';
 
 const String _card = DemoIds.handshakeCard;
 const Duration _tick = Duration(milliseconds: 1);
@@ -45,9 +43,7 @@ void _rejectMove(ControlledGateway gateway, ProviderContainer container) {
   container
       .read(boardNotifierProvider.notifier)
       .moveCardToColumnEnd(cardId: _card, toColumnId: DemoIds.review);
-  gateway.calls.last.completer.complete(
-    const OpRejected(OpRejection(reason: NackReason.forbidden)),
-  );
+  gateway.calls.last.reject(NackReason.forbidden);
 }
 
 class _EditRights extends Notifier<bool> {
@@ -64,7 +60,7 @@ final _editRightsProvider = NotifierProvider<_EditRights, bool>(
 void main() {
   group('a confirmation that overtakes a remote edit', () {
     testWidgets('does not overwrite the remote text silently', (tester) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
@@ -77,7 +73,7 @@ void main() {
         seq: 1286,
       );
       expect(_draft(container)!.submitted, isTrue);
-      call.completer.complete(const OpConfirmed(seq: 1285));
+      call.confirm(1285);
       await tester.pump(_tick);
 
       final draft = _draft(container)!;
@@ -113,7 +109,7 @@ void main() {
       expect(_descriptionCalls(gateway), isEmpty);
       expect(_draft(container, cardId)!.text, 'text for fresh');
 
-      created.completer.complete(const OpConfirmed(seq: 1285));
+      created.confirm(1285);
       await tester.pump(_tick);
 
       final calls = _descriptionCalls(gateway);
@@ -134,9 +130,7 @@ void main() {
       final cardId = (created.op as CreateCard).cardId;
       _drafts(container).edit(cardId, 'text for fresh');
 
-      created.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      created.reject(NackReason.forbidden);
       await tester.pump(_tick);
 
       expect(container.read(cardDraftsProvider), isEmpty);
@@ -187,7 +181,7 @@ void main() {
       expect(_descriptionCalls(gateway).length, 1);
       expect(_draft(container)!.flushRequested, isTrue);
 
-      gateway.calls.single.completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls.single.confirm(1285);
       await tester.pump(_tick);
 
       final calls = _descriptionCalls(gateway);
@@ -236,7 +230,7 @@ void main() {
     testWidgets('a conflicted or oversized draft is never auto-sent', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container)
           .edit(_card, 'x' * (CardLimits.descriptionMaxLength + 1));
@@ -252,23 +246,21 @@ void main() {
     testWidgets('buttons are inert until the event with the new version', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(
-        const OpRejected(
-          OpRejection(
-            reason: NackReason.versionConflict,
-            actorId: DemoIds.maxim,
-            atSeq: 1290,
-          ),
+      gateway.calls.single.rejectWith(
+        OpRejection(
+          reason: NackReason.versionConflict,
+          actorId: DemoIds.maxim,
+          atSeq: 1285,
         ),
       );
       await tester.pump(_tick);
 
       expect(_draft(container)!.conflict, isTrue);
-      expect(_draft(container)!.conflictAtSeq, 1290);
+      expect(_draft(container)!.conflictAtSeq, 1285);
       expect(_sheet(container).conflict!.resolvable, isFalse);
 
       _drafts(container).overwrite(_card);
@@ -280,7 +272,7 @@ void main() {
         _card,
         'theirs',
         descriptionVersion: 2,
-        seq: 1290,
+        seq: 1285,
       );
       expect(_sheet(container).conflict!.resolvable, isTrue);
 
@@ -297,17 +289,15 @@ void main() {
     testWidgets('a newer description version also unlocks the buttons', (
       tester,
     ) async {
-      final gateway = ControlledRemoteGateway();
+      final gateway = ControlledGateway();
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(
-        const OpRejected(
-          OpRejection(
-            reason: NackReason.versionConflict,
-            actorId: DemoIds.maxim,
-            atSeq: 1300,
-          ),
+      gateway.calls.single.rejectWith(
+        OpRejection(
+          reason: NackReason.versionConflict,
+          actorId: DemoIds.maxim,
+          atSeq: 1300,
         ),
       );
       await tester.pump(_tick);
@@ -334,7 +324,7 @@ void main() {
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(const OpRejected(_conflict));
+      gateway.calls.single.rejectWith(_conflict);
       await tester.pump(_tick);
       expect(_sheet(container).conflict!.resolvable, isTrue);
       _drafts(container).discard(_card);
@@ -352,7 +342,7 @@ void main() {
       final container = _open(gateway);
       _drafts(container).edit(_card, 'mine');
       _drafts(container).save(_card);
-      gateway.calls.single.completer.complete(const OpRejected(_conflict));
+      gateway.calls.single.rejectWith(_conflict);
       await tester.pump(_tick);
 
       expect(_board(container).cardStatus(_card), CardSyncStatus.rejected);

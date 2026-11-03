@@ -7,6 +7,7 @@ import '../../../theme/cardo_theme.dart';
 import 'board_providers.dart';
 import 'card_sheet_data.dart';
 import 'widgets/board_header.dart';
+import 'widgets/board_end_listener.dart';
 import 'widgets/board_notices_listener.dart';
 import 'widgets/board_sidebar.dart';
 import 'widgets/card_detail_panel.dart';
@@ -22,17 +23,19 @@ class BoardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final layout = CardoLayout.of(context);
     final windowClass = layout.windowClassFor(MediaQuery.sizeOf(context).width);
-    return BoardNoticesListener(
-      child: Scaffold(
-        body: switch (windowClass) {
-          CardoWindowClass.compact => CompactBoard(
-            onCardTap: (cardId) => _openPreview(context, ref, cardId),
-          ),
-          CardoWindowClass.medium => MediumBoardLayout(
-            onCardTap: (cardId) => _openPreview(context, ref, cardId),
-          ),
-          CardoWindowClass.expanded => const ExpandedBoardLayout(),
-        },
+    return BoardEndListener(
+      child: BoardNoticesListener(
+        child: Scaffold(
+          body: switch (windowClass) {
+            CardoWindowClass.compact => CompactBoard(
+              onCardTap: (cardId) => _openPreview(context, ref, cardId),
+            ),
+            CardoWindowClass.medium => MediumBoardLayout(
+              onCardTap: (cardId) => _openPreview(context, ref, cardId),
+            ),
+            CardoWindowClass.expanded => const ExpandedBoardLayout(),
+          },
+        ),
       ),
     );
   }

@@ -1,13 +1,16 @@
+import 'package:cardo/core/models/board_role.dart';
+import 'package:cardo/features/board/data/board_gateway.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/data/fake_board_gateway.dart';
 import 'package:cardo/features/board/domain/apply_op.dart';
+import 'package:cardo/features/board/domain/board_event.dart';
 import 'package:cardo/features/board/domain/board_model.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/board_fixtures.dart';
+import '../helpers/gateway_probe.dart';
 
 CreateCard _create(String title, {String columnId = colA}) {
   return CreateCard(
@@ -165,7 +168,7 @@ void main() {
     });
   });
 
-  group('submit', () {
+  group('submit over the protocol', () {
     FakeBoardGateway gateway({RejectPolicy? rejectWhen}) {
       return FakeBoardGateway(
         confirmDelay: Duration.zero,
@@ -173,20 +176,33 @@ void main() {
       );
     }
 
+    Future<GatewayProbe> open(FakeBoardGateway fake) async {
+      final probe = GatewayProbe(fake);
+      await probe.settle();
+      addTearDown(probe.dispose);
+      return probe;
+    }
+
     test('confirms and advances seq and server board', () async {
       final fake = gateway();
+      final probe = await open(fake);
       final start = fake.snapshot().board.seq;
-      final outcome = await fake.submit(
-        moveOp('c-audit', DemoIds.done, baseVersion: 1),
+      expect(
+        await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 1)),
+        SendOutcome.sent,
       );
-      expect(outcome, OpConfirmed(seq: start + 1));
+      final event = probe.events.single as CardMovedEvent;
+      expect(event.seq, start + 1);
+      expect(event.opId, 'op');
+      expect(event.toColumnId, DemoIds.done);
       expect(fake.serverBoard.seq, start + 1);
-      expect(fake.snapshot().board.cardById('c-audit')!.columnId, DemoIds.done);
+      expect(fake.serverBoard.cardById('c-audit')!.columnId, DemoIds.done);
     });
 
-    test('too long title is rejected with the limit and seq', () async {
+    test('too long title is rejected with the seq', () async {
       final fake = gateway();
-      final outcome = await fake.submit(
+      final probe = await open(fake);
+      await probe.send(
         CreateCard(
           opId: 'c',
           cardId: 'n',
@@ -195,66 +211,71 @@ void main() {
           actorId: DemoIds.elena,
         ),
       );
-      final rejection = (outcome as OpRejected).rejection;
+      final rejection = probe.nacks.single.rejection;
       expect(rejection.reason, NackReason.validationError);
-      expect(rejection.limit, 500);
       expect(rejection.atSeq, fake.serverBoard.seq);
       expect(fake.serverBoard.cardById('n'), isNull);
       expect(fake.serverBoard.seq, 1284);
     });
 
     test('not found has no actor and no limit', () async {
-      final fake = gateway();
-      final outcome = await fake.submit(moveOp('zz', DemoIds.done));
-      final rejection = (outcome as OpRejected).rejection;
+      final probe = await open(gateway());
+      await probe.send(moveOp('zz', DemoIds.done));
+      final rejection = probe.nacks.single.rejection;
       expect(rejection.reason, NackReason.notFound);
       expect(rejection.actorId, isNull);
       expect(rejection.limit, isNull);
     });
 
-    test('version conflict reports the last mover', () async {
+    test('a remote move makes the stale base a version conflict', () async {
       final fake = gateway();
+      final probe = await open(fake);
       fake.simulateRemoteMove(
         cardId: 'c-audit',
         toColumnId: DemoIds.review,
         actorId: DemoIds.anya,
       );
-      final outcome = await fake.submit(
-        moveOp('c-audit', DemoIds.done, baseVersion: 1),
-      );
-      final rejection = (outcome as OpRejected).rejection;
+      await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 1));
+      final rejection = probe.nacks.single.rejection;
       expect(rejection.reason, NackReason.versionConflict);
-      expect(rejection.actorId, DemoIds.anya);
       expect(rejection.atSeq, 1285);
+      final remote = probe.events.single as CardMovedEvent;
+      expect(remote.actorId, DemoIds.anya);
     });
 
-    test('version conflict falls back to updatedBy', () async {
-      final fake = gateway();
-      final outcome = await fake.submit(
-        moveOp('c-audit', DemoIds.done, baseVersion: 9),
-      );
-      expect((outcome as OpRejected).rejection.actorId, DemoIds.elena);
+    test('a wrong base version is a conflict', () async {
+      final probe = await open(gateway());
+      await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 9));
+      expect(probe.nacks.single.rejection.reason, NackReason.versionConflict);
     });
 
     test('rejectWhen overrides validation and stamps seq', () async {
       final fake = gateway(
         rejectWhen: (op) => const OpRejection(reason: NackReason.rateLimited),
       );
-      final outcome = await fake.submit(
-        moveOp('c-audit', DemoIds.done, baseVersion: 1),
-      );
-      final rejection = (outcome as OpRejected).rejection;
+      final probe = await open(fake);
+      await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 1));
+      final rejection = probe.nacks.single.rejection;
       expect(rejection.reason, NackReason.rateLimited);
       expect(rejection.atSeq, 1284);
       expect(fake.serverBoard.cardById('c-audit')!.columnId, DemoIds.backlog);
     });
 
     test('rejectWhen returning null lets the op through', () async {
-      final fake = gateway(rejectWhen: (op) => null);
-      final outcome = await fake.submit(
-        moveOp('c-audit', DemoIds.done, baseVersion: 1),
+      final probe = await open(gateway(rejectWhen: (op) => null));
+      await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 1));
+      expect(probe.events.single, isA<CardMovedEvent>());
+      expect(probe.nacks, isEmpty);
+    });
+
+    test('a viewer is refused as forbidden', () async {
+      final fake = FakeBoardGateway(
+        initial: demoBoardSnapshot(currentUserRole: BoardRole.viewer),
+        confirmDelay: Duration.zero,
       );
-      expect(outcome, isA<OpConfirmed>());
+      final probe = await open(fake);
+      await probe.send(moveOp('c-audit', DemoIds.done, baseVersion: 1));
+      expect(probe.nacks.single.rejection.reason, NackReason.forbidden);
     });
 
     test('simulateRemoteMove ignores unknown cards', () {

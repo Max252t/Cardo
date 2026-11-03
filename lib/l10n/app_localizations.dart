@@ -1279,6 +1279,24 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Код ошибки: {code}'**
   String boardLoadErrorCode(String code);
+
+  /// Сообщение после выхода с доски, когда участника исключили
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт. Вас убрали из участников доски «{title}».'**
+  String boardEndedRemoved(String title);
+
+  /// Сообщение после выхода с доски, когда её удалили
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска удалена. Владелец удалил доску «{title}».'**
+  String boardEndedDeleted(String title);
+
+  /// Сообщение после выхода с доски, когда сервер отказал в подключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт, или она удалена.'**
+  String get boardEndedAccessLost;
 }
 
 class _AppLocalizationsDelegate

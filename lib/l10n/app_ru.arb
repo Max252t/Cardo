@@ -477,5 +477,11 @@
   "boardLoadErrorToList": "К списку досок",
   "@boardLoadErrorToList": {"description":"Кнопка возврата к списку из ошибки"},
   "boardLoadErrorCode": "Код ошибки: {code}",
-  "@boardLoadErrorCode": {"description":"Код ошибки загрузки доски","placeholders":{"code":{"type":"String"}}}
+  "@boardLoadErrorCode": {"description":"Код ошибки загрузки доски","placeholders":{"code":{"type":"String"}}},
+  "boardEndedRemoved": "Доступ к доске закрыт. Вас убрали из участников доски «{title}».",
+  "@boardEndedRemoved": {"description":"Сообщение после выхода с доски, когда участника исключили","placeholders":{"title":{"type":"String"}}},
+  "boardEndedDeleted": "Доска удалена. Владелец удалил доску «{title}».",
+  "@boardEndedDeleted": {"description":"Сообщение после выхода с доски, когда её удалили","placeholders":{"title":{"type":"String"}}},
+  "boardEndedAccessLost": "Доступ к доске закрыт, или она удалена.",
+  "@boardEndedAccessLost": {"description":"Сообщение после выхода с доски, когда сервер отказал в подключении"}
 }

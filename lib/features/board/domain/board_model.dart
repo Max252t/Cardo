@@ -311,3 +311,22 @@ class BoardModel {
       'BoardModel($id, seq $seq, ${columns.length} columns, '
       '${cards.length} cards)';
 }
+
+ColumnMarker columnMarkerAt(int index, int count) {
+  if (index == 0) {
+    return ColumnMarker.backlog;
+  }
+  if (index == count - 1) {
+    return ColumnMarker.done;
+  }
+  return index == 1 ? ColumnMarker.inProgress : ColumnMarker.review;
+}
+
+List<ColumnModel> withColumnMarkers(Iterable<ColumnModel> columns) {
+  final sorted = List<ColumnModel>.of(columns)
+    ..sort((a, b) => compareRanks(a.rank, b.rank));
+  return <ColumnModel>[
+    for (var i = 0; i < sorted.length; i++)
+      sorted[i].copyWith(marker: columnMarkerAt(i, sorted.length)),
+  ];
+}
