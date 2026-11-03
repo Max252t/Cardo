@@ -136,6 +136,69 @@ void main() {
     });
   });
 
+  group('operations that must not overtake a held one', () {
+    test('archiving a column waits for a held move out of it', () {
+      final sent = <String>[];
+      final sender = _sender(sent);
+      sender.enqueue(_createCol);
+      sender.enqueue(
+        const MoveCard(
+          opId: 'move-out',
+          cardId: 'a1',
+          toColumnId: 'col-new',
+          baseVersion: 1,
+        ),
+      );
+      sender.enqueue(const ArchiveColumn(opId: 'arch-a', columnId: 'col-a'));
+
+      expect(sent, <String>['cc']);
+      sender.releaseResolved((opId) => opId == 'cc');
+      expect(sent, <String>['cc', 'move-out', 'arch-a']);
+      sender.dispose();
+    });
+
+    test('a later move of a column waits for its held move', () {
+      final sent = <String>[];
+      final sender = _sender(sent);
+      sender.enqueue(_createCol);
+      sender.enqueue(
+        const MoveColumn(
+          opId: 'right',
+          columnId: 'col-y',
+          afterId: 'col-new',
+          baseVersion: 1,
+        ),
+      );
+      sender.enqueue(
+        const MoveColumn(
+          opId: 'left',
+          columnId: 'col-y',
+          afterId: 'col-z',
+          baseVersion: 2,
+        ),
+      );
+      sender.enqueue(const ArchiveColumn(opId: 'arch-y', columnId: 'col-y'));
+
+      expect(sent, <String>['cc']);
+      sender.releaseResolved((opId) => opId == 'cc');
+      expect(sent, <String>['cc', 'right', 'left', 'arch-y']);
+      sender.dispose();
+    });
+
+    test('other operations still pass a held one', () {
+      final sent = <String>[];
+      final sender = _sender(sent);
+      sender.enqueue(_createCol);
+      sender.enqueue(_createCard);
+      sender.enqueue(
+        const RenameColumn(opId: 'rn', columnId: 'col-other', title: 'R'),
+      );
+
+      expect(sent, <String>['cc', 'rn']);
+      sender.dispose();
+    });
+  });
+
   group('refill', () {
     test('a queue held back by barriers schedules no refill', () {
       final scheduler = RecordingScheduler();

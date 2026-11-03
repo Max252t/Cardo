@@ -121,20 +121,25 @@ class OpSender {
   int _nextSendable() {
     final heldCards = <String>{};
     final heldColumns = <String>{};
+    var anyHeld = false;
     for (var i = 0; i < _queue.length; i++) {
       final op = _queue[i];
       final cardId = op.cardId;
       final held =
           _isBlocked(op) ||
           (cardId != null && heldCards.contains(cardId)) ||
-          heldColumns.any(op.referencesColumn);
+          heldColumns.any(op.referencesColumn) ||
+          (anyHeld && op is ArchiveColumn);
       if (!held) {
         return i;
       }
+      anyHeld = true;
       if (cardId != null) {
         heldCards.add(cardId);
       }
       if (op is CreateColumn) {
+        heldColumns.add(op.columnId);
+      } else if (op is MoveColumn) {
         heldColumns.add(op.columnId);
       }
     }
