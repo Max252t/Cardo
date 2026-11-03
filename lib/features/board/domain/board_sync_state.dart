@@ -5,18 +5,15 @@ import 'apply_op.dart';
 import 'board_event.dart';
 import 'board_model.dart';
 import 'board_op.dart';
+import 'op_rejection.dart';
+import 'reconnect_batch.dart';
+import 'rejection_log.dart';
+
+export 'op_rejection.dart';
+export 'reconnect_batch.dart';
+export 'rejection_log.dart';
 
 enum PendingOpStatus { queued, sent, rejected }
-
-enum NackReason {
-  versionConflict,
-  notFound,
-  forbidden,
-  validationError,
-  rateLimited,
-  resyncRequired,
-  internal,
-}
 
 enum BoardEndReason {
   removed,
@@ -27,53 +24,6 @@ enum BoardEndReason {
 }
 
 enum CardSyncStatus { confirmed, pending, rejected }
-
-class OpRejection {
-  const OpRejection({
-    required this.reason,
-    this.atSeq,
-    this.actorId,
-    this.limit,
-  });
-
-  final NackReason reason;
-  final int? atSeq;
-  final String? actorId;
-  final int? limit;
-
-  OpRejection withSeq(int seq) {
-    return OpRejection(
-      reason: reason,
-      atSeq: atSeq ?? seq,
-      actorId: actorId,
-      limit: limit,
-    );
-  }
-
-  OpRejection withActor(String? actor) {
-    return OpRejection(
-      reason: reason,
-      atSeq: atSeq,
-      actorId: actor,
-      limit: limit,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is OpRejection &&
-        other.reason == reason &&
-        other.atSeq == atSeq &&
-        other.actorId == actorId &&
-        other.limit == limit;
-  }
-
-  @override
-  int get hashCode => Object.hash(reason, atSeq, actorId, limit);
-
-  @override
-  String toString() => 'OpRejection(${reason.name}, at $atSeq)';
-}
 
 class PendingOp {
   const PendingOp({
@@ -144,6 +94,9 @@ class BoardSyncState {
     this.reconnectSeconds,
     this.ended,
     Set<String> abandoned = const <String>{},
+    this.rejections = const RejectionLog.empty(),
+    this.batch,
+    this.summary,
   }) : pending = List<PendingOp>.unmodifiable(pending),
        abandoned = Set<String>.unmodifiable(abandoned);
 
@@ -154,6 +107,11 @@ class BoardSyncState {
   final int? reconnectSeconds;
   final BoardEndReason? ended;
   final Set<String> abandoned;
+  final RejectionLog rejections;
+  final ReconnectBatch? batch;
+  final SyncSummary? summary;
+
+  int get waitingCount => pending.where((item) => !item.isRejected).length;
 
   BoardModel get view =>
       pending.fold(confirmed, (board, item) => applyOp(board, item.op));
@@ -252,22 +210,40 @@ class BoardSyncState {
     }
     final kept = <PendingOp>[];
     final gone = <String>{...dropped};
+    final logged = <RejectedOp>[];
+    final before = view;
     for (final item in pending) {
       final cardId = item.op.cardId;
-      if (dropped.contains(item.opId) ||
-          (cardId != null && droppedCards.contains(cardId))) {
+      final stale = dropped.contains(item.opId);
+      if (stale || (cardId != null && droppedCards.contains(cardId))) {
         gone.add(item.opId);
+        if (!item.isDescriptionConflict) {
+          logged.add(
+            describeRejected(
+              item.op,
+              confirmed,
+              before,
+              dropCause: stale ? DropCause.stale : DropCause.targetGone,
+            ),
+          );
+        }
       } else {
         kept.add(item);
       }
     }
-    return copyWith(pending: kept, abandoned: <String>{...abandoned, ...gone});
+    return copyWith(
+      pending: kept,
+      abandoned: <String>{...abandoned, ...gone},
+      rejections: rejections.add(logged),
+    );
   }
 
   BoardSyncState rebased() {
     var board = confirmed;
     final kept = <PendingOp>[];
     final gone = <String>{};
+    final logged = <RejectedOp>[];
+    final before = view;
     for (final item in pending) {
       if (item.isRejected) {
         kept.add(item);
@@ -278,11 +254,164 @@ class BoardSyncState {
         kept.add(item);
       } else {
         gone.add(item.opId);
+        logged.add(
+          describeRejected(
+            item.op,
+            confirmed,
+            before,
+            dropCause: DropCause.targetGone,
+          ),
+        );
       }
     }
     return gone.isEmpty
         ? this
-        : copyWith(pending: kept, abandoned: <String>{...abandoned, ...gone});
+        : copyWith(
+            pending: kept,
+            abandoned: <String>{...abandoned, ...gone},
+            rejections: rejections.add(logged),
+          );
+  }
+
+  BoardSyncState withRejectionLogged(String opId) {
+    final item = pendingById(opId);
+    if (item == null || !item.isRejected || item.isDescriptionConflict) {
+      return this;
+    }
+    final op = item.op;
+    final entries = <RejectedOp>[
+      describeRejected(op, confirmed, view, rejection: item.rejection),
+    ];
+    if (op is CreateCard) {
+      for (final other in pending) {
+        if (other.opId != opId &&
+            !other.isRejected &&
+            other.op.cardId == op.cardId) {
+          entries.add(
+            describeRejected(
+              other.op,
+              confirmed,
+              view,
+              dropCause: DropCause.targetGone,
+            ),
+          );
+        }
+      }
+    }
+    return copyWith(rejections: rejections.add(entries))._capped();
+  }
+
+  Set<String> get _protectedIds => <String>{
+    ...?batch?.ids,
+    ...?summary?.failedIds,
+  };
+
+  BoardSyncState _capped() {
+    final next = rejections.capped(_protectedIds);
+    return identical(next, rejections) ? this : copyWith(rejections: next);
+  }
+
+  BoardSyncState afterReady(
+    DateTime now,
+    Duration maxAge, {
+    bool reconnect = true,
+  }) {
+    final queued = <String>[
+      for (final item in pending)
+        if (!item.isRejected) item.opId,
+    ];
+    final next = withoutStale(now, maxAge).rebased();
+    final tracked = reconnect
+        ? queued
+        : <String>[
+            for (final id in queued)
+              if (next.pendingById(id) == null) id,
+          ];
+    if (tracked.isEmpty) {
+      return next._capped();
+    }
+    return next
+        .copyWith(batch: batch?.merge(tracked) ?? ReconnectBatch(ids: tracked))
+        .settleBatch();
+  }
+
+  BoardSyncState afterSnapshot(BoardModel board) {
+    final queued = <String>[
+      for (final item in pending)
+        if (!item.isRejected) item.opId,
+    ];
+    final next = replaceConfirmed(board).rebased();
+    final dropped = <String>[
+      for (final id in queued)
+        if (next.pendingById(id) == null) id,
+    ];
+    if (dropped.isEmpty) {
+      return next._capped();
+    }
+    return next
+        .copyWith(
+          batch: next.batch?.merge(dropped) ?? ReconnectBatch(ids: dropped),
+        )
+        .settleBatch();
+  }
+
+  bool _unresolved(String opId) {
+    final item = pendingById(opId);
+    if (item == null || item.isRejected) {
+      return false;
+    }
+    final cardId = item.op.cardId;
+    return cardId == null || !hasRejectedCreate(cardId);
+  }
+
+  BoardSyncState settleBatch() {
+    final current = batch;
+    if (current == null) {
+      return this;
+    }
+    if (current.ids.any(_unresolved)) {
+      final noted = current.withHeld(_heldIn(current));
+      return identical(noted, current) ? this : copyWith(batch: noted);
+    }
+    final failed = <String>[
+      for (final id in current.ids)
+        if (rejections.contains(id)) id,
+    ];
+    final held = <String>{...current.held, ..._heldIn(current)};
+    final saved = current.ids
+        .where((id) => !held.contains(id) && !rejections.contains(id))
+        .length;
+    final existing = summary;
+    return copyWith(
+      clearBatch: true,
+      summary: failed.isEmpty
+          ? existing
+          : existing == null
+          ? SyncSummary(failedIds: failed, savedCount: saved)
+          : existing.merge(failed, saved),
+    )._capped();
+  }
+
+  Iterable<String> _heldIn(ReconnectBatch current) sync* {
+    for (final id in current.ids) {
+      if (pendingById(id)?.isDescriptionConflict ?? false) {
+        yield id;
+      }
+    }
+  }
+
+  BoardSyncState dismissedSummary() {
+    return summary == null ? this : copyWith(clearSummary: true);
+  }
+
+  BoardSyncState acknowledgedRejections() {
+    if (summary == null && rejections.isEmpty) {
+      return this;
+    }
+    return copyWith(
+      clearSummary: true,
+      rejections: rejections.only(<String>{...?batch?.ids}),
+    );
   }
 
   BoardSyncState copyWith({
@@ -294,6 +423,11 @@ class BoardSyncState {
     bool clearReconnectSeconds = false,
     BoardEndReason? ended,
     Set<String>? abandoned,
+    RejectionLog? rejections,
+    ReconnectBatch? batch,
+    bool clearBatch = false,
+    SyncSummary? summary,
+    bool clearSummary = false,
   }) {
     return BoardSyncState(
       confirmed: confirmed ?? this.confirmed,
@@ -305,6 +439,9 @@ class BoardSyncState {
           : reconnectSeconds ?? this.reconnectSeconds,
       ended: ended ?? this.ended,
       abandoned: abandoned ?? this.abandoned,
+      rejections: rejections ?? this.rejections,
+      batch: clearBatch ? null : batch ?? this.batch,
+      summary: clearSummary ? null : summary ?? this.summary,
     );
   }
 
@@ -318,7 +455,10 @@ class BoardSyncState {
         other.reconnectSeconds == reconnectSeconds &&
         other.ended == ended &&
         other.abandoned.length == abandoned.length &&
-        other.abandoned.containsAll(abandoned);
+        other.abandoned.containsAll(abandoned) &&
+        other.rejections == rejections &&
+        other.batch == batch &&
+        other.summary == summary;
   }
 
   @override
@@ -330,6 +470,9 @@ class BoardSyncState {
     reconnectSeconds,
     ended,
     abandoned.length,
+    rejections,
+    batch,
+    summary,
   );
 
   @override
