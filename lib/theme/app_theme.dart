@@ -8,6 +8,7 @@ import 'cardo_radii.dart';
 import 'cardo_shadows.dart';
 import 'cardo_sizes.dart';
 import 'cardo_spacing.dart';
+import 'cardo_sync_tokens.dart';
 import 'cardo_typography.dart';
 
 ThemeData buildLightTheme() {
@@ -96,6 +97,7 @@ ThemeData _buildTheme({
   const motion = CardoMotion.standard;
   const layout = CardoLayout.standard;
   const form = CardoFormTokens.standard;
+  const sync = CardoSyncTokens.standard;
 
   final scheme = _colorScheme(colors);
   final buttonShape = RoundedRectangleBorder(
@@ -234,6 +236,7 @@ ThemeData _buildTheme({
       motion,
       layout,
       form,
+      sync,
     ],
   );
 }
