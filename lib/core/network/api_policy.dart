@@ -16,7 +16,11 @@ abstract final class ApiPaths {
   static const String healthz = '/healthz';
   static const String readyz = '/readyz';
 
+  static const String afterSeqParam = 'after_seq';
+
   static String board(String id) => '/api/boards/${Uri.encodeComponent(id)}';
+
+  static String boardEvents(String id) => '${board(id)}/events';
 
   static const Set<String> public = <String>{
     register,
