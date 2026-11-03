@@ -747,4 +747,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String boardLoadErrorCode(String code) {
     return 'Error code: $code';
   }
+
+  @override
+  String boardEndedRemoved(String title) {
+    return 'Access to the board was revoked. You were removed from “$title”.';
+  }
+
+  @override
+  String boardEndedDeleted(String title) {
+    return 'The board was deleted. The owner deleted “$title”.';
+  }
+
+  @override
+  String get boardEndedAccessLost =>
+      'Access to the board was revoked or it was deleted.';
 }

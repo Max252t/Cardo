@@ -23,6 +23,7 @@ String nackMessage(
     NackReason.notFound => l10n.nackNotFound,
     NackReason.rateLimited => l10n.nackRateLimited,
     NackReason.internal when retrying => l10n.nackInternal,
+    NackReason.resyncRequired => l10n.nackInternalFinal,
     NackReason.internal => l10n.nackInternalFinal,
   };
 }

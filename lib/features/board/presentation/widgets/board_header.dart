@@ -89,8 +89,10 @@ class CompactHeaderBar extends ConsumerWidget {
     final spacing = CardoSpacing.of(context);
     final layout = CardoLayout.of(context);
     final l10n = AppLocalizations.of(context);
-    final connection = ref.watch(
-      boardNotifierProvider.select((state) => state.connection),
+    final (connection, reconnectSeconds) = ref.watch(
+      boardNotifierProvider.select(
+        (state) => (state.connection, state.reconnectSeconds),
+      ),
     );
     final canEdit = ref.watch(canEditBoardProvider);
     final userId = ref.watch(currentUserProvider).userId;
@@ -116,6 +118,7 @@ class CompactHeaderBar extends ConsumerWidget {
               SizedBox(height: spacing.xxs),
               ConnectionPill(
                 status: connection,
+                reconnectSeconds: reconnectSeconds,
                 variant: ConnectionPillVariant.compact,
               ),
             ],
@@ -201,8 +204,10 @@ class ExpandedHeaderTitle extends ConsumerWidget {
     final spacing = CardoSpacing.of(context);
     final layout = CardoLayout.of(context);
     final l10n = AppLocalizations.of(context);
-    final connection = ref.watch(
-      boardNotifierProvider.select((state) => state.connection),
+    final (connection, reconnectSeconds) = ref.watch(
+      boardNotifierProvider.select(
+        (state) => (state.connection, state.reconnectSeconds),
+      ),
     );
     final lastSeq = ref.watch(
       boardNotifierProvider.select((state) => state.lastSeq),
@@ -220,6 +225,7 @@ class ExpandedHeaderTitle extends ConsumerWidget {
           children: <Widget>[
             ConnectionPill(
               status: connection,
+              reconnectSeconds: reconnectSeconds,
               variant: connection == ConnectionStatus.connected
                   ? ConnectionPillVariant.compact
                   : ConnectionPillVariant.pill,
