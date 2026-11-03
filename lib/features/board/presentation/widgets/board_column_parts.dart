@@ -5,6 +5,7 @@ import '../../../../shared/widgets/card_tile.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_view_data.dart';
 import '../board_drag_controller.dart';
+import 'add_card_slot.dart';
 import 'board_card_item.dart';
 import 'board_column_header.dart';
 import 'column_empty_state.dart';
@@ -120,7 +121,7 @@ class ColumnFooter extends StatelessWidget {
           : Align(
               alignment: AlignmentDirectional.topStart,
               child: canEdit
-                  ? AddCardButton(columnId: columnId, dense: dense)
+                  ? AddCardSlot(columnId: columnId, dense: dense)
                   : SizedBox(height: CardoSizes.of(context).hairline),
             ),
     );

@@ -4,7 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/dashed_border.dart';
 import '../../../../theme/cardo_theme.dart';
-import 'board_column_header.dart';
+import 'add_card_slot.dart';
 
 class ColumnEmptyState extends StatelessWidget {
   const ColumnEmptyState({
@@ -56,7 +56,7 @@ class ColumnEmptyState extends StatelessWidget {
               ],
             ),
             if (canEdit)
-              AddCardButton(columnId: columnId, dense: dense, prominent: true),
+              AddCardSlot(columnId: columnId, dense: dense, prominent: true),
           ],
         ),
       ),

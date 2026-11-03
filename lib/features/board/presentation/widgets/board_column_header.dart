@@ -1,14 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_view_data.dart';
-import '../board_providers.dart';
-import 'add_card_dialog.dart';
 import 'column_menu_sheet.dart';
 import 'column_marker.dart';
 
@@ -127,20 +124,22 @@ class ColumnMenuButton extends StatelessWidget {
   }
 }
 
-class AddCardButton extends ConsumerWidget {
+class AddCardButton extends StatelessWidget {
   const AddCardButton({
     super.key,
     required this.columnId,
     required this.dense,
+    required this.onPressed,
     this.prominent = false,
   });
 
   final String columnId;
   final bool dense;
+  final VoidCallback onPressed;
   final bool prominent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colors = CardoColors.of(context);
     final typography = CardoTypography.of(context);
     final sizes = CardoSizes.of(context);
@@ -149,7 +148,7 @@ class AddCardButton extends ConsumerWidget {
     final layout = CardoLayout.of(context);
     final l10n = AppLocalizations.of(context);
     return TextButton.icon(
-      onPressed: () => unawaited(_add(context, ref)),
+      onPressed: onPressed,
       icon: Icon(
         LucideIcons.plus,
         size: dense ? layout.iconDense : sizes.iconButton,
@@ -185,13 +184,5 @@ class AddCardButton extends ConsumerWidget {
             : typography.tab,
       ),
     );
-  }
-
-  Future<void> _add(BuildContext context, WidgetRef ref) async {
-    final notifier = ref.read(boardNotifierProvider.notifier);
-    final title = await showAddCardDialog(context);
-    if (title != null) {
-      notifier.createCard(columnId: columnId, title: title);
-    }
   }
 }

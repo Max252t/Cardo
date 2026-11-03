@@ -993,4 +993,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get columnArchiveConfirm => 'Archive';
+
+  @override
+  String get cardComposerDescription => 'Description';
+
+  @override
+  String get cardInlineEditCaption => 'Editing title';
+
+  @override
+  String get cardInlineEditCancel => 'Cancel editing';
+
+  @override
+  String get cardInlineEditSave => 'Save title';
+
+  @override
+  String get cardInlineEditAction => 'Edit title on the board';
 }

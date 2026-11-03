@@ -5,7 +5,6 @@ import 'package:cardo/features/board/domain/board_op.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/presentation/board_drag_controller.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
-import 'package:cardo/features/board/presentation/widgets/board_column.dart';
 import 'package:cardo/shared/widgets/card_tile.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,20 +14,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../helpers/pump_board.dart';
 
 final Finder _rankTitle = find.text('Fractional indexing для rank');
-
-Finder _addButton(String columnId) {
-  return find.descendant(
-    of: find.byWidgetPredicate(
-      (w) => w is BoardColumnView && w.data.column.id == columnId,
-    ),
-    matching: find.text('Добавить карточку'),
-  );
-}
-
-Future<void> _scrollToFooter(WidgetTester tester) async {
-  await tester.fling(_item('c-rate-limit'), const Offset(0, -1500), 3000);
-  await tester.pump(const Duration(seconds: 1));
-}
 
 Finder _item(String cardId) => find.byKey(ValueKey<String>('item-$cardId'));
 
@@ -262,6 +247,7 @@ void main() {
       final handle = tester.ensureSemantics();
       final actions = _customActions(tester, _rankTitle);
       expect(actions.keys.toSet(), <String>{
+        'Править заголовок на доске',
         'Переместить в «Бэклог»',
         'Переместить в «Ревью»',
         'Переместить в «Готово»',
@@ -314,50 +300,6 @@ void main() {
   });
 
   group('actions', () {
-    testWidgets('add card dialog queues and confirms a new card', (
-      tester,
-    ) async {
-      await pumpBoard(tester);
-      await _scrollToFooter(tester);
-      await tester.tap(_addButton(DemoIds.backlog));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('Новая карточка'), findsOneWidget);
-      await tester.enterText(find.byType(TextField), 'Проверить nack');
-      await tester.pump();
-      await tester.tap(find.text('Добавить'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
-      final op = _state(tester).pending.single.op as CreateCard;
-      expect(op.title, 'Проверить nack');
-      expect(op.columnId, DemoIds.backlog);
-      await tester.pump(confirmDelay);
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(_state(tester).pending, isEmpty);
-      expect(
-        containerOf(tester)
-            .read(boardViewProvider)
-            .cardsIn(DemoIds.backlog)
-            .last
-            .title,
-        'Проверить nack',
-      );
-      await _finish(tester);
-    });
-
-    testWidgets('cancelling the dialog creates nothing', (tester) async {
-      await pumpBoard(tester);
-      await _scrollToFooter(tester);
-      await tester.tap(_addButton(DemoIds.backlog));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-      await tester.tap(find.text('Отменить'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(_state(tester).pending, isEmpty);
-      await _finish(tester);
-    });
-
     testWidgets('detail panel Move menu moves the card', (tester) async {
       await pumpBoard(tester, size: expandedSize);
       await tester.tap(find.text('Fractional indexing для rank'));

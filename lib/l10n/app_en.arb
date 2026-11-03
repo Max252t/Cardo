@@ -255,5 +255,10 @@
   "columnArchiveBody": "{cards} will be archived with the column. Board members will stop seeing them right away.",
   "columnArchiveBodyEmpty": "The column has no cards. Board members will stop seeing the column right away.",
   "columnArchiveCancel": "Cancel",
-  "columnArchiveConfirm": "Archive"
+  "columnArchiveConfirm": "Archive",
+  "cardComposerDescription": "Description",
+  "cardInlineEditCaption": "Editing title",
+  "cardInlineEditCancel": "Cancel editing",
+  "cardInlineEditSave": "Save title",
+  "cardInlineEditAction": "Edit title on the board"
 }

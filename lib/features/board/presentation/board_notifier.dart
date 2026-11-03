@@ -132,9 +132,16 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     );
   }
 
-  void createCard({required String columnId, required String title}) {
+  void createCard({
+    required String columnId,
+    required String title,
+    String description = '',
+  }) {
     final trimmed = title.trim();
-    if (!_canEdit || trimmed.isEmpty) {
+    if (!_canEdit ||
+        trimmed.isEmpty ||
+        trimmed.runes.length > CardLimits.titleMaxLength ||
+        description.length > CardLimits.descriptionMaxLength) {
       return;
     }
     if (state.liveView.columnById(columnId) == null) {
@@ -147,6 +154,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         cardId: _newId(),
         columnId: columnId,
         title: trimmed,
+        description: description,
         actorId: _actorId,
         afterId: existing.isEmpty ? null : existing.last.id,
         at: _now(),
@@ -160,7 +168,11 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     }
     final trimmed = title.trim();
     final card = state.liveView.activeCard(cardId);
-    if (!_canEdit || trimmed.isEmpty || card == null || card.title == trimmed) {
+    if (!_canEdit ||
+        trimmed.isEmpty ||
+        trimmed.runes.length > CardLimits.titleMaxLength ||
+        card == null ||
+        card.title == trimmed) {
       return;
     }
     _enqueue(

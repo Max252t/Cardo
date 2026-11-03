@@ -707,7 +707,7 @@ abstract class AppLocalizations {
   /// Кнопка отмены создания карточки
   ///
   /// In ru, this message translates to:
-  /// **'Отменить'**
+  /// **'Отмена'**
   String get addCardCancel;
 
   /// Snackbar: nack forbidden
@@ -1633,6 +1633,36 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'В архив'**
   String get columnArchiveConfirm;
+
+  /// Кнопка показа поля описания в форме новой карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание'**
+  String get cardComposerDescription;
+
+  /// Подпись редактора заголовка карточки на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Правка заголовка'**
+  String get cardInlineEditCaption;
+
+  /// Кнопка отмены правки заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить правку'**
+  String get cardInlineEditCancel;
+
+  /// Кнопка сохранения заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить заголовок'**
+  String get cardInlineEditSave;
+
+  /// Действие запуска правки заголовка прямо на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Править заголовок на доске'**
+  String get cardInlineEditAction;
 }
 
 class _AppLocalizationsDelegate
