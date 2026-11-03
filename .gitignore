@@ -78,3 +78,6 @@ test/.test_coverage.dart
 # Local API configuration
 env/*.json
 !env/example.json
+
+# Local git worktrees
+.claude/worktrees/
