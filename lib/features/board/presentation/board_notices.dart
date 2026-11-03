@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../domain/board_op.dart';
 import '../domain/board_sync_state.dart';
 
 @immutable
@@ -8,12 +9,14 @@ class BoardNotice {
     required this.opId,
     required this.rejection,
     required this.retrying,
+    this.column = false,
     this.actorName,
   });
 
   final String opId;
   final OpRejection rejection;
   final bool retrying;
+  final bool column;
   final String? actorName;
 
   @override
@@ -22,11 +25,12 @@ class BoardNotice {
         other.opId == opId &&
         other.rejection == rejection &&
         other.retrying == retrying &&
+        other.column == column &&
         other.actorName == actorName;
   }
 
   @override
-  int get hashCode => Object.hash(opId, rejection, retrying, actorName);
+  int get hashCode => Object.hash(opId, rejection, retrying, column, actorName);
 }
 
 const OpRejection _internal = OpRejection(reason: NackReason.internal);
@@ -61,6 +65,7 @@ List<BoardNotice> noticesBetween(
           opId: item.opId,
           rejection: rejection,
           retrying: false,
+          column: isColumnOp(item.op),
           actorName: actorId == null
               ? null
               : next.view.memberById(actorId)?.name,
@@ -75,3 +80,8 @@ List<BoardNotice> noticesBetween(
   }
   return notices;
 }
+
+bool isColumnOp(BoardOp op) => switch (op) {
+  CreateColumn() || RenameColumn() || MoveColumn() || ArchiveColumn() => true,
+  _ => false,
+};

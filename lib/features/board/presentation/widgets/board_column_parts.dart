@@ -7,6 +7,7 @@ import '../board_view_data.dart';
 import '../board_drag_controller.dart';
 import 'board_card_item.dart';
 import 'board_column_header.dart';
+import 'column_empty_state.dart';
 
 @immutable
 class ColumnInsets {
@@ -96,6 +97,7 @@ class ColumnFooter extends StatelessWidget {
     required this.canEdit,
     required this.insets,
     required this.bottomInset,
+    this.empty = false,
   });
 
   final String columnId;
@@ -103,6 +105,7 @@ class ColumnFooter extends StatelessWidget {
   final bool canEdit;
   final ColumnInsets insets;
   final double bottomInset;
+  final bool empty;
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +115,14 @@ class ColumnFooter extends StatelessWidget {
         end: insets.horizontal,
         bottom: insets.vertical + bottomInset,
       ),
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: canEdit
-            ? AddCardButton(columnId: columnId, dense: dense)
-            : SizedBox(height: CardoSizes.of(context).hairline),
-      ),
+      child: empty
+          ? ColumnEmptyState(columnId: columnId, dense: dense, canEdit: canEdit)
+          : Align(
+              alignment: AlignmentDirectional.topStart,
+              child: canEdit
+                  ? AddCardButton(columnId: columnId, dense: dense)
+                  : SizedBox(height: CardoSizes.of(context).hairline),
+            ),
     );
   }
 }
@@ -170,12 +175,14 @@ class ColumnHeaderSlot extends StatelessWidget {
     required this.count,
     required this.dense,
     required this.insets,
+    this.canEdit = false,
   });
 
   final ColumnInfo column;
   final int count;
   final bool dense;
   final ColumnInsets insets;
+  final bool canEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +193,12 @@ class ColumnHeaderSlot extends StatelessWidget {
         top: insets.vertical,
         bottom: insets.gap,
       ),
-      child: BoardColumnHeader(column: column, count: count, dense: dense),
+      child: BoardColumnHeader(
+        column: column,
+        count: count,
+        dense: dense,
+        canEdit: canEdit,
+      ),
     );
   }
 }

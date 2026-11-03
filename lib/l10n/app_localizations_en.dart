@@ -909,4 +909,88 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get protocolUpdateApp =>
       'Update the app: the server uses newer features.';
+
+  @override
+  String nackVersionConflictColumn(String name) {
+    return '$name already moved this column.';
+  }
+
+  @override
+  String get nackVersionConflictColumnUnknown =>
+      'Another member already moved this column.';
+
+  @override
+  String get nackNotFoundColumn => 'The column is already archived.';
+
+  @override
+  String get columnNewHint => 'Column name';
+
+  @override
+  String get columnNewSemantic => 'New column name';
+
+  @override
+  String get columnNewCreate => 'Create column';
+
+  @override
+  String get columnEmptyTitle => 'Column is empty';
+
+  @override
+  String get columnEmptyBody =>
+      'Add the first card or drag one here from another column.';
+
+  @override
+  String get columnEmptyBodyViewer => 'No cards yet.';
+
+  @override
+  String get columnMenu => 'Column menu';
+
+  @override
+  String columnMenuSemantic(String title) {
+    return 'Column menu: $title';
+  }
+
+  @override
+  String columnSheetSemantic(String title) {
+    return 'Column “$title”';
+  }
+
+  @override
+  String get columnNameLabel => 'Column name';
+
+  @override
+  String get columnMoveLeft => 'Move left';
+
+  @override
+  String get columnMoveRight => 'Move right';
+
+  @override
+  String columnArchiveTitle(String title) {
+    return 'Archive “$title”?';
+  }
+
+  @override
+  String columnArchiveCards(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards',
+      one: '$count card',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String columnArchiveBody(String cards) {
+    return '$cards will be archived with the column. Board members will stop seeing them right away.';
+  }
+
+  @override
+  String get columnArchiveBodyEmpty =>
+      'The column has no cards. Board members will stop seeing the column right away.';
+
+  @override
+  String get columnArchiveCancel => 'Cancel';
+
+  @override
+  String get columnArchiveConfirm => 'Archive';
 }

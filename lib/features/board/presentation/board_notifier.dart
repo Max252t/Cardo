@@ -205,6 +205,73 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     _enqueue(ArchiveCard(opId: _newId(), cardId: cardId));
   }
 
+  String? createColumn(String title) {
+    final trimmed = title.trim();
+    if (!_canEdit || !_validColumnTitle(trimmed)) {
+      return null;
+    }
+    final ordered = state.liveView.orderedColumns;
+    final columnId = _newId();
+    _enqueue(
+      CreateColumn(
+        opId: _newId(),
+        columnId: columnId,
+        title: trimmed,
+        afterId: ordered.isEmpty ? null : ordered.last.id,
+      ),
+    );
+    return columnId;
+  }
+
+  void renameColumn({required String columnId, required String title}) {
+    final trimmed = title.trim();
+    final column = state.liveView.columnById(columnId);
+    if (!_canEdit ||
+        column == null ||
+        column.title == trimmed ||
+        !_validColumnTitle(trimmed)) {
+      return;
+    }
+    _enqueue(RenameColumn(opId: _newId(), columnId: columnId, title: trimmed));
+  }
+
+  void moveColumn({required String columnId, required int direction}) {
+    if (!_canEdit || direction == 0) {
+      return;
+    }
+    final view = state.liveView;
+    final column = view.columnById(columnId);
+    if (column == null) {
+      return;
+    }
+    final ordered = view.orderedColumns;
+    final from = ordered.indexWhere((other) => other.id == columnId);
+    final to = from + direction.sign;
+    if (to < 0 || to >= ordered.length) {
+      return;
+    }
+    final others = ordered.where((other) => other.id != columnId).toList();
+    _enqueue(
+      MoveColumn(
+        opId: _newId(),
+        columnId: columnId,
+        baseVersion: column.version,
+        afterId: to > 0 ? others[to - 1].id : null,
+        beforeId: to < others.length ? others[to].id : null,
+      ),
+    );
+  }
+
+  void archiveColumn(String columnId) {
+    if (!_canEdit || state.liveView.columnById(columnId) == null) {
+      return;
+    }
+    _enqueue(ArchiveColumn(opId: _newId(), columnId: columnId));
+  }
+
+  bool _validColumnTitle(String title) =>
+      title.isNotEmpty && title.runes.length <= ColumnLimits.titleMaxLength;
+
   String _newId() => ref.read(idGeneratorProvider)();
 
   DateTime _now() => ref.read(nowProvider)().toUtc();
@@ -320,7 +387,8 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       return false;
     }
     final cardId = op.cardId;
-    return cardId == null || !state.hasRejectedCreate(cardId);
+    return (cardId == null || !state.hasRejectedCreate(cardId)) &&
+        !state.dependsOnRejectedColumnCreate(op);
   }
 
   void _releaseBarriers() {
@@ -552,13 +620,16 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       return;
     }
     final op = item.op;
-    final dropsDependents = op is CreateCard;
     state = state.copyWith(
       pending: state.pending.where((other) {
         if (other.opId == opId) {
           return false;
         }
-        return !(dropsDependents && other.op.cardId == op.cardId);
+        return switch (op) {
+          CreateCard() => other.op.cardId != op.cardId,
+          CreateColumn() => !other.op.referencesColumn(op.columnId),
+          _ => true,
+        };
       }).toList(),
     );
   }

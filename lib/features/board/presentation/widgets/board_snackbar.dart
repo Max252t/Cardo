@@ -11,15 +11,21 @@ String nackMessage(
   OpRejection rejection, {
   required String? actorName,
   bool retrying = false,
+  bool column = false,
 }) {
   return switch (rejection.reason) {
     NackReason.forbidden => l10n.nackForbidden,
     NackReason.validationError => l10n.nackValidation(
       rejection.limit ?? CardLimits.titleMaxLength,
     ),
+    NackReason.versionConflict when column && actorName != null =>
+      l10n.nackVersionConflictColumn(actorName),
+    NackReason.versionConflict when column =>
+      l10n.nackVersionConflictColumnUnknown,
     NackReason.versionConflict when actorName != null =>
       l10n.nackVersionConflict(actorName),
     NackReason.versionConflict => l10n.nackVersionConflictUnknown,
+    NackReason.notFound when column => l10n.nackNotFoundColumn,
     NackReason.notFound => l10n.nackNotFound,
     NackReason.rateLimited => l10n.nackRateLimited,
     NackReason.internal when retrying => l10n.nackInternal,

@@ -71,6 +71,7 @@ class BoardColumnView extends ConsumerWidget {
         count: data.count,
         dense: dense,
         insets: insets,
+        canEdit: canEdit,
       ),
     );
     final footer = ColumnDropTarget(
@@ -85,6 +86,7 @@ class BoardColumnView extends ConsumerWidget {
         canEdit: canEdit,
         insets: insets,
         bottomInset: bottomInset,
+        empty: data.cards.isEmpty && drag?.hoverIndex == null,
       ),
     );
     return ColumnFrame(
