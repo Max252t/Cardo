@@ -6,9 +6,12 @@ import 'package:cardo/core/network/api_policy.dart';
 import 'package:cardo/core/network/dio_factory.dart';
 import 'package:cardo/core/realtime/connection_status.dart';
 import 'package:cardo/core/result/result.dart';
-import 'package:cardo/features/board/data/rest_board_gateway.dart';
+import 'package:cardo/features/board/data/board_gateway.dart';
+import 'package:cardo/features/board/data/realtime/realtime_credentials.dart';
+import 'package:cardo/features/board/data/server_board_gateway.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
 import 'package:cardo/features/board/domain/board_session.dart';
+import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
 import 'package:cardo/features/boards/data/dio_boards_api.dart';
 import 'package:dio/dio.dart';
@@ -17,6 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/api_json.dart';
 import '../../../helpers/fake_http_adapter.dart';
+import '../../../helpers/hanging_transport.dart';
 
 const CurrentUser me = CurrentUser(
   userId: annaId,
@@ -53,6 +57,7 @@ class StubServer {
   late final FakeHttpAdapter adapter;
   late final Dio dio;
   late final DioBoardsApi api;
+  final HangingTransport transport = HangingTransport();
 
   Future<FakeResponse> handle(RequestOptions options) async {
     if (options.path == ApiPaths.boards) {
@@ -62,17 +67,26 @@ class StubServer {
     return snapshotResponse ?? FakeResponse.ok(snapshot);
   }
 
-  Future<Result<RestBoardGateway, ApiFailure>> load({
+  Future<Result<ServerBoardGateway, ApiFailure>> load({
     String id = boardId1,
     CurrentUser user = me,
   }) {
-    return RestBoardGateway.load(api: api, boardId: id, currentUser: user);
+    return ServerBoardGateway.load(
+      api: api,
+      boardId: id,
+      currentUser: user,
+      realtime: RealtimeSettings(
+        transport: transport,
+        credentials: StaticCredentials(),
+        wsBaseUri: Uri.parse('ws://api.test'),
+      ),
+    );
   }
 }
 
-Future<RestBoardGateway> loaded(StubServer server) async {
+Future<ServerBoardGateway> loaded(StubServer server) async {
   final result = await server.load();
-  return (result as Success<RestBoardGateway, ApiFailure>).value;
+  return (result as Success<ServerBoardGateway, ApiFailure>).value;
 }
 
 void main() {
@@ -370,26 +384,26 @@ void main() {
   });
 
   group('offline behaviour', () {
-    test('submit is unsupported and never reaches the network', () async {
+    test('send before the handshake is refused without a request', () async {
       final server = StubServer();
       final gateway = await loaded(server);
       final before = server.adapter.requests.length;
 
-      await expectLater(
-        gateway.submit(
-          const MoveCard(
-            opId: 'op-1',
-            cardId: 'card-1',
-            toColumnId: 'col-b',
-            baseVersion: 1,
-          ),
+      final outcome = gateway.send(
+        const MoveCard(
+          opId: 'op-1',
+          cardId: 'card-1',
+          toColumnId: 'col-b',
+          baseVersion: 1,
         ),
-        throwsUnsupportedError,
       );
+
+      expect(outcome, SendOutcome.notConnected);
       expect(server.adapter.requests.length, before);
+      await gateway.dispose();
     });
 
-    test('board edits stay queued and the connection stays offline', () async {
+    test('board edits stay queued while the handshake is pending', () async {
       final server = StubServer();
       final gateway = await loaded(server);
       final before = server.adapter.requests.length;
@@ -406,8 +420,13 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       final state = container.read(boardNotifierProvider);
-      expect(state.connection, ConnectionStatus.offline);
+      expect(state.connection, ConnectionStatus.syncing);
       expect(state.pending, hasLength(2));
+      expect(
+        state.pending.map((item) => item.status),
+        everyElement(PendingOpStatus.queued),
+      );
+      expect(server.transport.attempts, hasLength(1));
       expect(server.adapter.requests.length, before);
       expect(
         container.read(boardViewProvider).cardsIn('col-b').map((c) => c.id),
@@ -441,12 +460,12 @@ void main() {
       final board = (await server.api.getBoard(boardId1)).valueOrNull!;
       final boards = (await server.api.listBoards()).valueOrNull!;
 
-      final a = RestBoardGateway.buildSnapshot(
+      final a = ServerBoardGateway.buildSnapshot(
         board: board,
         boards: boards,
         currentUser: me,
       );
-      final b = RestBoardGateway.buildSnapshot(
+      final b = ServerBoardGateway.buildSnapshot(
         board: board,
         boards: boards,
         currentUser: me,

@@ -1,7 +1,6 @@
 import 'package:cardo/core/models/board_role.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/domain/card_draft.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
@@ -63,9 +62,7 @@ void main() {
       expect(_draft(container)!.flushRequested, isTrue);
       expect(_descriptionCalls(gateway).length, 1);
 
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await tester.pump(_tick);
 
       final draft = _draft(container)!;
@@ -88,7 +85,6 @@ void main() {
       NackReason.forbidden,
       NackReason.notFound,
       NackReason.validationError,
-      NackReason.rateLimited,
     ]) {
       testWidgets('${reason.name} keeps the draft and stops auto sending', (
         tester,
@@ -96,9 +92,7 @@ void main() {
         final gateway = ControlledGateway();
         final container = _open(gateway);
         _flushBehindInFlightSave(container);
-        gateway.calls.single.completer.complete(
-          OpRejected(OpRejection(reason: reason)),
-        );
+        gateway.calls.single.rejectWith(OpRejection(reason: reason));
         await tester.pump(_tick);
         await tester.pump(_hold);
         await tester.pump(_hold);
@@ -114,9 +108,7 @@ void main() {
       final gateway = ControlledGateway();
       final container = _open(gateway);
       _flushBehindInFlightSave(container);
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await tester.pump(_tick);
       await tester.pump(_hold);
       expect(_descriptionCalls(gateway).length, 1);
@@ -139,9 +131,7 @@ void main() {
       final gateway = ControlledGateway();
       final container = _open(gateway);
       _flushBehindInFlightSave(container);
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await tester.pump(_tick);
       await tester.pump(_hold);
 
@@ -158,10 +148,8 @@ void main() {
       final gateway = ControlledGateway();
       final container = _open(gateway);
       _flushBehindInFlightSave(container);
-      gateway.calls.single.completer.complete(
-        const OpRejected(
-          OpRejection(reason: NackReason.versionConflict, actorId: 'maxim'),
-        ),
+      gateway.calls.single.rejectWith(
+        OpRejection(reason: NackReason.versionConflict, actorId: 'maxim'),
       );
       await tester.pump(_tick);
 
@@ -188,9 +176,7 @@ void main() {
       container
           .read(boardNotifierProvider.notifier)
           .moveCardToColumnEnd(cardId: _card, toColumnId: DemoIds.review);
-      gateway.calls.single.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.single.reject(NackReason.forbidden);
       await tester.pump(_tick);
 
       _drafts(container).edit(_card, 'typed while locked');
@@ -230,7 +216,7 @@ void main() {
       expect(_descriptionCalls(gateway).length, 2);
 
       for (final call in gateway.calls.toList()) {
-        call.completer.complete(const OpConfirmed(seq: 1285));
+        call.confirm(1285);
       }
       await tester.pump(_tick);
 
@@ -296,8 +282,7 @@ void main() {
       _drafts(container).flush(_card);
       expect(_descriptionCalls(gateway).length, 1);
       expect(_draft(container)!.flushRequested, isFalse);
-      _lastDescriptionCall(gateway).completer
-          .complete(const OpConfirmed(seq: 1285));
+      _lastDescriptionCall(gateway).confirm(1285);
       await tester.pump(_tick);
       await tester.pump(_hold);
       expect(_descriptionCalls(gateway).length, 1);

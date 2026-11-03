@@ -167,6 +167,7 @@ void main() {
 
       gateway.publishCard(_card);
       await tester.pump();
+      await tester.pump();
       expect(find.text('Загружаем актуальную версию…'), findsNothing);
       expect(_buttonEnabled(tester, 'Перезаписать'), isTrue);
       expect(_buttonEnabled(tester, 'Отменить'), isTrue);
@@ -201,6 +202,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       await openCardSheet(tester);
       gateway.publishCard(_card);
+      await tester.pump();
       await tester.pump();
       await tester.tap(find.text('Отменить'));
       await tester.pump();

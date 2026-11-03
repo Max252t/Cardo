@@ -104,10 +104,12 @@ void main() {
       expect(app.server.count(snapshotKey), 1);
     });
 
-    testWidgets('the board is opened offline and queues edits', (tester) async {
+    testWidgets('the board starts syncing and queues edits until sync.ready', (
+      tester,
+    ) async {
       final app = await openBoard(tester);
 
-      expect(find.text(app.l10n.connectionOffline), findsWidgets);
+      expect(find.text(app.l10n.connectionSyncing), findsWidgets);
     });
 
     testWidgets('an owner can add cards', (tester) async {

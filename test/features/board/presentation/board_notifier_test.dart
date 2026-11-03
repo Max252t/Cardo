@@ -2,6 +2,7 @@ import 'package:cardo/core/models/board_role.dart';
 import 'package:cardo/core/realtime/connection_status.dart';
 import 'package:cardo/features/board/data/board_gateway.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
+import 'package:cardo/features/board/data/sync_signal.dart';
 import 'package:cardo/features/board/data/fake_board_gateway.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
 import 'package:cardo/features/board/domain/board_session.dart';
@@ -70,6 +71,9 @@ void main() {
       final session = _open(tester, gateway: gateway);
       final container = session.container;
       final notifier = container.read(boardNotifierProvider.notifier);
+      expect(_read(container).connection, ConnectionStatus.syncing);
+      await _flush(tester);
+      expect(_read(container).connection, ConnectionStatus.connected);
       final start = _read(container);
       expect(start.lastSeq, 1284);
       expect(start.pending, isEmpty);
@@ -249,9 +253,7 @@ void main() {
       notifier.moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
       expect(_read(container).pending.length, 4);
 
-      gateway.calls.first.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.forbidden)),
-      );
+      gateway.calls.first.reject(NackReason.forbidden);
       await _flush(tester);
       expect(_read(container).pending.length, 4);
       expect(
@@ -274,9 +276,7 @@ void main() {
       final notifier = container.read(boardNotifierProvider.notifier);
       notifier.moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
       notifier.moveCard(cardId: 'c-ci', toColumnId: DemoIds.backlog);
-      gateway.calls.first.completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.notFound)),
-      );
+      gateway.calls.first.reject(NackReason.notFound);
       await _flush(tester);
       await tester.pump(_hold);
       final after = _read(container);
@@ -313,8 +313,7 @@ void main() {
             .moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
         expect(gateway.calls.length, 1);
 
-        const internal = OpRejected(OpRejection(reason: NackReason.internal));
-        gateway.calls[0].completer.complete(internal);
+        gateway.calls[0].reject(NackReason.internal);
         await _flush(tester);
         var item = _read(container).pending.single;
         expect(item.status, PendingOpStatus.sent);
@@ -323,7 +322,7 @@ void main() {
 
         await tester.pump(const Duration(milliseconds: 50));
         expect(gateway.calls.length, 2);
-        gateway.calls[1].completer.complete(internal);
+        gateway.calls[1].reject(NackReason.internal);
         await _flush(tester);
         item = _read(container).pending.single;
         expect(item.failedAttempts, 2);
@@ -331,7 +330,7 @@ void main() {
 
         await tester.pump(const Duration(milliseconds: 50));
         expect(gateway.calls.length, 3);
-        gateway.calls[2].completer.complete(internal);
+        gateway.calls[2].reject(NackReason.internal);
         await _flush(tester);
 
         item = _read(container).pending.single;
@@ -353,12 +352,10 @@ void main() {
       container
           .read(boardNotifierProvider.notifier)
           .moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
-      gateway.calls[0].completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.internal)),
-      );
+      gateway.calls[0].reject(NackReason.internal);
       await _flush(tester);
       await tester.pump(const Duration(milliseconds: 50));
-      gateway.calls[1].completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls[1].confirm(1285);
       await _flush(tester);
       final state = _read(container);
       expect(state.pending, isEmpty);
@@ -367,19 +364,25 @@ void main() {
       container.dispose();
     });
 
-    testWidgets('a thrown gateway error counts as internal', (tester) async {
-      final gateway = ControlledGateway();
+    testWidgets('a refused send stays queued until the gateway is ready', (
+      tester,
+    ) async {
+      final gateway = ControlledGateway()
+        ..nextOutcome = SendOutcome.notConnected;
       final session = _open(tester, gateway: gateway);
       final container = session.container;
       container
           .read(boardNotifierProvider.notifier)
           .moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
-      gateway.calls[0].completer.completeError(StateError('boom'));
       await _flush(tester);
-      expect(_read(container).pending.single.failedAttempts, 1);
-      await tester.pump(const Duration(milliseconds: 50));
-      expect(gateway.calls.length, 2);
-      gateway.calls[1].completer.complete(const OpConfirmed(seq: 1285));
+      expect(gateway.calls, isEmpty);
+      expect(_read(container).pending.single.status, PendingOpStatus.queued);
+      gateway.nextOutcome = SendOutcome.sent;
+      gateway.emit(const ReadySignal());
+      await _flush(tester);
+      expect(gateway.calls.length, 1);
+      expect(_read(container).pending.single.status, PendingOpStatus.sent);
+      gateway.calls[0].confirm(1285);
       await _flush(tester);
       expect(_read(container).pending, isEmpty);
       container.dispose();
@@ -392,9 +395,7 @@ void main() {
       container
           .read(boardNotifierProvider.notifier)
           .moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
-      gateway.calls[0].completer.complete(
-        const OpRejected(OpRejection(reason: NackReason.rateLimited)),
-      );
+      gateway.calls[0].reject(NackReason.rateLimited);
       await _flush(tester);
       await tester.pump(const Duration(milliseconds: 80));
       expect(gateway.calls.length, 1);
@@ -411,7 +412,7 @@ void main() {
       container
           .read(boardNotifierProvider.notifier)
           .moveCard(cardId: 'c-audit', toColumnId: DemoIds.done);
-      gateway.calls[0].completer.complete(const OpConfirmed(seq: 1284));
+      gateway.calls[0].confirm(1284);
       await _flush(tester);
       final state = _read(container);
       expect(state.pending, isEmpty);
@@ -432,7 +433,7 @@ void main() {
       final lastState = session.history.last;
       expect(lastState.pending, hasLength(1));
       container.dispose();
-      gateway.calls[0].completer.complete(const OpConfirmed(seq: 1285));
+      gateway.calls[0].confirm(1285);
       await _flush(tester);
       expect(tester.takeException(), isNull);
       expect(session.history, hasLength(recorded));
@@ -451,9 +452,7 @@ void main() {
         cardId: DemoIds.rankCard,
         toColumnId: DemoIds.review,
       );
-      gateway.calls[0].completer.complete(
-        OpRejected(rejection(NackReason.versionConflict)),
-      );
+      gateway.calls[0].rejectWith(rejection(NackReason.versionConflict));
       await _flush(tester);
       final rejected = _read(container);
       expect(rejected.cardStatus(DemoIds.rankCard), CardSyncStatus.rejected);
@@ -492,9 +491,7 @@ void main() {
         cardId: DemoIds.rankCard,
         toColumnId: DemoIds.inProgress,
       );
-      gateway.calls[0].completer.complete(
-        OpRejected(rejection(NackReason.versionConflict)),
-      );
+      gateway.calls[0].rejectWith(rejection(NackReason.versionConflict));
       await _flush(tester);
       notifier.moveCardToIndex(
         cardId: DemoIds.rankCard,
@@ -540,9 +537,7 @@ void main() {
       final container = session.container;
       final notifier = container.read(boardNotifierProvider.notifier);
       notifier.archiveCard(DemoIds.rankCard);
-      gateway.calls[0].completer.complete(
-        OpRejected(rejection(NackReason.notFound)),
-      );
+      gateway.calls[0].rejectWith(rejection(NackReason.notFound));
       await _flush(tester);
       expect(
         _read(container).view.cardsIn(DemoIds.inProgress).map((c) => c.id),
@@ -757,7 +752,7 @@ void main() {
       expect(item.rejection!.reason, NackReason.versionConflict);
       expect(item.rejection!.actorId, DemoIds.maxim);
       expect(item.rejection!.atSeq, 1285);
-      expect(state.lastSeq, 1284);
+      expect(state.lastSeq, 1285);
 
       final notices = <BoardNotice>[];
       for (var i = 1; i < session.history.length; i++) {

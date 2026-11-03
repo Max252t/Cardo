@@ -1,17 +1,21 @@
-import 'dart:async';
-
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/data/fake_board_gateway.dart';
+import 'package:cardo/features/board/domain/board_event.dart';
 import 'package:cardo/features/board/domain/board_model.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/gateway_probe.dart';
+
 const String _card = DemoIds.handshakeCard;
 
-FakeBoardGateway _gateway() {
-  return FakeBoardGateway(confirmDelay: Duration.zero);
+Future<(FakeBoardGateway, GatewayProbe)> _open() async {
+  final gateway = FakeBoardGateway(confirmDelay: Duration.zero);
+  final probe = GatewayProbe(gateway);
+  await probe.settle();
+  addTearDown(probe.dispose);
+  return (gateway, probe);
 }
 
 EditCardDescription _edit(
@@ -29,145 +33,115 @@ EditCardDescription _edit(
   );
 }
 
-OpRejection _rejection(OpOutcome outcome) => (outcome as OpRejected).rejection;
-
 void main() {
-  group('submit EditCardDescription', () {
+  group('EditCardDescription over the protocol', () {
     test('a matching base is confirmed and applied', () async {
-      final gateway = _gateway();
-      final outcome = await gateway.submit(_edit('new text'));
-      expect(outcome, isA<OpConfirmed>());
+      final (gateway, probe) = await _open();
+      await probe.send(_edit('new text'));
+      final event = probe.events.single as CardEditedEvent;
+      expect(event.description, 'new text');
+      expect(event.descriptionVersion, 2);
       final card = gateway.serverBoard.cardById(_card)!;
       expect(card.description, 'new text');
       expect(card.descriptionVersion, 2);
       expect(gateway.serverBoard.seq, 1285);
     });
 
-    test('a stale base is a version_conflict with the last author', () async {
-      final gateway = _gateway();
+    test('a stale base is a version_conflict at the current seq', () async {
+      final (gateway, probe) = await _open();
       gateway.simulateRemoteDescriptionEdit(
         cardId: _card,
         text: 'remote',
         actorId: DemoIds.anya,
       );
-      final outcome = await gateway.submit(_edit('mine'));
-      final rejection = _rejection(outcome);
+      await probe.send(_edit('mine'));
+      final rejection = probe.nacks.single.rejection;
       expect(rejection.reason, NackReason.versionConflict);
-      expect(rejection.actorId, DemoIds.anya);
       expect(rejection.atSeq, 1285);
       expect(gateway.serverBoard.cardById(_card)!.description, 'remote');
     });
 
-    test('the conflict actor falls back to the card author', () async {
-      final gateway = _gateway();
-      final stale = await gateway.submit(_edit('mine', base: 9));
-      expect(_rejection(stale).actorId, DemoIds.maxim);
-    });
-
-    test('our own confirmed edit is the conflict author afterwards', () async {
-      final gateway = _gateway();
-      await gateway.submit(_edit('first'));
-      final outcome = await gateway.submit(_edit('second', opId: 'op2'));
-      expect(_rejection(outcome).actorId, DemoIds.elena);
-    });
-
-    test('a nack pushes the current card to subscribers', () async {
-      final gateway = _gateway();
-      final updates = <RemoteCardUpdate>[];
-      final subscription = gateway.remoteUpdates.listen(updates.add);
+    test('a nack delivers the held remote edit first', () async {
+      final (gateway, probe) = await _open();
       gateway.simulateRemoteDescriptionEdit(
         cardId: _card,
         text: 'remote',
         actorId: DemoIds.maxim,
       );
-      await gateway.submit(_edit('mine'));
-      expect(updates.length, 1);
-      expect(updates.single.card.description, 'remote');
-      expect(updates.single.card.descriptionVersion, 2);
-      expect(updates.single.actorId, DemoIds.maxim);
-      expect(updates.single.seq, 1285);
-      await subscription.cancel();
+      await probe.send(_edit('mine'));
+      final remote = probe.events.single as CardEditedEvent;
+      expect(remote.description, 'remote');
+      expect(remote.descriptionVersion, 2);
+      expect(remote.actorId, DemoIds.maxim);
+      expect(remote.seq, 1285);
     });
 
-    test('a confirmed edit does not push anything', () async {
-      final gateway = _gateway();
-      final updates = <RemoteCardUpdate>[];
-      final subscription = gateway.remoteUpdates.listen(updates.add);
-      await gateway.submit(_edit('mine'));
-      expect(updates, isEmpty);
-      await subscription.cancel();
+    test('a confirmed edit does not deliver anything else', () async {
+      final (_, probe) = await _open();
+      await probe.send(_edit('mine'));
+      expect(probe.events.length, 1);
+      expect(probe.nacks, isEmpty);
     });
 
     test('an unknown card is not found', () async {
-      final gateway = _gateway();
-      final outcome = await gateway.submit(_edit('x', cardId: 'zz'));
-      expect(_rejection(outcome).reason, NackReason.notFound);
+      final (_, probe) = await _open();
+      await probe.send(_edit('x', cardId: 'zz'));
+      expect(probe.nacks.single.rejection.reason, NackReason.notFound);
     });
 
     test('exactly 10 000 characters pass', () async {
-      final gateway = _gateway();
-      final outcome = await gateway.submit(
-        _edit('x' * CardLimits.descriptionMaxLength),
-      );
-      expect(outcome, isA<OpConfirmed>());
+      final (gateway, probe) = await _open();
+      await probe.send(_edit('x' * CardLimits.descriptionMaxLength));
+      expect(probe.events.single, isA<CardEditedEvent>());
       expect(
         gateway.serverBoard.cardById(_card)!.description.length,
         CardLimits.descriptionMaxLength,
       );
     });
 
-    test('10 001 characters are a validation_error with the limit', () async {
-      final gateway = _gateway();
+    test('10 001 characters are a validation_error', () async {
+      final (gateway, probe) = await _open();
       final original = gateway.serverBoard.cardById(_card)!.description;
-      final outcome = await gateway.submit(
-        _edit('x' * (CardLimits.descriptionMaxLength + 1)),
-      );
-      final rejection = _rejection(outcome);
-      expect(rejection.reason, NackReason.validationError);
-      expect(rejection.limit, 10000);
-      expect(rejection.actorId, isNull);
+      await probe.send(_edit('x' * (CardLimits.descriptionMaxLength + 1)));
+      expect(probe.nacks.single.rejection.reason, NackReason.validationError);
       expect(gateway.serverBoard.cardById(_card)!.description, original);
     });
   });
 
   group('simulateRemoteDescriptionEdit', () {
     test('changes the server without delivering by default', () async {
-      final gateway = _gateway();
-      final updates = <RemoteCardUpdate>[];
-      final subscription = gateway.remoteUpdates.listen(updates.add);
+      final (gateway, probe) = await _open();
       gateway.simulateRemoteDescriptionEdit(
         cardId: _card,
         text: 'remote',
         actorId: DemoIds.anya,
       );
+      await probe.settle();
       final card = gateway.serverBoard.cardById(_card)!;
       expect(card.description, 'remote');
       expect(card.descriptionVersion, 2);
       expect(card.version, 15);
       expect(gateway.serverBoard.seq, 1285);
-      expect(updates, isEmpty);
-      await subscription.cancel();
+      expect(probe.events, isEmpty);
     });
 
-    test('delivers the updated card when asked', () async {
-      final gateway = _gateway();
-      final updates = <RemoteCardUpdate>[];
-      final subscription = gateway.remoteUpdates.listen(updates.add);
+    test('delivers the edit when asked', () async {
+      final (gateway, probe) = await _open();
       gateway.simulateRemoteDescriptionEdit(
         cardId: _card,
         text: 'remote',
         actorId: DemoIds.anya,
         deliver: true,
       );
-      expect(updates.length, 1);
-      expect(updates.single.card, gateway.serverBoard.cardById(_card));
-      expect(updates.single.actorId, DemoIds.anya);
-      expect(updates.single.seq, 1285);
-      await subscription.cancel();
+      await probe.settle();
+      final event = probe.events.single as CardEditedEvent;
+      expect(event.actorId, DemoIds.anya);
+      expect(event.seq, 1285);
+      expect(event.description, 'remote');
     });
 
     test('ignores unknown and archived cards', () async {
-      final gateway = _gateway();
+      final (gateway, probe) = await _open();
       final before = gateway.serverBoard;
       gateway.simulateRemoteDescriptionEdit(
         cardId: 'zz',
@@ -176,7 +150,7 @@ void main() {
         deliver: true,
       );
       expect(gateway.serverBoard, before);
-      await gateway.submit(const ArchiveCard(opId: 'a', cardId: _card));
+      await probe.send(const ArchiveCard(opId: 'a', cardId: _card));
       final archived = gateway.serverBoard;
       gateway.simulateRemoteDescriptionEdit(
         cardId: _card,
@@ -187,8 +161,8 @@ void main() {
       expect(gateway.serverBoard, archived);
     });
 
-    test('two edits grow the version twice', () {
-      final gateway = _gateway();
+    test('two edits grow the version twice', () async {
+      final (gateway, _) = await _open();
       for (final text in <String>['one', 'two']) {
         gateway.simulateRemoteDescriptionEdit(
           cardId: _card,
@@ -202,13 +176,13 @@ void main() {
   });
 
   group('dispose', () {
-    test('closes the remote stream', () async {
-      final gateway = _gateway();
-      final done = Completer<void>();
-      gateway.remoteUpdates.listen((_) {}, onDone: done.complete);
+    test('closes the signal stream', () async {
+      final gateway = FakeBoardGateway(confirmDelay: Duration.zero);
+      var done = false;
+      gateway.signals.listen((_) {}, onDone: () => done = true);
       await gateway.dispose();
-      await done.future;
-      expect(done.isCompleted, isTrue);
+      await pumpEventQueue();
+      expect(done, isTrue);
     });
   });
 }
