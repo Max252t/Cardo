@@ -60,6 +60,8 @@ class TokenManager {
 
   String? get currentAccessToken => _tokens?.access;
 
+  DateTime? get currentAccessExpiresAt => _tokens?.accessExpiresAt;
+
   Future<void> adopt(AuthTokens tokens) async {
     _generation++;
     _tokens = tokens;
