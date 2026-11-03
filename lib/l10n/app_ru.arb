@@ -280,7 +280,7 @@
   "@addCardHint": {"description": "Подсказка поля заголовка новой карточки"},
   "addCardSubmit": "Добавить",
   "@addCardSubmit": {"description": "Кнопка создания карточки"},
-  "addCardCancel": "Отменить",
+  "addCardCancel": "Отмена",
   "@addCardCancel": {"description": "Кнопка отмены создания карточки"},
   "nackForbidden": "Нет прав на это действие.",
   "@nackForbidden": {"description": "Snackbar: nack forbidden"},
@@ -553,5 +553,15 @@
   "boardEndedUnsavedHeading": "Несохранённый текст",
   "@boardEndedUnsavedHeading": {"description":"Диалог: заголовок блока несохранённого текста"},
   "protocolUpdateApp": "Обновите приложение: сервер использует новые возможности.",
-  "@protocolUpdateApp": {"description":"Snackbar: сервер шлёт незнакомые сообщения"}
+  "@protocolUpdateApp": {"description":"Snackbar: сервер шлёт незнакомые сообщения"},
+  "cardComposerDescription": "Описание",
+  "@cardComposerDescription": {"description": "Кнопка показа поля описания в форме новой карточки"},
+  "cardInlineEditCaption": "Правка заголовка",
+  "@cardInlineEditCaption": {"description": "Подпись редактора заголовка карточки на доске"},
+  "cardInlineEditCancel": "Отменить правку",
+  "@cardInlineEditCancel": {"description": "Кнопка отмены правки заголовка на доске"},
+  "cardInlineEditSave": "Сохранить заголовок",
+  "@cardInlineEditSave": {"description": "Кнопка сохранения заголовка на доске"},
+  "cardInlineEditAction": "Править заголовок на доске",
+  "@cardInlineEditAction": {"description": "Действие запуска правки заголовка прямо на доске"}
 }

@@ -432,7 +432,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addCardSubmit => 'Добавить';
 
   @override
-  String get addCardCancel => 'Отменить';
+  String get addCardCancel => 'Отмена';
 
   @override
   String get nackForbidden => 'Нет прав на это действие.';
@@ -928,4 +928,19 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get protocolUpdateApp =>
       'Обновите приложение: сервер использует новые возможности.';
+
+  @override
+  String get cardComposerDescription => 'Описание';
+
+  @override
+  String get cardInlineEditCaption => 'Правка заголовка';
+
+  @override
+  String get cardInlineEditCancel => 'Отменить правку';
+
+  @override
+  String get cardInlineEditSave => 'Сохранить заголовок';
+
+  @override
+  String get cardInlineEditAction => 'Править заголовок на доске';
 }

@@ -234,5 +234,10 @@
   "boardEndedAccessLostBody": "Access to the board was revoked or it was deleted. Your unsaved changes there were discarded.",
   "boardEndedAction": "To my boards",
   "boardEndedUnsavedHeading": "Unsaved text",
-  "protocolUpdateApp": "Update the app: the server uses newer features."
+  "protocolUpdateApp": "Update the app: the server uses newer features.",
+  "cardComposerDescription": "Description",
+  "cardInlineEditCaption": "Editing title",
+  "cardInlineEditCancel": "Cancel editing",
+  "cardInlineEditSave": "Save title",
+  "cardInlineEditAction": "Edit title on the board"
 }
