@@ -1,25 +1,60 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_view_data.dart';
 import 'column_marker.dart';
+import 'new_column_field.dart';
 
-class ColumnTabs extends StatelessWidget {
+class ColumnTabs extends StatefulWidget {
   const ColumnTabs({
     super.key,
     required this.columns,
     required this.selectedIndex,
     required this.onSelected,
+    this.onCreate,
   });
 
   final List<ColumnViewData> columns;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final ValueChanged<String>? onCreate;
+
+  @override
+  State<ColumnTabs> createState() => _ColumnTabsState();
+}
+
+class _ColumnTabsState extends State<ColumnTabs> {
+  @override
+  void didUpdateWidget(ColumnTabs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final index = widget.selectedIndex;
+    final changed =
+        index != oldWidget.selectedIndex ||
+        widget.columns.length != oldWidget.columns.length;
+    if (changed && index >= 0 && index < widget.columns.length) {
+      final id = widget.columns[index].column.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final target = GlobalObjectKey(id).currentContext;
+        if (mounted && target != null && target.mounted) {
+          unawaited(
+            Scrollable.ensureVisible(
+              target,
+              duration: resolveMotion(context, CardoMotion.of(context).reorder),
+            ),
+          );
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final spacing = CardoSpacing.of(context);
+    final columns = widget.columns;
+    final onCreate = widget.onCreate;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsetsDirectional.symmetric(horizontal: spacing.xs),
@@ -28,10 +63,12 @@ class ColumnTabs extends StatelessWidget {
         children: <Widget>[
           for (var i = 0; i < columns.length; i++)
             ColumnTab(
+              key: GlobalObjectKey(columns[i].column.id),
               data: columns[i],
-              selected: i == selectedIndex,
-              onTap: () => onSelected(i),
+              selected: i == widget.selectedIndex,
+              onTap: () => widget.onSelected(i),
             ),
+          if (onCreate != null) NewColumnTab(onCreate: onCreate),
         ],
       ),
     );

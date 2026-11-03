@@ -47,6 +47,7 @@ class _BoardNoticesListenerState extends ConsumerState<BoardNoticesListener> {
         notice.rejection,
         actorName: notice.actorName,
         retrying: notice.retrying,
+        column: notice.column,
       ),
       withDismiss: nackHasDismiss(notice.rejection.reason),
       replaceCurrent: _shown.isEmpty,

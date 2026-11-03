@@ -132,13 +132,20 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     );
   }
 
-  void createCard({required String columnId, required String title}) {
+  bool createCard({
+    required String columnId,
+    required String title,
+    String description = '',
+  }) {
     final trimmed = title.trim();
-    if (!_canEdit || trimmed.isEmpty) {
-      return;
+    if (!_canEdit ||
+        trimmed.isEmpty ||
+        trimmed.runes.length > CardLimits.titleMaxLength ||
+        description.runes.length > CardLimits.descriptionMaxLength) {
+      return false;
     }
     if (state.liveView.columnById(columnId) == null) {
-      return;
+      return false;
     }
     final existing = state.liveView.cardsIn(columnId);
     _enqueue(
@@ -147,11 +154,13 @@ class BoardNotifier extends Notifier<BoardSyncState> {
         cardId: _newId(),
         columnId: columnId,
         title: trimmed,
+        description: description,
         actorId: _actorId,
         afterId: existing.isEmpty ? null : existing.last.id,
         at: _now(),
       ),
     );
+    return true;
   }
 
   void editCardTitle({required String cardId, required String title}) {
@@ -160,7 +169,11 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     }
     final trimmed = title.trim();
     final card = state.liveView.activeCard(cardId);
-    if (!_canEdit || trimmed.isEmpty || card == null || card.title == trimmed) {
+    if (!_canEdit ||
+        trimmed.isEmpty ||
+        trimmed.runes.length > CardLimits.titleMaxLength ||
+        card == null ||
+        card.title == trimmed) {
       return;
     }
     _enqueue(
@@ -181,7 +194,7 @@ class BoardNotifier extends Notifier<BoardSyncState> {
   }) {
     if (!_canEdit ||
         state.liveView.activeCard(cardId) == null ||
-        description.length > CardLimits.descriptionMaxLength) {
+        description.runes.length > CardLimits.descriptionMaxLength) {
       return null;
     }
     final opId = _newId();
@@ -204,6 +217,73 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     }
     _enqueue(ArchiveCard(opId: _newId(), cardId: cardId));
   }
+
+  String? createColumn(String title) {
+    final trimmed = title.trim();
+    if (!_canEdit || !_validColumnTitle(trimmed)) {
+      return null;
+    }
+    final ordered = state.liveView.orderedColumns;
+    final columnId = _newId();
+    _enqueue(
+      CreateColumn(
+        opId: _newId(),
+        columnId: columnId,
+        title: trimmed,
+        afterId: ordered.isEmpty ? null : ordered.last.id,
+      ),
+    );
+    return columnId;
+  }
+
+  void renameColumn({required String columnId, required String title}) {
+    final trimmed = title.trim();
+    final column = state.liveView.columnById(columnId);
+    if (!_canEdit ||
+        column == null ||
+        column.title == trimmed ||
+        !_validColumnTitle(trimmed)) {
+      return;
+    }
+    _enqueue(RenameColumn(opId: _newId(), columnId: columnId, title: trimmed));
+  }
+
+  void moveColumn({required String columnId, required int direction}) {
+    if (!_canEdit || direction == 0) {
+      return;
+    }
+    final view = state.liveView;
+    final column = view.columnById(columnId);
+    if (column == null) {
+      return;
+    }
+    final ordered = view.orderedColumns;
+    final from = ordered.indexWhere((other) => other.id == columnId);
+    final to = from + direction.sign;
+    if (to < 0 || to >= ordered.length) {
+      return;
+    }
+    final others = ordered.where((other) => other.id != columnId).toList();
+    _enqueue(
+      MoveColumn(
+        opId: _newId(),
+        columnId: columnId,
+        baseVersion: column.version,
+        afterId: to > 0 ? others[to - 1].id : null,
+        beforeId: to < others.length ? others[to].id : null,
+      ),
+    );
+  }
+
+  void archiveColumn(String columnId) {
+    if (!_canEdit || state.liveView.columnById(columnId) == null) {
+      return;
+    }
+    _enqueue(ArchiveColumn(opId: _newId(), columnId: columnId));
+  }
+
+  bool _validColumnTitle(String title) =>
+      title.isNotEmpty && title.runes.length <= ColumnLimits.titleMaxLength;
 
   String _newId() => ref.read(idGeneratorProvider)();
 
@@ -320,7 +400,8 @@ class BoardNotifier extends Notifier<BoardSyncState> {
       return false;
     }
     final cardId = op.cardId;
-    return cardId == null || !state.hasRejectedCreate(cardId);
+    return (cardId == null || !state.hasRejectedCreate(cardId)) &&
+        !state.dependsOnRejectedColumnCreate(op);
   }
 
   void _releaseBarriers() {
@@ -551,15 +632,13 @@ class BoardNotifier extends Notifier<BoardSyncState> {
     if (item == null) {
       return;
     }
-    final op = item.op;
-    final dropsDependents = op is CreateCard;
+    final dependents = state.dependentOpIds(item.op);
     state = state.copyWith(
-      pending: state.pending.where((other) {
-        if (other.opId == opId) {
-          return false;
-        }
-        return !(dropsDependents && other.op.cardId == op.cardId);
-      }).toList(),
+      pending: state.pending
+          .where(
+            (other) => other.opId != opId && !dependents.contains(other.opId),
+          )
+          .toList(),
     );
   }
 

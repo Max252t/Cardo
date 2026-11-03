@@ -432,7 +432,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addCardSubmit => 'Добавить';
 
   @override
-  String get addCardCancel => 'Отменить';
+  String get addCardCancel => 'Отмена';
 
   @override
   String get nackForbidden => 'Нет прав на это действие.';
@@ -928,4 +928,105 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get protocolUpdateApp =>
       'Обновите приложение: сервер использует новые возможности.';
+
+  @override
+  String nackVersionConflictColumn(String name) {
+    return 'Колонку уже переместил $name.';
+  }
+
+  @override
+  String get nackVersionConflictColumnUnknown =>
+      'Колонку уже переместил другой участник.';
+
+  @override
+  String get nackNotFoundColumn => 'Колонка уже в архиве.';
+
+  @override
+  String get columnNewHint => 'Название колонки';
+
+  @override
+  String get columnNewSemantic => 'Название новой колонки';
+
+  @override
+  String get columnNewCreate => 'Создать колонку';
+
+  @override
+  String get columnEmptyTitle => 'Колонка пуста';
+
+  @override
+  String get columnEmptyBody =>
+      'Добавьте первую карточку или перетащите сюда из другой колонки.';
+
+  @override
+  String get columnEmptyBodyViewer => 'Карточек пока нет.';
+
+  @override
+  String get columnMenu => 'Меню колонки';
+
+  @override
+  String columnMenuSemantic(String title) {
+    return 'Меню колонки «$title»';
+  }
+
+  @override
+  String columnSheetSemantic(String title) {
+    return 'Колонка «$title»';
+  }
+
+  @override
+  String get columnNameLabel => 'Название колонки';
+
+  @override
+  String get columnMoveLeft => 'Сдвинуть левее';
+
+  @override
+  String get columnMoveRight => 'Сдвинуть правее';
+
+  @override
+  String columnArchiveTitle(String title) {
+    return 'Архивировать «$title»?';
+  }
+
+  @override
+  String columnArchiveCards(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count карточки',
+      many: '$count карточек',
+      few: '$count карточки',
+      one: '$count карточка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String columnArchiveBody(String cards) {
+    return 'Вместе с колонкой в архив уйдут $cards. Участники доски сразу перестанут их видеть.';
+  }
+
+  @override
+  String get columnArchiveBodyEmpty =>
+      'В колонке нет карточек. Участники доски сразу перестанут видеть колонку.';
+
+  @override
+  String get columnArchiveCancel => 'Отмена';
+
+  @override
+  String get columnArchiveConfirm => 'В архив';
+
+  @override
+  String get cardComposerDescription => 'Описание';
+
+  @override
+  String get cardInlineEditCaption => 'Правка заголовка';
+
+  @override
+  String get cardInlineEditCancel => 'Отменить правку';
+
+  @override
+  String get cardInlineEditSave => 'Сохранить заголовок';
+
+  @override
+  String get cardInlineEditAction => 'Править заголовок на доске';
 }

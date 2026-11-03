@@ -17,15 +17,17 @@ String rejectedKindLabel(AppLocalizations l10n, RejectedOpKind kind) {
   };
 }
 
+bool isColumnKind(RejectedOpKind kind) => switch (kind) {
+  RejectedOpKind.createColumn ||
+  RejectedOpKind.renameColumn ||
+  RejectedOpKind.moveColumn ||
+  RejectedOpKind.archiveColumn => true,
+  _ => false,
+};
+
 String rejectedSubject(AppLocalizations l10n, RejectedItemView item) {
   final subject = item.subject;
-  final isColumn = switch (item.kind) {
-    RejectedOpKind.createColumn ||
-    RejectedOpKind.renameColumn ||
-    RejectedOpKind.moveColumn ||
-    RejectedOpKind.archiveColumn => true,
-    _ => false,
-  };
+  final isColumn = isColumnKind(item.kind);
   switch (item.kind) {
     case RejectedOpKind.create:
       return subject == null
@@ -59,7 +61,12 @@ String rejectedReason(AppLocalizations l10n, RejectedItemView item) {
   if (rejection == null) {
     return l10n.nackInternalFinal;
   }
-  return nackMessage(l10n, rejection, actorName: item.actorName);
+  return nackMessage(
+    l10n,
+    rejection,
+    actorName: item.actorName,
+    column: isColumnKind(item.kind),
+  );
 }
 
 String syncSummaryBody(AppLocalizations l10n, SyncSummaryView summary) {

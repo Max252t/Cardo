@@ -33,6 +33,7 @@ class OpSender {
 
   final List<BoardOp> _queue = <BoardOp>[];
   final Map<String, String> _barriers = <String, String>{};
+  final Map<String, String> _columnBarriers = <String, String>{};
   final Map<String, int> _order = <String, int>{};
   int _counter = 0;
   int _tokens;
@@ -59,9 +60,10 @@ class OpSender {
   }
 
   void releaseResolved(bool Function(String opId) resolved) {
-    final before = _barriers.length;
+    final before = _barriers.length + _columnBarriers.length;
     _barriers.removeWhere((cardId, opId) => resolved(opId));
-    if (_barriers.length != before) {
+    _columnBarriers.removeWhere((columnId, opId) => resolved(opId));
+    if (_barriers.length + _columnBarriers.length != before) {
       _drain();
     }
   }
@@ -88,6 +90,7 @@ class OpSender {
     _tokens = burst;
     _lastRefill = now();
     _barriers.clear();
+    _columnBarriers.clear();
     _order.clear();
     _refillTimer?.cancel();
     _refillTimer = null;
@@ -102,12 +105,45 @@ class OpSender {
   }
 
   bool _isBlocked(BoardOp op) {
+    for (final entry in _columnBarriers.entries) {
+      if (entry.value != op.opId && op.referencesColumn(entry.key)) {
+        return true;
+      }
+    }
     final cardId = op.cardId;
     if (cardId == null) {
       return false;
     }
     final holder = _barriers[cardId];
     return holder != null && holder != op.opId;
+  }
+
+  int _nextSendable() {
+    final heldCards = <String>{};
+    final heldColumns = <String>{};
+    var anyHeld = false;
+    for (var i = 0; i < _queue.length; i++) {
+      final op = _queue[i];
+      final cardId = op.cardId;
+      final held =
+          _isBlocked(op) ||
+          (cardId != null && heldCards.contains(cardId)) ||
+          heldColumns.any(op.referencesColumn) ||
+          (anyHeld && op is ArchiveColumn);
+      if (!held) {
+        return i;
+      }
+      anyHeld = true;
+      if (cardId != null) {
+        heldCards.add(cardId);
+      }
+      if (op is CreateColumn) {
+        heldColumns.add(op.columnId);
+      } else if (op is MoveColumn) {
+        heldColumns.add(op.columnId);
+      }
+    }
+    return -1;
   }
 
   void _refillByClock() {
@@ -122,7 +158,7 @@ class OpSender {
   void _drain() {
     _refillByClock();
     while (!_disposed && !_paused && _tokens > 0) {
-      final index = _queue.indexWhere((op) => !_isBlocked(op));
+      final index = _nextSendable();
       if (index < 0) {
         break;
       }
@@ -134,6 +170,9 @@ class OpSender {
       final outcome = dispatch(op);
       if (outcome == SendOutcome.sent && op is CreateCard) {
         _barriers[op.cardId] = op.opId;
+      }
+      if (outcome == SendOutcome.sent && op is CreateColumn) {
+        _columnBarriers[op.columnId] = op.opId;
       }
       if (outcome == SendOutcome.notConnected) {
         final unsent = <BoardOp>[op, ..._queue];
@@ -150,7 +189,7 @@ class OpSender {
         _paused ||
         _refillTimer != null ||
         _tokens > 0 ||
-        !_queue.any((op) => !_isBlocked(op))) {
+        _nextSendable() < 0) {
       return;
     }
     _refillTimer = scheduler.after(refill, () {

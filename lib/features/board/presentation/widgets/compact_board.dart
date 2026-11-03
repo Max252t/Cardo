@@ -28,6 +28,10 @@ class CompactBoard extends ConsumerStatefulWidget {
 class _CompactBoardState extends ConsumerState<CompactBoard> {
   PageController? _controller;
   int _page = 0;
+  String? _selectedId;
+  int _pagerCount = -1;
+  int? _pendingPage;
+  bool _syncScheduled = false;
   int _flipDirection = 0;
   Timer? _flipTimer;
 
@@ -74,6 +78,75 @@ class _CompactBoardState extends ConsumerState<CompactBoard> {
         ),
       );
     }
+  }
+
+  void _createColumn(String title) {
+    final id = ref.read(boardNotifierProvider.notifier).createColumn(title);
+    if (id != null) {
+      setState(() => _selectedId = id);
+    }
+  }
+
+  void _followSelected(List<ColumnViewData> columns) {
+    if (columns.isEmpty) {
+      return;
+    }
+    final id = _selectedId;
+    final index = id == null
+        ? -1
+        : columns.indexWhere((column) => column.column.id == id);
+    final target = index >= 0 ? index : _page.clamp(0, columns.length - 1);
+    _selectedId = columns[target].column.id;
+    var needsSync = false;
+    if (target != _page) {
+      _page = target;
+      _pendingPage = target;
+      needsSync = true;
+    }
+    if (columns.length != _pagerCount) {
+      _pagerCount = columns.length;
+      needsSync = true;
+    }
+    if (needsSync) {
+      _scheduleSync();
+    }
+  }
+
+  void _scheduleSync() {
+    if (_syncScheduled) {
+      return;
+    }
+    _syncScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncScheduled = false;
+      if (!mounted) {
+        return;
+      }
+      final controller = _controller;
+      void settle() {
+        final target = _pendingPage;
+        _pendingPage = null;
+        if (mounted && target != null) {
+          _goTo(target);
+        }
+      }
+
+      if (controller == null) {
+        settle();
+      } else {
+        refreshPagerExtent(controller, settle);
+      }
+    });
+  }
+
+  void _onPageChanged(int value) {
+    final current = ref.read(boardColumnsProvider);
+    setState(() {
+      _page = value;
+      if (value >= 0 && value < current.length) {
+        _selectedId = current[value].column.id;
+      }
+    });
   }
 
   void _onDragUpdate(Offset global) {
@@ -139,6 +212,7 @@ class _CompactBoardState extends ConsumerState<CompactBoard> {
     });
     final columns = ref.watch(boardColumnsProvider);
     final canEdit = ref.watch(canEditBoardProvider);
+    _followSelected(columns);
     final page = columns.isEmpty ? 0 : _page.clamp(0, columns.length - 1);
     return BoundedHeaderLayout(
       header: CompactBoardHeader(
@@ -146,6 +220,7 @@ class _CompactBoardState extends ConsumerState<CompactBoard> {
           columns: columns,
           selectedIndex: page,
           onSelected: _goTo,
+          onCreate: canEdit ? _createColumn : null,
         ),
       ),
       body: LayoutBuilder(
@@ -158,7 +233,7 @@ class _CompactBoardState extends ConsumerState<CompactBoard> {
           canEdit: canEdit,
           hooks: _hooks,
           onCardTap: widget.onCardTap,
-          onPageChanged: (value) => setState(() => _page = value),
+          onPageChanged: _onPageChanged,
         ),
       ),
     );

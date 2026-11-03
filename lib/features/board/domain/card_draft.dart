@@ -26,7 +26,7 @@ class CardDraft {
 
   bool get submitted => submittedOpId != null;
 
-  bool get tooLong => text.length > CardLimits.descriptionMaxLength;
+  bool get tooLong => text.runes.length > CardLimits.descriptionMaxLength;
 
   bool get canSubmit => !tooLong && !conflict && !submitted;
 

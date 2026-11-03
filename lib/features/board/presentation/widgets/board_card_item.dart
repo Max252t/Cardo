@@ -9,7 +9,9 @@ import '../../domain/board_sync_state.dart';
 import '../board_drag_controller.dart';
 import '../board_providers.dart';
 import '../board_view_data.dart';
+import '../card_inline_state.dart';
 import 'board_snackbar.dart';
+import 'card_inline_title_editor.dart';
 
 class CardDragHooks {
   const CardDragHooks({required this.onUpdate, required this.onEnd});
@@ -88,11 +90,26 @@ class BoardCardItem extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final cardId = data.card.id;
     final draggable = canEdit && data.status != CardSyncStatus.rejected;
+    if (draggable &&
+        ref.watch(
+          cardInlineProvider.select((state) => state.editingCardId == cardId),
+        )) {
+      return CardInlineTitleEditor(
+        key: ValueKey<String>('title-editor-$cardId'),
+        cardId: cardId,
+        dense: dense,
+        bottomGap: bottomGap,
+      );
+    }
     final tile = MergeSemantics(
       child: Semantics(
         hint: draggable ? l10n.cardDragHint : null,
         customSemanticsActions: draggable
             ? <CustomSemanticsAction, VoidCallback>{
+                CustomSemanticsAction(label: l10n.cardInlineEditAction): () =>
+                    ref
+                        .read(cardInlineProvider.notifier)
+                        .startEditing(cardId, data.card.title),
                 for (final column in otherColumns)
                   CustomSemanticsAction(
                     label: l10n.cardMoveTo(column.title),

@@ -165,6 +165,48 @@ class BoardSyncState {
         item.isRejected && item.op is CreateCard && item.op.cardId == cardId,
   );
 
+  Set<String> dependentOpIds(BoardOp root) {
+    final columns = <String>{if (root is CreateColumn) root.columnId};
+    final cards = <String>{if (root is CreateCard) root.cardId};
+    if (columns.isEmpty && cards.isEmpty) {
+      return const <String>{};
+    }
+    final found = <String>{};
+    var grew = true;
+    while (grew) {
+      grew = false;
+      for (final item in pending) {
+        final op = item.op;
+        if (op.opId == root.opId || found.contains(op.opId)) {
+          continue;
+        }
+        final cardId = op.cardId;
+        final inColumn = columns.any(op.referencesColumn);
+        final inCard = cardId != null && cards.contains(cardId);
+        if (!inColumn && !inCard) {
+          continue;
+        }
+        found.add(op.opId);
+        grew = true;
+        if (op is CreateCard) {
+          cards.add(op.cardId);
+        }
+        if (op is CreateColumn) {
+          columns.add(op.columnId);
+        }
+      }
+    }
+    return found;
+  }
+
+  bool dependsOnRejectedColumnCreate(BoardOp op) => pending.any(
+    (item) =>
+        item.isRejected &&
+        item.op is CreateColumn &&
+        item.op.opId != op.opId &&
+        dependentOpIds(item.op).contains(op.opId),
+  );
+
   BoardSyncState withoutOps(Set<String> opIds) {
     if (opIds.isEmpty || !pending.any((item) => opIds.contains(item.opId))) {
       return this;
@@ -195,14 +237,11 @@ class BoardSyncState {
 
   BoardSyncState withoutStale(DateTime now, Duration maxAge) {
     final dropped = <String>{};
-    final droppedCards = <String>{};
+    final orphans = <String>{};
     for (final item in pending) {
       if (!item.isRejected && now.difference(item.createdAt) > maxAge) {
         dropped.add(item.opId);
-        final op = item.op;
-        if (op is CreateCard) {
-          droppedCards.add(op.cardId);
-        }
+        orphans.addAll(dependentOpIds(item.op));
       }
     }
     if (dropped.isEmpty) {
@@ -213,9 +252,9 @@ class BoardSyncState {
     final logged = <RejectedOp>[];
     final before = view;
     for (final item in pending) {
-      final cardId = item.op.cardId;
       final stale = dropped.contains(item.opId);
-      if (stale || (cardId != null && droppedCards.contains(cardId))) {
+      final orphan = orphans.contains(item.opId);
+      if (stale || orphan) {
         gone.add(item.opId);
         if (!item.isDescriptionConflict) {
           logged.add(
@@ -282,11 +321,10 @@ class BoardSyncState {
     final entries = <RejectedOp>[
       describeRejected(op, confirmed, view, rejection: item.rejection),
     ];
-    if (op is CreateCard) {
+    if (op is CreateCard || op is CreateColumn) {
+      final dependents = dependentOpIds(op);
       for (final other in pending) {
-        if (other.opId != opId &&
-            !other.isRejected &&
-            other.op.cardId == op.cardId) {
+        if (!other.isRejected && dependents.contains(other.opId)) {
           entries.add(
             describeRejected(
               other.op,
@@ -361,7 +399,8 @@ class BoardSyncState {
       return false;
     }
     final cardId = item.op.cardId;
-    return cardId == null || !hasRejectedCreate(cardId);
+    return (cardId == null || !hasRejectedCreate(cardId)) &&
+        !dependsOnRejectedColumnCreate(item.op);
   }
 
   BoardSyncState settleBatch() {

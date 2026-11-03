@@ -4,6 +4,8 @@ sealed class BoardOp {
   final String opId;
 
   String? get cardId => null;
+
+  bool referencesColumn(String columnId) => false;
 }
 
 final class MoveCard extends BoardOp {
@@ -22,6 +24,9 @@ final class MoveCard extends BoardOp {
   final String? afterId;
   final String? beforeId;
   final int baseVersion;
+
+  @override
+  bool referencesColumn(String columnId) => toColumnId == columnId;
 
   @override
   bool operator ==(Object other) {
@@ -66,6 +71,9 @@ final class CreateCard extends BoardOp {
   final String? afterId;
   final String? beforeId;
   final DateTime? at;
+
+  @override
+  bool referencesColumn(String columnId) => this.columnId == columnId;
 
   @override
   bool operator ==(Object other) {
@@ -206,6 +214,10 @@ final class CreateColumn extends BoardOp {
   final String? beforeId;
 
   @override
+  bool referencesColumn(String columnId) =>
+      this.columnId == columnId || afterId == columnId || beforeId == columnId;
+
+  @override
   bool operator ==(Object other) {
     return other is CreateColumn &&
         other.opId == opId &&
@@ -231,6 +243,9 @@ final class RenameColumn extends BoardOp {
 
   final String columnId;
   final String title;
+
+  @override
+  bool referencesColumn(String columnId) => this.columnId == columnId;
 
   @override
   bool operator ==(Object other) {
@@ -262,6 +277,10 @@ final class MoveColumn extends BoardOp {
   final String? beforeId;
 
   @override
+  bool referencesColumn(String columnId) =>
+      this.columnId == columnId || afterId == columnId || beforeId == columnId;
+
+  @override
   bool operator ==(Object other) {
     return other is MoveColumn &&
         other.opId == opId &&
@@ -283,6 +302,9 @@ final class ArchiveColumn extends BoardOp {
   const ArchiveColumn({required super.opId, required this.columnId});
 
   final String columnId;
+
+  @override
+  bool referencesColumn(String columnId) => this.columnId == columnId;
 
   @override
   bool operator ==(Object other) {

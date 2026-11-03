@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'cardo_colors.dart';
+import 'cardo_column_tokens.dart';
 import 'cardo_form_tokens.dart';
 import 'cardo_layout.dart';
 import 'cardo_motion.dart';
@@ -98,6 +99,7 @@ ThemeData _buildTheme({
   const layout = CardoLayout.standard;
   const form = CardoFormTokens.standard;
   const sync = CardoSyncTokens.standard;
+  const columnTokens = CardoColumnTokens.standard;
 
   final scheme = _colorScheme(colors);
   final buttonShape = RoundedRectangleBorder(
@@ -237,6 +239,7 @@ ThemeData _buildTheme({
       layout,
       form,
       sync,
+      columnTokens,
     ],
   );
 }

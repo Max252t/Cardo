@@ -29,7 +29,7 @@ void main() {
 
   group('ThemeData extensions', () {
     themes.forEach((name, theme) {
-      test('$name has all 10 extensions', () {
+      test('$name has all 11 extensions', () {
         expect(theme.extension<CardoColors>(), isNotNull);
         expect(theme.extension<CardoTypography>(), isNotNull);
         expect(theme.extension<CardoRadii>(), isNotNull);
@@ -40,7 +40,8 @@ void main() {
         expect(theme.extension<CardoLayout>(), isNotNull);
         expect(theme.extension<CardoFormTokens>(), isNotNull);
         expect(theme.extension<CardoSyncTokens>(), isNotNull);
-        expect(theme.extensions.length, 10);
+        expect(theme.extension<CardoColumnTokens>(), isNotNull);
+        expect(theme.extensions.length, 11);
       });
     });
 

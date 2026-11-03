@@ -12,8 +12,8 @@ import '../board_drag_controller.dart';
 import '../board_providers.dart';
 import 'board_card_item.dart';
 import 'board_column.dart';
-import 'board_snackbar.dart';
 import 'drag_edge.dart';
+import 'new_column_field.dart';
 
 class ScrollingBoard extends ConsumerStatefulWidget {
   const ScrollingBoard({
@@ -84,6 +84,27 @@ class _ScrollingBoardState extends ConsumerState<ScrollingBoard> {
     }
   }
 
+  void _scrollToEnd() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_controller.hasClients) {
+        return;
+      }
+      final target = _controller.position.maxScrollExtent;
+      final duration = resolveMotion(context, CardoMotion.of(context).reorder);
+      if (duration == Duration.zero) {
+        _controller.jumpTo(target);
+      } else {
+        unawaited(
+          _controller.animateTo(
+            target,
+            duration: duration,
+            curve: CardoMotion.of(context).reorderCurve,
+          ),
+        );
+      }
+    });
+  }
+
   void _stop() {
     _ticker?.cancel();
     _ticker = null;
@@ -141,7 +162,7 @@ class _ScrollingBoardState extends ConsumerState<ScrollingBoard> {
                         ),
                       ),
                     ),
-                  if (canEdit) const AddColumnButton(),
+                  if (canEdit) AddColumnButton(onCreated: _scrollToEnd),
                 ],
               ),
             ),
@@ -152,11 +173,50 @@ class _ScrollingBoardState extends ConsumerState<ScrollingBoard> {
   }
 }
 
-class AddColumnButton extends StatelessWidget {
-  const AddColumnButton({super.key});
+class AddColumnButton extends ConsumerStatefulWidget {
+  const AddColumnButton({super.key, this.onCreated});
+
+  final VoidCallback? onCreated;
+
+  @override
+  ConsumerState<AddColumnButton> createState() => _AddColumnButtonState();
+}
+
+class _AddColumnButtonState extends ConsumerState<AddColumnButton> {
+  bool _editing = false;
+
+  void _open() {
+    setState(() => _editing = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(Scrollable.ensureVisible(context));
+      }
+    });
+  }
+
+  void _close() {
+    if (mounted && _editing) {
+      setState(() => _editing = false);
+    }
+  }
+
+  void _create(String title) {
+    final id = ref.read(boardNotifierProvider.notifier).createColumn(title);
+    setState(() => _editing = false);
+    if (id != null) {
+      widget.onCreated?.call();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_editing) {
+      return NewColumnField(
+        width: CardoLayout.of(context).addColumnWidth,
+        onSubmit: _create,
+        onCancel: _close,
+      );
+    }
     final colors = CardoColors.of(context);
     final typography = CardoTypography.of(context);
     final sizes = CardoSizes.of(context);
@@ -179,7 +239,7 @@ class AddColumnButton extends StatelessWidget {
           child: Material(
             type: MaterialType.transparency,
             child: InkWell(
-              onTap: () => showComingSoon(context),
+              onTap: _open,
               borderRadius: radius,
               child: ConstrainedBox(
                 constraints: BoxConstraints(

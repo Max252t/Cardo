@@ -707,7 +707,7 @@ abstract class AppLocalizations {
   /// Кнопка отмены создания карточки
   ///
   /// In ru, this message translates to:
-  /// **'Отменить'**
+  /// **'Отмена'**
   String get addCardCancel;
 
   /// Snackbar: nack forbidden
@@ -1507,6 +1507,162 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Обновите приложение: сервер использует новые возможности.'**
   String get protocolUpdateApp;
+
+  /// Snackbar: nack version_conflict при сдвиге колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонку уже переместил {name}.'**
+  String nackVersionConflictColumn(String name);
+
+  /// Snackbar: nack version_conflict при сдвиге колонки без имени
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонку уже переместил другой участник.'**
+  String get nackVersionConflictColumnUnknown;
+
+  /// Snackbar: nack not_found для колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка уже в архиве.'**
+  String get nackNotFoundColumn;
+
+  /// Подсказка поля новой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Название колонки'**
+  String get columnNewHint;
+
+  /// Метка поля новой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Название новой колонки'**
+  String get columnNewSemantic;
+
+  /// Кнопка-галочка создания колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать колонку'**
+  String get columnNewCreate;
+
+  /// Заголовок пустой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка пуста'**
+  String get columnEmptyTitle;
+
+  /// Текст пустой колонки для редактора
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавьте первую карточку или перетащите сюда из другой колонки.'**
+  String get columnEmptyBody;
+
+  /// Текст пустой колонки для наблюдателя
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточек пока нет.'**
+  String get columnEmptyBodyViewer;
+
+  /// Подсказка кнопки меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Меню колонки'**
+  String get columnMenu;
+
+  /// Метка кнопки меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Меню колонки «{title}»'**
+  String columnMenuSemantic(String title);
+
+  /// Метка шторки колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка «{title}»'**
+  String columnSheetSemantic(String title);
+
+  /// Подпись поля переименования
+  ///
+  /// In ru, this message translates to:
+  /// **'Название колонки'**
+  String get columnNameLabel;
+
+  /// Пункт меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Сдвинуть левее'**
+  String get columnMoveLeft;
+
+  /// Пункт меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Сдвинуть правее'**
+  String get columnMoveRight;
+
+  /// Заголовок блока архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Архивировать «{title}»?'**
+  String columnArchiveTitle(String title);
+
+  /// Число карточек, уходящих в архив
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} карточка} few{{count} карточки} many{{count} карточек} other{{count} карточки}}'**
+  String columnArchiveCards(int count);
+
+  /// Текст блока архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Вместе с колонкой в архив уйдут {cards}. Участники доски сразу перестанут их видеть.'**
+  String columnArchiveBody(String cards);
+
+  /// Текст блока архивации пустой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'В колонке нет карточек. Участники доски сразу перестанут видеть колонку.'**
+  String get columnArchiveBodyEmpty;
+
+  /// Кнопка отмены архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get columnArchiveCancel;
+
+  /// Кнопка подтверждения архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'В архив'**
+  String get columnArchiveConfirm;
+
+  /// Кнопка показа поля описания в форме новой карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание'**
+  String get cardComposerDescription;
+
+  /// Подпись редактора заголовка карточки на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Правка заголовка'**
+  String get cardInlineEditCaption;
+
+  /// Кнопка отмены правки заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить правку'**
+  String get cardInlineEditCancel;
+
+  /// Кнопка сохранения заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить заголовок'**
+  String get cardInlineEditSave;
+
+  /// Действие запуска правки заголовка прямо на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Править заголовок на доске'**
+  String get cardInlineEditAction;
 }
 
 class _AppLocalizationsDelegate

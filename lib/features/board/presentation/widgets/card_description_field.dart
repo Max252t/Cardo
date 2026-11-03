@@ -103,7 +103,10 @@ class _CardDescriptionSectionState
           )
         else
           field,
-        _DescriptionCounter(length: data.text.length, tooLong: data.tooLong),
+        _DescriptionCounter(
+          length: data.text.runes.length,
+          tooLong: data.tooLong,
+        ),
       ],
     );
   }

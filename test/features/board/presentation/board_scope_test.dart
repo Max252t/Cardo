@@ -49,7 +49,9 @@ void main() {
       await tester.tap(find.text('Открыть демо-доску'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Срок жизни инвайт-ссылки').first);
+      await tester.tap(
+        find.text('Rate limit на логин: 5 попыток в минуту').first,
+      );
       await pumpFrames(tester);
 
       expect(find.byType(CardSheet), findsOneWidget);

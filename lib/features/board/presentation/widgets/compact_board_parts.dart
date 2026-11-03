@@ -72,3 +72,21 @@ class BoundedHeaderLayout extends StatelessWidget {
     );
   }
 }
+
+void refreshPagerExtent(PageController controller, VoidCallback done) {
+  if (!controller.hasClients) {
+    done();
+    return;
+  }
+  final position = controller.position;
+  final pixels = position.pixels;
+  final probe = pixels >= position.maxScrollExtent ? pixels - 1 : pixels + 1;
+  position.jumpTo(probe);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (controller.hasClients) {
+      controller.position.jumpTo(pixels);
+    }
+    done();
+  });
+  WidgetsBinding.instance.ensureVisualUpdate();
+}

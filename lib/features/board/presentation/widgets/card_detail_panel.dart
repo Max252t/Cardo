@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
 import '../board_providers.dart';
+import '../card_inline_state.dart';
 import '../card_sheet_data.dart';
 import 'card_editor_body.dart';
 import 'card_editor_parts.dart';
@@ -95,6 +96,18 @@ class _PanelTopBar extends ConsumerWidget {
           )
         else
           const Spacer(),
+        if (data.canEdit)
+          CardIconButton(
+            tooltip: l10n.cardInlineEditAction,
+            icon: LucideIcons.pencil,
+            style: style,
+            foreground: style.quietForeground,
+            onPressed: data.locked
+                ? null
+                : () => ref
+                      .read(cardInlineProvider.notifier)
+                      .startEditing(data.cardId, data.title),
+          ),
         if (data.canEdit)
           CardIconButton(
             tooltip: l10n.cardPanelArchive,
