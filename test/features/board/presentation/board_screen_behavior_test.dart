@@ -54,7 +54,7 @@ void main() {
         expect(find.text(viewerBanner), findsOneWidget);
         expect(find.text('Добавить карточку'), findsNothing);
         expect(find.text('Колонка'), findsNothing);
-        expect(find.byTooltip('Меню доски'), findsNothing);
+        expect(find.byTooltip('Меню доски'), findsOneWidget);
         expect(find.text('Пригласить'), findsNothing);
         expect(
           find.byWidgetPredicate((w) => w is LongPressDraggable),

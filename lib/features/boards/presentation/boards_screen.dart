@@ -13,6 +13,7 @@ import '../../../shared/widgets/cardo_buttons.dart';
 import '../../../shared/widgets/cardo_logo.dart';
 import '../../../theme/cardo_theme.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../invites/presentation/invite_link_dialog.dart';
 import 'boards_providers.dart';
 import 'widgets/boards_body.dart';
 
@@ -75,8 +76,16 @@ class BoardsCompactLayout extends StatelessWidget {
                 bottom: spacing.sm,
               ),
               child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[CardoLogo(), ProfileButton()],
+                children: <Widget>[
+                  Expanded(
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: CardoLogo(),
+                    ),
+                  ),
+                  HaveLinkButton(),
+                  ProfileButton(),
+                ],
               ),
             ),
             Padding(
@@ -156,6 +165,7 @@ class BoardsWideLayout extends StatelessWidget {
                       width: metrics.gridTileMaxExtent - spacing.xl * 3,
                       child: BoardsSearchField(controller: search),
                     ),
+                    const HaveLinkButton(),
                     const ProfileButton(),
                   ],
                 ),
