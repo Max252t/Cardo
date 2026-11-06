@@ -442,6 +442,8 @@
   "@boardsNoResults": {"description":"Результат поиска без совпадений"},
   "boardsProfile": "Профиль",
   "@boardsProfile": {"description":"Подсказка кнопки профиля"},
+  "boardsRefresh": "Обновить",
+  "@boardsRefresh": {"description":"Подсказка и метка кнопки обновления списка досок"},
   "boardUpdatedAt": "изменено {when}",
   "@boardUpdatedAt": {"description":"Время последнего изменения доски","placeholders":{"when":{"type":"String"}}},
   "boardSemantic": "Доска «{title}», {role}",

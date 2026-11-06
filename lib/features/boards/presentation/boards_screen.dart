@@ -15,7 +15,9 @@ import '../../../theme/cardo_theme.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../invites/presentation/invite_link_dialog.dart';
 import 'boards_providers.dart';
+import 'widgets/boards_auto_refresh.dart';
 import 'widgets/boards_body.dart';
+import 'widgets/boards_refresh_button.dart';
 
 class BoardsScreen extends ConsumerStatefulWidget {
   const BoardsScreen({super.key});
@@ -39,12 +41,14 @@ class _BoardsScreenState extends ConsumerState<BoardsScreen> {
     final wide =
         layout.windowClassFor(MediaQuery.sizeOf(context).width) ==
         CardoWindowClass.expanded;
-    return Scaffold(
-      floatingActionButton: wide ? null : const BoardsFabSlot(),
-      body: SafeArea(
-        child: wide
-            ? BoardsWideLayout(search: _search)
-            : BoardsCompactLayout(search: _search),
+    return BoardsAutoRefresh(
+      child: Scaffold(
+        floatingActionButton: wide ? null : const BoardsFabSlot(),
+        body: SafeArea(
+          child: wide
+              ? BoardsWideLayout(search: _search)
+              : BoardsCompactLayout(search: _search),
+        ),
       ),
     );
   }
@@ -83,6 +87,7 @@ class BoardsCompactLayout extends StatelessWidget {
                       child: CardoLogo(),
                     ),
                   ),
+                  BoardsRefreshButton(),
                   HaveLinkButton(),
                   ProfileButton(),
                 ],
@@ -165,6 +170,7 @@ class BoardsWideLayout extends StatelessWidget {
                       width: metrics.gridTileMaxExtent - spacing.xl * 3,
                       child: BoardsSearchField(controller: search),
                     ),
+                    const BoardsRefreshButton(),
                     const HaveLinkButton(),
                     const ProfileButton(),
                   ],

@@ -6,4 +6,5 @@ abstract final class CardoDurations {
   static const Duration lostDraftSnackbar = Duration(seconds: 10);
   static const Duration nowTick = Duration(minutes: 1);
   static const Duration selfExitWindow = Duration(seconds: 30);
+  static const Duration boardsRefresh = Duration(seconds: 30);
 }

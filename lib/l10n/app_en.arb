@@ -179,6 +179,7 @@
   "boardsLoadError": "Couldn't load your boards",
   "boardsNoResults": "Nothing found",
   "boardsProfile": "Profile",
+  "boardsRefresh": "Refresh",
   "boardUpdatedAt": "updated {when}",
   "boardSemantic": "Board “{title}”, {role}",
   "newBoardTitle": "New board",

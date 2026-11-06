@@ -40,25 +40,28 @@ class BoardsBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(boardsListProvider);
-    Future<void> reload() => ref.refresh(boardsListProvider.future);
-    return switch (async) {
-      AsyncData(:final value) => switch (value) {
-        Success<List<BoardInfo>, ApiFailure>(:final value) => BoardsContent(
-          boards: value,
-          query: query,
-          grid: grid,
-          onRefresh: reload,
-        ),
-        Failure<List<BoardInfo>, ApiFailure>(:final failure) => BoardsFailure(
-          message: describeApiFailure(l10n, failure),
-          onRetry: () => unawaited(reload()),
-        ),
-      },
-      AsyncError() => BoardsFailure(
+    Future<void> reload() => ref.read(boardsListProvider.notifier).reload();
+    final loaded = async.value;
+    if (loaded == null && !async.hasError) {
+      return const BoardsSkeleton();
+    }
+    if (loaded == null) {
+      return BoardsFailure(
         message: l10n.errorUnknown,
         onRetry: () => unawaited(reload()),
+      );
+    }
+    return switch (loaded) {
+      Success<List<BoardInfo>, ApiFailure>(:final value) => BoardsContent(
+        boards: value,
+        query: query,
+        grid: grid,
+        onRefresh: reload,
       ),
-      _ => const BoardsSkeleton(),
+      Failure<List<BoardInfo>, ApiFailure>(:final failure) => BoardsFailure(
+        message: describeApiFailure(l10n, failure),
+        onRetry: () => unawaited(reload()),
+      ),
     };
   }
 }

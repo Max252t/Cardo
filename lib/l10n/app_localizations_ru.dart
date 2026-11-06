@@ -699,6 +699,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get boardsProfile => 'Профиль';
 
   @override
+  String get boardsRefresh => 'Обновить';
+
+  @override
   String boardUpdatedAt(String when) {
     return 'изменено $when';
   }

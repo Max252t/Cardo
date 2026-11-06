@@ -1172,6 +1172,12 @@ abstract class AppLocalizations {
   /// **'Профиль'**
   String get boardsProfile;
 
+  /// Подсказка и метка кнопки обновления списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновить'**
+  String get boardsRefresh;
+
   /// Время последнего изменения доски
   ///
   /// In ru, this message translates to:
