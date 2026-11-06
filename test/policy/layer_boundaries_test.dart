@@ -11,6 +11,7 @@ const Set<String> pureCoreDirs = <String>{
   'ranking',
   'equality',
   'realtime',
+  'invite',
 };
 
 const Set<String> infrastructureCoreDirs = <String>{'network'};
