@@ -53,12 +53,9 @@ Future<EndHarness> pumpEnd(
         boardNavigationProvider.overrideWith(
           (ref) => BoardNavigation(onBack: () => harness.backCalls++),
         ),
-        boardsListProvider.overrideWith((ref) {
-          harness.listLoads++;
-          return Future.value(
-            const Success<List<BoardInfo>, ApiFailure>(<BoardInfo>[]),
-          );
-        }),
+        boardsListProvider.overrideWith(
+          () => CountingBoardsList(() => harness.listLoads++),
+        ),
       ],
       child: MaterialApp(
         theme: buildLightTheme(),
@@ -128,6 +125,20 @@ List<String> mockClipboard(WidgetTester tester) {
 }
 
 final Finder dialogFinder = find.byType(BoardEndedDialog);
+
+class CountingBoardsList extends BoardsListNotifier {
+  CountingBoardsList(this.onBuild);
+
+  final void Function() onBuild;
+
+  @override
+  Future<Result<List<BoardInfo>, ApiFailure>> build() {
+    onBuild();
+    return Future.value(
+      const Success<List<BoardInfo>, ApiFailure>(<BoardInfo>[]),
+    );
+  }
+}
 
 void main() {
   final locales = <Locale, AppLocalizations>{

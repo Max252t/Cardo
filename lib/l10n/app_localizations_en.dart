@@ -687,6 +687,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get boardsProfile => 'Profile';
 
   @override
+  String get boardsRefresh => 'Refresh';
+
+  @override
   String boardUpdatedAt(String when) {
     return 'updated $when';
   }
