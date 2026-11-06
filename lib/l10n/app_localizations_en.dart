@@ -1008,4 +1008,193 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardInlineEditAction => 'Edit title on the board';
+
+  @override
+  String get membersTitle => 'Members';
+
+  @override
+  String membersSheetSemantic(String title) {
+    return 'Members of “$title”';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String membersOnlineCount(int count) {
+    return '$count online';
+  }
+
+  @override
+  String membersSummary(String members, String online) {
+    return '$members · $online';
+  }
+
+  @override
+  String membersBoardSubtitle(String title, String people) {
+    return '$title · $people';
+  }
+
+  @override
+  String get membersYou => 'You';
+
+  @override
+  String get membersOnBoard => 'on the board';
+
+  @override
+  String get membersAddLabel => 'Colleague\'s email';
+
+  @override
+  String get membersAddAction => 'Add';
+
+  @override
+  String membersAdded(String name) {
+    return 'Member added: $name';
+  }
+
+  @override
+  String get membersErrorNotFound => 'No user with this email';
+
+  @override
+  String get membersErrorAlreadyMember => 'This user is already on the board';
+
+  @override
+  String get membersErrorValidation => 'Check the email and role';
+
+  @override
+  String get membersErrorForbidden => 'Only the board owner can manage members';
+
+  @override
+  String membersRoleChange(String name, String role) {
+    return 'Change role: $name, currently $role';
+  }
+
+  @override
+  String membersRoleForNew(String role) {
+    return 'Role of the new member: $role';
+  }
+
+  @override
+  String membersRemoveTooltip(String name) {
+    return 'Remove from the board: $name';
+  }
+
+  @override
+  String membersRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String membersRemoveBody(String board) {
+    return 'They will lose access to “$board” right away. Their unsaved changes will not be kept.';
+  }
+
+  @override
+  String get membersRemoveConfirm => 'Remove';
+
+  @override
+  String get invitesTitle => 'Invite link';
+
+  @override
+  String get invitesCreate => 'Create link';
+
+  @override
+  String invitesRoleForNew(String role) {
+    return 'Role for the link: $role';
+  }
+
+  @override
+  String invitesLinkSemantic(String link) {
+    return 'Invite link: $link';
+  }
+
+  @override
+  String get invitesCopy => 'Copy';
+
+  @override
+  String get invitesCopied => 'Copied';
+
+  @override
+  String get invitesRevoke => 'Revoke';
+
+  @override
+  String invitesRevokeSemantic(String meta) {
+    return 'Revoke invite: $meta';
+  }
+
+  @override
+  String invitesCopySemantic(String meta) {
+    return 'Copy link: $meta';
+  }
+
+  @override
+  String invitesMeta(String role, String expiry, String uses) {
+    return '$role · $expiry · $uses';
+  }
+
+  @override
+  String invitesLeftDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '$count day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours left',
+      one: '$count hour left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes left',
+      one: '$count minute left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesExpired => 'expired';
+
+  @override
+  String invitesUses(int used, int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '$max uses',
+      one: '$max use',
+    );
+    return '$used of $_temp0';
+  }
+
+  @override
+  String get invitesEmpty =>
+      'No active links. Create a link and send it to a colleague.';
+
+  @override
+  String get invitesTokenHint =>
+      'A link can be copied only right after it is created.';
+
+  @override
+  String get invitesLoadError => 'Couldn\'t load invites';
 }

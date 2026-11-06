@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -8,6 +10,7 @@ import '../../../../shared/widgets/avatar_identity.dart';
 import '../../../../shared/widgets/avatar_stack.dart';
 import '../../../../shared/widgets/connection_pill.dart';
 import '../../../../theme/cardo_theme.dart';
+import '../../../members/presentation/members_screen.dart';
 import '../board_providers.dart';
 import '../board_view_data.dart';
 import 'board_header_actions.dart';
@@ -132,6 +135,12 @@ class CompactHeaderBar extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+        IconButton(
+          tooltip: l10n.boardMembers,
+          onPressed: () => unawaited(showMembers(context)),
+          iconSize: layout.iconHeader,
+          icon: const Icon(LucideIcons.users),
         ),
         AvatarStack(
           people: others,
@@ -265,6 +274,7 @@ class ExpandedHeaderActions extends ConsumerWidget {
     final spacing = CardoSpacing.of(context);
     final layout = CardoLayout.of(context);
     final online = ref.watch(onlineMembersProvider);
+    final canManage = ref.watch(currentRoleProvider).canManageMembers;
     return Wrap(
       alignment: WrapAlignment.end,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -280,7 +290,7 @@ class ExpandedHeaderActions extends ConsumerWidget {
           ringWidth: sizes.avatarRing,
         ),
         const MembersButton(),
-        if (canEdit) const InviteButton(),
+        if (canManage) const InviteButton(),
       ],
     );
   }

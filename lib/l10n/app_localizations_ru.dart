@@ -1029,4 +1029,202 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cardInlineEditAction => 'Править заголовок на доске';
+
+  @override
+  String get membersTitle => 'Участники';
+
+  @override
+  String membersSheetSemantic(String title) {
+    return 'Участники доски «$title»';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count участника',
+      many: '$count участников',
+      few: '$count участника',
+      one: '$count участник',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String membersOnlineCount(int count) {
+    return '$count онлайн';
+  }
+
+  @override
+  String membersSummary(String members, String online) {
+    return '$members · $online';
+  }
+
+  @override
+  String membersBoardSubtitle(String title, String people) {
+    return '$title · $people';
+  }
+
+  @override
+  String get membersYou => 'Вы';
+
+  @override
+  String get membersOnBoard => 'на доске';
+
+  @override
+  String get membersAddLabel => 'Email коллеги';
+
+  @override
+  String get membersAddAction => 'Добавить';
+
+  @override
+  String membersAdded(String name) {
+    return 'Участник добавлен: $name';
+  }
+
+  @override
+  String get membersErrorNotFound => 'Нет пользователя с таким email';
+
+  @override
+  String get membersErrorAlreadyMember => 'Этот пользователь уже на доске';
+
+  @override
+  String get membersErrorValidation => 'Проверьте email и роль';
+
+  @override
+  String get membersErrorForbidden =>
+      'Управлять участниками может только владелец доски';
+
+  @override
+  String membersRoleChange(String name, String role) {
+    return 'Сменить роль: $name, сейчас $role';
+  }
+
+  @override
+  String membersRoleForNew(String role) {
+    return 'Роль нового участника: $role';
+  }
+
+  @override
+  String membersRemoveTooltip(String name) {
+    return 'Исключить с доски: $name';
+  }
+
+  @override
+  String membersRemoveTitle(String name) {
+    return 'Исключить $name?';
+  }
+
+  @override
+  String membersRemoveBody(String board) {
+    return 'Участник сразу потеряет доступ к доске «$board». Его несохранённые изменения не сохранятся.';
+  }
+
+  @override
+  String get membersRemoveConfirm => 'Исключить';
+
+  @override
+  String get invitesTitle => 'Ссылка-приглашение';
+
+  @override
+  String get invitesCreate => 'Создать ссылку';
+
+  @override
+  String invitesRoleForNew(String role) {
+    return 'Роль по ссылке: $role';
+  }
+
+  @override
+  String invitesLinkSemantic(String link) {
+    return 'Ссылка-приглашение: $link';
+  }
+
+  @override
+  String get invitesCopy => 'Копировать';
+
+  @override
+  String get invitesCopied => 'Скопировано';
+
+  @override
+  String get invitesRevoke => 'Отозвать';
+
+  @override
+  String invitesRevokeSemantic(String meta) {
+    return 'Отозвать приглашение: $meta';
+  }
+
+  @override
+  String invitesCopySemantic(String meta) {
+    return 'Скопировать ссылку: $meta';
+  }
+
+  @override
+  String invitesMeta(String role, String expiry, String uses) {
+    return '$role · $expiry · $uses';
+  }
+
+  @override
+  String invitesLeftDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count дня',
+      many: 'осталось $count дней',
+      few: 'осталось $count дня',
+      one: 'остался $count день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count часа',
+      many: 'осталось $count часов',
+      few: 'осталось $count часа',
+      one: 'остался $count час',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count минуты',
+      many: 'осталось $count минут',
+      few: 'осталось $count минуты',
+      one: 'осталась $count минута',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesExpired => 'срок истёк';
+
+  @override
+  String invitesUses(int used, int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '$used из $max использований',
+      one: '$used из $max использования',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesEmpty =>
+      'Активных ссылок нет. Создайте ссылку и отправьте её коллеге.';
+
+  @override
+  String get invitesTokenHint =>
+      'Ссылку можно скопировать только сразу после создания.';
+
+  @override
+  String get invitesLoadError => 'Не удалось загрузить приглашения';
 }

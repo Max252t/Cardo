@@ -184,7 +184,7 @@ void main() {
     testWidgets('shows sidebar, header with seq, columns and no tabs', (
       tester,
     ) async {
-      await pumpBoard(tester, size: expandedSize);
+      await pumpBoard(tester, size: expandedSize, role: BoardRole.owner);
       expect(find.byType(ColumnTabs), findsNothing);
       expect(find.text('Поиск'), findsOneWidget);
       expect(find.text('ДОСКИ'), findsOneWidget);

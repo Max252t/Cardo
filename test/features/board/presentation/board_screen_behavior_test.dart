@@ -380,14 +380,13 @@ void main() {
       await _finish(tester);
     });
 
-    testWidgets('placeholder actions show the coming soon snackbar', (
-      tester,
-    ) async {
+    testWidgets('the members button opens the members dialog', (tester) async {
       await pumpBoard(tester, size: expandedSize);
       await tester.tap(find.text('Участники'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('Появится в следующих версиях'), findsOneWidget);
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Участники'), findsNWidgets(2));
       await _finish(tester);
     });
   });

@@ -1663,6 +1663,240 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Править заголовок на доске'**
   String get cardInlineEditAction;
+
+  /// Заголовок экрана участников
+  ///
+  /// In ru, this message translates to:
+  /// **'Участники'**
+  String get membersTitle;
+
+  /// Название экрана участников для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Участники доски «{title}»'**
+  String membersSheetSemantic(String title);
+
+  /// Число участников доски
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} участник} few{{count} участника} many{{count} участников} other{{count} участника}}'**
+  String membersCount(int count);
+
+  /// Число участников на доске прямо сейчас
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} онлайн'**
+  String membersOnlineCount(int count);
+
+  /// Строка под заголовком списка участников
+  ///
+  /// In ru, this message translates to:
+  /// **'{members} · {online}'**
+  String membersSummary(String members, String online);
+
+  /// Подзаголовок модального окна участников
+  ///
+  /// In ru, this message translates to:
+  /// **'{title} · {people}'**
+  String membersBoardSubtitle(String title, String people);
+
+  /// Пометка текущего пользователя в списке
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы'**
+  String get membersYou;
+
+  /// Статус участника, который сейчас на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'на доске'**
+  String get membersOnBoard;
+
+  /// Подпись поля добавления участника по email
+  ///
+  /// In ru, this message translates to:
+  /// **'Email коллеги'**
+  String get membersAddLabel;
+
+  /// Кнопка добавления участника по email
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить'**
+  String get membersAddAction;
+
+  /// Сообщение об успешном добавлении участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Участник добавлен: {name}'**
+  String membersAdded(String name);
+
+  /// Ошибка: email не зарегистрирован
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет пользователя с таким email'**
+  String get membersErrorNotFound;
+
+  /// Ошибка: пользователь уже участник
+  ///
+  /// In ru, this message translates to:
+  /// **'Этот пользователь уже на доске'**
+  String get membersErrorAlreadyMember;
+
+  /// Ошибка валидации при добавлении участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте email и роль'**
+  String get membersErrorValidation;
+
+  /// Ошибка прав при управлении участниками
+  ///
+  /// In ru, this message translates to:
+  /// **'Управлять участниками может только владелец доски'**
+  String get membersErrorForbidden;
+
+  /// Метка выбора роли участника для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Сменить роль: {name}, сейчас {role}'**
+  String membersRoleChange(String name, String role);
+
+  /// Метка выбора роли при добавлении
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль нового участника: {role}'**
+  String membersRoleForNew(String role);
+
+  /// Подсказка кнопки исключения участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить с доски: {name}'**
+  String membersRemoveTooltip(String name);
+
+  /// Заголовок подтверждения исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить {name}?'**
+  String membersRemoveTitle(String name);
+
+  /// Пояснение к подтверждению исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Участник сразу потеряет доступ к доске «{board}». Его несохранённые изменения не сохранятся.'**
+  String membersRemoveBody(String board);
+
+  /// Кнопка подтверждения исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить'**
+  String get membersRemoveConfirm;
+
+  /// Заголовок секции инвайт-ссылок
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка-приглашение'**
+  String get invitesTitle;
+
+  /// Кнопка создания инвайт-ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать ссылку'**
+  String get invitesCreate;
+
+  /// Метка выбора роли для новой ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль по ссылке: {role}'**
+  String invitesRoleForNew(String role);
+
+  /// Метка текста ссылки для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка-приглашение: {link}'**
+  String invitesLinkSemantic(String link);
+
+  /// Кнопка копирования ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Копировать'**
+  String get invitesCopy;
+
+  /// Подтверждение копирования ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировано'**
+  String get invitesCopied;
+
+  /// Кнопка отзыва приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Отозвать'**
+  String get invitesRevoke;
+
+  /// Метка кнопки отзыва для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Отозвать приглашение: {meta}'**
+  String invitesRevokeSemantic(String meta);
+
+  /// Метка кнопки копирования для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать ссылку: {meta}'**
+  String invitesCopySemantic(String meta);
+
+  /// Описание приглашения: роль, срок, использования
+  ///
+  /// In ru, this message translates to:
+  /// **'{role} · {expiry} · {uses}'**
+  String invitesMeta(String role, String expiry, String uses);
+
+  /// Сколько дней осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{остался {count} день} few{осталось {count} дня} many{осталось {count} дней} other{осталось {count} дня}}'**
+  String invitesLeftDays(int count);
+
+  /// Сколько часов осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{остался {count} час} few{осталось {count} часа} many{осталось {count} часов} other{осталось {count} часа}}'**
+  String invitesLeftHours(int count);
+
+  /// Сколько минут осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{осталась {count} минута} few{осталось {count} минуты} many{осталось {count} минут} other{осталось {count} минуты}}'**
+  String invitesLeftMinutes(int count);
+
+  /// Приглашение просрочено
+  ///
+  /// In ru, this message translates to:
+  /// **'срок истёк'**
+  String get invitesExpired;
+
+  /// Сколько раз использовано приглашение
+  ///
+  /// In ru, this message translates to:
+  /// **'{max, plural, one{{used} из {max} использования} other{{used} из {max} использований}}'**
+  String invitesUses(int used, int max);
+
+  /// Пустой список приглашений
+  ///
+  /// In ru, this message translates to:
+  /// **'Активных ссылок нет. Создайте ссылку и отправьте её коллеге.'**
+  String get invitesEmpty;
+
+  /// Пояснение, почему у старых приглашений нет ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылку можно скопировать только сразу после создания.'**
+  String get invitesTokenHint;
+
+  /// Ошибка загрузки списка приглашений
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить приглашения'**
+  String get invitesLoadError;
 }
 
 class _AppLocalizationsDelegate
