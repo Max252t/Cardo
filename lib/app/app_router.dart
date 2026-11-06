@@ -12,6 +12,7 @@ import '../features/board/presentation/board_route_page.dart';
 import '../features/board/presentation/demo_board_page.dart';
 import '../features/boards/presentation/boards_screen.dart';
 import '../features/design_preview/design_system_preview.dart';
+import '../features/invites/presentation/invite_screen.dart';
 import '../shared/providers/app_config_provider.dart';
 import 'app_routes.dart';
 import 'config_screen.dart';
@@ -41,25 +42,42 @@ String? resolveRedirect({
           : AppRoutes.splashFrom(location.toString());
     case SessionSignedOut():
       final open = path == AppRoutes.login || path == AppRoutes.register;
-      return open ? null : AppRoutes.login;
+      if (open) {
+        return null;
+      }
+      final origin = path == AppRoutes.splash
+          ? location.queryParameters[AppRoutes.fromParam]
+          : location.toString();
+      final target = _safeTarget(origin);
+      final invite =
+          target != null && AppRoutes.isInvitePath(Uri.parse(target).path);
+      return AppRoutes.withFrom(AppRoutes.login, invite ? target : null);
     case SessionSignedIn():
       if (path == AppRoutes.splash) {
         final target = location.queryParameters[AppRoutes.fromParam];
         return _safeTarget(target) ?? AppRoutes.boards;
       }
-      final entry =
-          path == AppRoutes.login || path == AppRoutes.register || path == '/';
-      return entry ? AppRoutes.boards : null;
+      if (path == AppRoutes.login || path == AppRoutes.register) {
+        final target = location.queryParameters[AppRoutes.fromParam];
+        return _safeTarget(target) ?? AppRoutes.boards;
+      }
+      return path == '/' ? AppRoutes.boards : null;
   }
 }
 
 String? _safeTarget(String? target) {
-  if (target == null || !target.startsWith('/') || target.startsWith('//')) {
+  if (target == null ||
+      !target.startsWith('/') ||
+      target.startsWith('//') ||
+      target.contains(r'\')) {
     return null;
   }
-  final path = Uri.tryParse(target)?.path;
-  if (path == null ||
-      path == AppRoutes.splash ||
+  final uri = Uri.tryParse(target);
+  if (uri == null || uri.hasScheme || uri.hasAuthority) {
+    return null;
+  }
+  final path = uri.path;
+  if (path == AppRoutes.splash ||
       path == AppRoutes.login ||
       path == AppRoutes.register ||
       path == AppRoutes.config) {
@@ -113,6 +131,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 BoardRoutePage(boardId: state.pathParameters['id']!),
           ),
         ],
+      ),
+      GoRoute(
+        path: '${AppRoutes.invite}/:token',
+        builder: (context, state) =>
+            InviteScreen(rawToken: state.pathParameters['token']),
       ),
       GoRoute(
         path: AppRoutes.profile,

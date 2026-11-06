@@ -1029,4 +1029,303 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cardInlineEditAction => 'Править заголовок на доске';
+
+  @override
+  String get membersTitle => 'Участники';
+
+  @override
+  String membersSheetSemantic(String title) {
+    return 'Участники доски «$title»';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count участника',
+      many: '$count участников',
+      few: '$count участника',
+      one: '$count участник',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String membersOnlineCount(int count) {
+    return '$count онлайн';
+  }
+
+  @override
+  String membersSummary(String members, String online) {
+    return '$members · $online';
+  }
+
+  @override
+  String get membersYou => 'Вы';
+
+  @override
+  String get membersOnBoard => 'на доске';
+
+  @override
+  String get membersAddLabel => 'Email коллеги';
+
+  @override
+  String get membersAddAction => 'Добавить';
+
+  @override
+  String membersAdded(String name) {
+    return 'Участник добавлен: $name';
+  }
+
+  @override
+  String get membersErrorNotFound => 'Нет пользователя с таким email';
+
+  @override
+  String get membersErrorAlreadyMember => 'Этот пользователь уже на доске';
+
+  @override
+  String get membersErrorValidation => 'Проверьте email и роль';
+
+  @override
+  String get membersErrorForbidden =>
+      'Управлять участниками может только владелец доски';
+
+  @override
+  String membersRoleChange(String name, String role) {
+    return 'Сменить роль: $name, сейчас $role';
+  }
+
+  @override
+  String membersRoleForNew(String role) {
+    return 'Роль нового участника: $role';
+  }
+
+  @override
+  String membersRemoveTooltip(String name) {
+    return 'Исключить с доски: $name';
+  }
+
+  @override
+  String membersRemoveTitle(String name) {
+    return 'Исключить $name?';
+  }
+
+  @override
+  String membersRemoveBody(String board) {
+    return 'Участник сразу потеряет доступ к доске «$board». Его несохранённые изменения не сохранятся.';
+  }
+
+  @override
+  String get membersRemoveConfirm => 'Исключить';
+
+  @override
+  String get invitesTitle => 'Ссылка-приглашение';
+
+  @override
+  String get invitesCreate => 'Создать ссылку';
+
+  @override
+  String invitesRoleForNew(String role) {
+    return 'Роль по ссылке: $role';
+  }
+
+  @override
+  String invitesLinkSemantic(String link) {
+    return 'Ссылка-приглашение: $link';
+  }
+
+  @override
+  String get invitesCopy => 'Копировать';
+
+  @override
+  String get invitesCopied => 'Скопировано';
+
+  @override
+  String get invitesRevoke => 'Отозвать';
+
+  @override
+  String invitesRevokeSemantic(String meta) {
+    return 'Отозвать приглашение: $meta';
+  }
+
+  @override
+  String invitesMeta(String role, String expiry, String uses) {
+    return '$role · $expiry · $uses';
+  }
+
+  @override
+  String invitesLeftDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count дня',
+      many: 'осталось $count дней',
+      few: 'осталось $count дня',
+      one: 'остался $count день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count часа',
+      many: 'осталось $count часов',
+      few: 'осталось $count часа',
+      one: 'остался $count час',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count минуты',
+      many: 'осталось $count минут',
+      few: 'осталось $count минуты',
+      one: 'осталась $count минута',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesExpired => 'срок истёк';
+
+  @override
+  String invitesUses(int used, int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '$used из $max использований',
+      one: '$used из $max использования',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesEmpty =>
+      'Активных ссылок нет. Создайте ссылку и отправьте её коллеге.';
+
+  @override
+  String get invitesTokenHint =>
+      'Ссылку можно скопировать только сразу после создания.';
+
+  @override
+  String get invitesLoadError => 'Не удалось загрузить приглашения';
+
+  @override
+  String get inviteHeadline => 'Вас приглашают на доску';
+
+  @override
+  String get inviteNote =>
+      'Роль и права назначил владелец доски. Вы увидите их сразу после присоединения.';
+
+  @override
+  String get inviteAccept => 'Присоединиться';
+
+  @override
+  String get inviteUnavailableTitle => 'Ссылка больше не работает';
+
+  @override
+  String get inviteUnavailableBody =>
+      'Она отозвана, истекла или уже использована. Попросите пригласившего прислать новую.';
+
+  @override
+  String get inviteNotFoundTitle => 'Ссылка не найдена';
+
+  @override
+  String get inviteNotFoundBody =>
+      'Проверьте, что ссылка скопирована целиком, или попросите прислать новую.';
+
+  @override
+  String get inviteToBoards => 'К моим доскам';
+
+  @override
+  String get inviteHaveLink => 'У меня есть ссылка';
+
+  @override
+  String get inviteLinkTitle => 'Открыть приглашение';
+
+  @override
+  String get inviteLinkField => 'Ссылка или код приглашения';
+
+  @override
+  String get inviteLinkRequired => 'Вставьте ссылку или код приглашения';
+
+  @override
+  String get inviteLinkInvalid =>
+      'Это не похоже на ссылку-приглашение. Вставьте ссылку целиком.';
+
+  @override
+  String get inviteLinkSubmit => 'Открыть';
+
+  @override
+  String get boardSettingsTitle => 'Настройки доски';
+
+  @override
+  String get boardSettingsName => 'Название';
+
+  @override
+  String get boardSettingsSave => 'Сохранить';
+
+  @override
+  String get boardSettingsSaved => 'Название сохранено';
+
+  @override
+  String get boardSettingsRole => 'Ваша роль';
+
+  @override
+  String get boardSettingsDanger => 'Опасная зона';
+
+  @override
+  String get boardSettingsDeleteAction => 'Удалить доску';
+
+  @override
+  String get boardSettingsDeleteTitle => 'Удалить доску?';
+
+  @override
+  String boardSettingsDeleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count участника сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      many:
+          '$count участников сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      few:
+          '$count участника сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      one:
+          '$count участник сразу потеряет доступ, а открытые у него экраны доски закроются.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardSettingsDeleteAlone =>
+      'Доска и все её карточки будут удалены без возможности восстановления.';
+
+  @override
+  String get boardSettingsDeleteConfirm => 'Удалить';
+
+  @override
+  String get boardSettingsLeaveAction => 'Покинуть доску';
+
+  @override
+  String get boardSettingsLeaveTitle => 'Покинуть доску?';
+
+  @override
+  String boardSettingsLeaveBody(String title) {
+    return 'Вы потеряете доступ к «$title». Вернуться можно будет только по новой ссылке-приглашению.';
+  }
+
+  @override
+  String get boardSettingsLeaveConfirm => 'Покинуть';
+
+  @override
+  String get boardSettingsBack => 'Назад к доске';
 }

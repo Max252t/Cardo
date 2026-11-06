@@ -15,6 +15,7 @@ import '../../../../shared/widgets/cardo_buttons.dart';
 import '../../../../shared/widgets/dashed_border.dart';
 import '../../../../shared/widgets/error_state.dart';
 import '../../../../theme/cardo_theme.dart';
+import '../../../invites/presentation/invite_link_dialog.dart';
 import '../../domain/board_info.dart';
 import '../boards_providers.dart';
 import '../new_board_dialog.dart';
@@ -108,6 +109,7 @@ class BoardsContent extends ConsumerWidget {
     if (boards.isEmpty) {
       return BoardsEmpty(
         onCreate: () => unawaited(createBoardAndOpen(context)),
+        onHaveLink: () => unawaited(openInviteFromLink(context)),
       );
     }
     final needle = query.trim().toLowerCase();

@@ -1008,4 +1008,290 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardInlineEditAction => 'Edit title on the board';
+
+  @override
+  String get membersTitle => 'Members';
+
+  @override
+  String membersSheetSemantic(String title) {
+    return 'Members of “$title”';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String membersOnlineCount(int count) {
+    return '$count online';
+  }
+
+  @override
+  String membersSummary(String members, String online) {
+    return '$members · $online';
+  }
+
+  @override
+  String get membersYou => 'You';
+
+  @override
+  String get membersOnBoard => 'on the board';
+
+  @override
+  String get membersAddLabel => 'Colleague\'s email';
+
+  @override
+  String get membersAddAction => 'Add';
+
+  @override
+  String membersAdded(String name) {
+    return 'Member added: $name';
+  }
+
+  @override
+  String get membersErrorNotFound => 'No user with this email';
+
+  @override
+  String get membersErrorAlreadyMember => 'This user is already on the board';
+
+  @override
+  String get membersErrorValidation => 'Check the email and role';
+
+  @override
+  String get membersErrorForbidden => 'Only the board owner can manage members';
+
+  @override
+  String membersRoleChange(String name, String role) {
+    return 'Change role: $name, currently $role';
+  }
+
+  @override
+  String membersRoleForNew(String role) {
+    return 'Role of the new member: $role';
+  }
+
+  @override
+  String membersRemoveTooltip(String name) {
+    return 'Remove from the board: $name';
+  }
+
+  @override
+  String membersRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String membersRemoveBody(String board) {
+    return 'They will lose access to “$board” right away. Their unsaved changes will not be kept.';
+  }
+
+  @override
+  String get membersRemoveConfirm => 'Remove';
+
+  @override
+  String get invitesTitle => 'Invite link';
+
+  @override
+  String get invitesCreate => 'Create link';
+
+  @override
+  String invitesRoleForNew(String role) {
+    return 'Role for the link: $role';
+  }
+
+  @override
+  String invitesLinkSemantic(String link) {
+    return 'Invite link: $link';
+  }
+
+  @override
+  String get invitesCopy => 'Copy';
+
+  @override
+  String get invitesCopied => 'Copied';
+
+  @override
+  String get invitesRevoke => 'Revoke';
+
+  @override
+  String invitesRevokeSemantic(String meta) {
+    return 'Revoke invite: $meta';
+  }
+
+  @override
+  String invitesMeta(String role, String expiry, String uses) {
+    return '$role · $expiry · $uses';
+  }
+
+  @override
+  String invitesLeftDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '$count day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours left',
+      one: '$count hour left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes left',
+      one: '$count minute left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesExpired => 'expired';
+
+  @override
+  String invitesUses(int used, int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '$max uses',
+      one: '$max use',
+    );
+    return '$used of $_temp0';
+  }
+
+  @override
+  String get invitesEmpty =>
+      'No active links. Create a link and send it to a colleague.';
+
+  @override
+  String get invitesTokenHint =>
+      'A link can be copied only right after it is created.';
+
+  @override
+  String get invitesLoadError => 'Couldn\'t load invites';
+
+  @override
+  String get inviteHeadline => 'You\'re invited to a board';
+
+  @override
+  String get inviteNote =>
+      'The board owner chose your role and permissions. You\'ll see them right after you join.';
+
+  @override
+  String get inviteAccept => 'Join';
+
+  @override
+  String get inviteUnavailableTitle => 'This link no longer works';
+
+  @override
+  String get inviteUnavailableBody =>
+      'It was revoked, has expired or was already used. Ask the person who invited you to send a new one.';
+
+  @override
+  String get inviteNotFoundTitle => 'Link not found';
+
+  @override
+  String get inviteNotFoundBody =>
+      'Check that the whole link was copied, or ask for a new one.';
+
+  @override
+  String get inviteToBoards => 'To my boards';
+
+  @override
+  String get inviteHaveLink => 'I have a link';
+
+  @override
+  String get inviteLinkTitle => 'Open an invitation';
+
+  @override
+  String get inviteLinkField => 'Invitation link or code';
+
+  @override
+  String get inviteLinkRequired => 'Paste an invitation link or code';
+
+  @override
+  String get inviteLinkInvalid =>
+      'That doesn\'t look like an invitation link. Paste the whole link.';
+
+  @override
+  String get inviteLinkSubmit => 'Open';
+
+  @override
+  String get boardSettingsTitle => 'Board settings';
+
+  @override
+  String get boardSettingsName => 'Name';
+
+  @override
+  String get boardSettingsSave => 'Save';
+
+  @override
+  String get boardSettingsSaved => 'Name saved';
+
+  @override
+  String get boardSettingsRole => 'Your role';
+
+  @override
+  String get boardSettingsDanger => 'Danger zone';
+
+  @override
+  String get boardSettingsDeleteAction => 'Delete board';
+
+  @override
+  String get boardSettingsDeleteTitle => 'Delete this board?';
+
+  @override
+  String boardSettingsDeleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count members will lose access right away and their open board screens will close.',
+      one:
+          '$count member will lose access right away and their open board screens will close.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardSettingsDeleteAlone =>
+      'The board and all its cards will be deleted permanently.';
+
+  @override
+  String get boardSettingsDeleteConfirm => 'Delete';
+
+  @override
+  String get boardSettingsLeaveAction => 'Leave board';
+
+  @override
+  String get boardSettingsLeaveTitle => 'Leave this board?';
+
+  @override
+  String boardSettingsLeaveBody(String title) {
+    return 'You\'ll lose access to “$title”. You can only come back with a new invitation link.';
+  }
+
+  @override
+  String get boardSettingsLeaveConfirm => 'Leave';
+
+  @override
+  String get boardSettingsBack => 'Back to the board';
 }

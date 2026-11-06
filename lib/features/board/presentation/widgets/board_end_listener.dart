@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../boards/presentation/boards_providers.dart';
+import '../../../board_settings/presentation/self_exit.dart';
 import '../../domain/board_sync_state.dart';
 import '../board_providers.dart';
 import '../sync_views.dart';
@@ -30,6 +31,10 @@ class BoardEndListener extends ConsumerWidget {
   void _leave(BuildContext context, WidgetRef ref, BoardEndReason reason) {
     if (reason == BoardEndReason.sessionEnded ||
         reason == BoardEndReason.unsupported) {
+      return;
+    }
+    final boardId = ref.read(boardViewProvider).id;
+    if (ref.read(selfExitProvider.notifier).isRecent(boardId)) {
       return;
     }
     final onBack = ref.read(boardNavigationProvider).onBack;

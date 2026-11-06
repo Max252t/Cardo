@@ -77,13 +77,14 @@ void main() {
       await _finish(tester);
     });
 
-    testWidgets('coming soon placeholder is in English', (tester) async {
+    testWidgets('members dialog opens in English', (tester) async {
       await pumpBoard(tester, size: expandedSize, locale: _en);
       await tester.tap(find.text('Members'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('Coming in a future version'), findsOneWidget);
-      expect(find.text('Появится в следующих версиях'), findsNothing);
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Members'), findsNWidgets(2));
+      expect(find.text('Участники'), findsNothing);
       await _finish(tester);
     });
 

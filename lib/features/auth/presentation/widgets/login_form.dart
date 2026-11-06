@@ -177,7 +177,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 TextButton(
                   onPressed: form.submitting
                       ? null
-                      : () => context.go(AppRoutes.register),
+                      : () => context.go(
+                          AppRoutes.keepFrom(
+                            AppRoutes.register,
+                            GoRouterState.of(context).uri,
+                          ),
+                        ),
                   child: Text(l10n.loginCreateLink),
                 ),
               ],
@@ -187,7 +192,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               label: l10n.loginCreateAccount,
               onPressed: form.submitting
                   ? null
-                  : () => context.go(AppRoutes.register),
+                  : () => context.go(
+                      AppRoutes.keepFrom(
+                        AppRoutes.register,
+                        GoRouterState.of(context).uri,
+                      ),
+                    ),
             ),
         ],
       ),

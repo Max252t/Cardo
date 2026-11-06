@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -5,8 +7,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/models/board_role.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
+import '../../../members/presentation/members_screen.dart';
 import '../board_providers.dart';
-import 'board_snackbar.dart';
 
 class MembersButton extends StatelessWidget {
   const MembersButton({super.key});
@@ -19,7 +21,7 @@ class MembersButton extends StatelessWidget {
     final typography = CardoTypography.of(context);
     final layout = CardoLayout.of(context);
     return OutlinedButton.icon(
-      onPressed: () => showComingSoon(context),
+      onPressed: () => unawaited(showMembers(context)),
       icon: Icon(LucideIcons.userPlus, size: layout.iconDense),
       label: Text(AppLocalizations.of(context).boardMembers),
       style: OutlinedButton.styleFrom(
@@ -47,7 +49,7 @@ class InviteButton extends StatelessWidget {
     final radii = CardoRadii.of(context);
     final typography = CardoTypography.of(context);
     return FilledButton(
-      onPressed: () => showComingSoon(context),
+      onPressed: () => unawaited(showMembers(context, focusInvites: true)),
       style: FilledButton.styleFrom(
         backgroundColor: colors.accent,
         foregroundColor: colors.onAccent,
