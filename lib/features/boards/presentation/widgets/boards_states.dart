@@ -83,9 +83,10 @@ class SkeletonBar extends StatelessWidget {
 }
 
 class BoardsEmpty extends StatelessWidget {
-  const BoardsEmpty({super.key, required this.onCreate});
+  const BoardsEmpty({super.key, required this.onCreate, this.onHaveLink});
 
   final VoidCallback onCreate;
+  final VoidCallback? onHaveLink;
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +130,22 @@ class BoardsEmpty extends StatelessWidget {
                   ),
                 ],
               ),
-              CardoPrimaryButton(
-                label: l10n.boardsEmptyAction,
-                icon: LucideIcons.plus,
-                onPressed: onCreate,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: spacing.cardGap,
+                children: <Widget>[
+                  CardoPrimaryButton(
+                    label: l10n.boardsEmptyAction,
+                    icon: LucideIcons.plus,
+                    onPressed: onCreate,
+                  ),
+                  if (onHaveLink != null)
+                    CardoSecondaryButton(
+                      label: l10n.inviteHaveLink,
+                      icon: LucideIcons.link,
+                      onPressed: onHaveLink,
+                    ),
+                ],
               ),
             ],
           ),

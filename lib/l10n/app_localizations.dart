@@ -1694,12 +1694,6 @@ abstract class AppLocalizations {
   /// **'{members} · {online}'**
   String membersSummary(String members, String online);
 
-  /// Подзаголовок модального окна участников
-  ///
-  /// In ru, this message translates to:
-  /// **'{title} · {people}'**
-  String membersBoardSubtitle(String title, String people);
-
   /// Пометка текущего пользователя в списке
   ///
   /// In ru, this message translates to:
@@ -1838,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'Отозвать приглашение: {meta}'**
   String invitesRevokeSemantic(String meta);
 
-  /// Метка кнопки копирования для диктора
-  ///
-  /// In ru, this message translates to:
-  /// **'Скопировать ссылку: {meta}'**
-  String invitesCopySemantic(String meta);
-
   /// Описание приглашения: роль, срок, использования
   ///
   /// In ru, this message translates to:
@@ -1897,6 +1885,186 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Не удалось загрузить приглашения'**
   String get invitesLoadError;
+
+  /// Заголовок экрана принятия приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Вас приглашают на доску'**
+  String get inviteHeadline;
+
+  /// Пояснение на экране приглашения: превью приглашения недоступно до принятия
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль и права назначил владелец доски. Вы увидите их сразу после присоединения.'**
+  String get inviteNote;
+
+  /// Кнопка принятия приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Присоединиться'**
+  String get inviteAccept;
+
+  /// Заголовок для отозванного, истёкшего или исчерпанного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка больше не работает'**
+  String get inviteUnavailableTitle;
+
+  /// Текст для недоступного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Она отозвана, истекла или уже использована. Попросите пригласившего прислать новую.'**
+  String get inviteUnavailableBody;
+
+  /// Заголовок для неизвестного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка не найдена'**
+  String get inviteNotFoundTitle;
+
+  /// Текст для неизвестного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте, что ссылка скопирована целиком, или попросите прислать новую.'**
+  String get inviteNotFoundBody;
+
+  /// Кнопка возврата к списку досок с экрана приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'К моим доскам'**
+  String get inviteToBoards;
+
+  /// Кнопка открытия приглашения по ссылке
+  ///
+  /// In ru, this message translates to:
+  /// **'У меня есть ссылка'**
+  String get inviteHaveLink;
+
+  /// Заголовок окна ввода ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть приглашение'**
+  String get inviteLinkTitle;
+
+  /// Подпись поля ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка или код приглашения'**
+  String get inviteLinkField;
+
+  /// Ошибка пустого поля ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Вставьте ссылку или код приглашения'**
+  String get inviteLinkRequired;
+
+  /// Ошибка неверной ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Это не похоже на ссылку-приглашение. Вставьте ссылку целиком.'**
+  String get inviteLinkInvalid;
+
+  /// Кнопка открытия приглашения по введённой ссылке
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть'**
+  String get inviteLinkSubmit;
+
+  /// Заголовок экрана настроек доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки доски'**
+  String get boardSettingsTitle;
+
+  /// Подпись поля названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название'**
+  String get boardSettingsName;
+
+  /// Кнопка сохранения названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get boardSettingsSave;
+
+  /// Подтверждение переименования доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название сохранено'**
+  String get boardSettingsSaved;
+
+  /// Подпись роли текущего пользователя в настройках доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Ваша роль'**
+  String get boardSettingsRole;
+
+  /// Заголовок блока опасных действий
+  ///
+  /// In ru, this message translates to:
+  /// **'Опасная зона'**
+  String get boardSettingsDanger;
+
+  /// Кнопка начала удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить доску'**
+  String get boardSettingsDeleteAction;
+
+  /// Заголовок подтверждения удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить доску?'**
+  String get boardSettingsDeleteTitle;
+
+  /// Текст подтверждения удаления доски с участниками
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} участник сразу потеряет доступ, а открытые у него экраны доски закроются.} few{{count} участника сразу потеряют доступ, а открытые у них экраны доски закроются.} many{{count} участников сразу потеряют доступ, а открытые у них экраны доски закроются.} other{{count} участника сразу потеряют доступ, а открытые у них экраны доски закроются.}}'**
+  String boardSettingsDeleteBody(int count);
+
+  /// Текст подтверждения удаления доски без других участников
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска и все её карточки будут удалены без возможности восстановления.'**
+  String get boardSettingsDeleteAlone;
+
+  /// Кнопка подтверждения удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить'**
+  String get boardSettingsDeleteConfirm;
+
+  /// Кнопка начала выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть доску'**
+  String get boardSettingsLeaveAction;
+
+  /// Заголовок подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть доску?'**
+  String get boardSettingsLeaveTitle;
+
+  /// Текст подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы потеряете доступ к «{title}». Вернуться можно будет только по новой ссылке-приглашению.'**
+  String boardSettingsLeaveBody(String title);
+
+  /// Кнопка подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть'**
+  String get boardSettingsLeaveConfirm;
+
+  /// Кнопка возврата из настроек на доску
+  ///
+  /// In ru, this message translates to:
+  /// **'Назад к доске'**
+  String get boardSettingsBack;
 }
 
 class _AppLocalizationsDelegate

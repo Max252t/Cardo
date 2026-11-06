@@ -35,7 +35,12 @@ class RegisterScreen extends StatelessWidget {
                       alignment: AlignmentDirectional.centerStart,
                       child: IconButton(
                         tooltip: l10n.registerBack,
-                        onPressed: () => context.go(AppRoutes.login),
+                        onPressed: () => context.go(
+                          AppRoutes.keepFrom(
+                            AppRoutes.login,
+                            GoRouterState.of(context).uri,
+                          ),
+                        ),
                         iconSize: layout.iconHeader,
                         icon: const Icon(LucideIcons.chevronLeft),
                       ),

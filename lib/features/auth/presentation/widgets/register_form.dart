@@ -252,7 +252,12 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   TextButton(
                     onPressed: form.submitting
                         ? null
-                        : () => context.go(AppRoutes.login),
+                        : () => context.go(
+                            AppRoutes.keepFrom(
+                              AppRoutes.login,
+                              GoRouterState.of(context).uri,
+                            ),
+                          ),
                     child: Text(l10n.registerSignIn),
                   ),
                 ],
