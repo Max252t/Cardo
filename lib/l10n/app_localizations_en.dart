@@ -29,7 +29,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String connectionReconnectingIn(int seconds) {
-    return 'Reconnecting · $seconds s';
+    return 'Reconnecting in ${seconds}s';
   }
 
   @override
@@ -46,7 +46,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cardDropPlaceholder => 'Card drop spot';
+  String get cardDropPlaceholder => 'Drop card here';
 
   @override
   String get roleOwner => 'Owner';
@@ -257,12 +257,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String boardViewerBanner(String owner) {
-    return 'You are a viewer: you can look but not edit. Access is managed by the owner, $owner.';
+    return 'You\'re a viewer: you can view but not edit. Ask the owner, $owner, for access.';
   }
 
   @override
   String get boardViewerBannerNoOwner =>
-      'You are a viewer: you can look but not edit.';
+      'You\'re a viewer: you can view but not edit. Ask the owner for access.';
 
   @override
   String get cardDragHint => 'Press and hold to drag';
@@ -342,7 +342,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cardTitleEditHint => 'Tap to edit the title';
+  String get cardTitleEditHint => 'Edit the title';
 
   @override
   String get cardTitleField => 'Card title';
@@ -377,7 +377,7 @@ class AppLocalizationsEn extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String limitString = limitNumberFormat.format(limit);
 
-    return 'Description is too long: $limitString characters maximum. Saving is unavailable.';
+    return 'Description is too long: $limitString characters maximum. Shorten it to save.';
   }
 
   @override
@@ -404,11 +404,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardDraftLostArchived =>
-      'The card is archived. Your text was not saved.';
+      'The card is archived. Your text wasn\'t saved.';
 
   @override
   String get cardDraftLostCreateRejected =>
-      'The card could not be created. Your text was not saved.';
+      'The card couldn\'t be created. Your text wasn\'t saved.';
 
   @override
   String get cardDraftLostCopy => 'Copy';
@@ -443,7 +443,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Another member already changed this card.';
 
   @override
-  String get nackNotFound => 'The card is already archived.';
+  String get nackNotFound => 'This card is already archived.';
 
   @override
   String get nackInternal => 'Couldn\'t save. Trying again…';
@@ -470,7 +470,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonLoading => 'Loading…';
 
   @override
-  String get configTitle => 'Server address is not set';
+  String get configTitle => 'Server address isn\'t set';
 
   @override
   String get configHint =>
@@ -764,8 +764,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count changes could not be applied',
-      one: '$count change could not be applied',
+      other: '$count changes couldn\'t be applied',
+      one: '$count change couldn\'t be applied',
     );
     return '$_temp0';
   }
@@ -1089,7 +1089,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String membersRemoveBody(String board) {
-    return 'They will lose access to “$board” right away. Their unsaved changes will not be kept.';
+    return 'They will lose access to “$board” right away. Their unsaved changes won\'t be kept.';
   }
 
   @override
