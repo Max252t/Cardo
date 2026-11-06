@@ -10,6 +10,7 @@ import '../features/auth/presentation/register_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
 import '../features/board/presentation/board_route_page.dart';
 import '../features/board/presentation/demo_board_page.dart';
+import '../features/board_settings/presentation/self_exit.dart';
 import '../features/boards/presentation/boards_screen.dart';
 import '../features/design_preview/design_system_preview.dart';
 import '../features/invites/presentation/invite_screen.dart';
@@ -92,7 +93,12 @@ class _RouterRefresh extends ChangeNotifier {
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh();
-  ref.listen<Session>(sessionProvider, (_, _) => refresh.notify());
+  ref.listen<Session>(sessionProvider, (_, next) {
+    if (next is! SessionSignedIn) {
+      ref.read(selfExitProvider.notifier).reset();
+    }
+    refresh.notify();
+  });
   final config = ref.watch(appConfigProvider);
   final router = GoRouter(
     initialLocation: AppRoutes.boards,

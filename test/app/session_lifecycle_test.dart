@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cardo/core/network/api_policy.dart';
 import 'package:cardo/features/auth/domain/auth_tokens.dart';
 import 'package:cardo/features/auth/domain/session.dart';
 import 'package:cardo/features/auth/presentation/auth_providers.dart';
+import 'package:cardo/features/board_settings/presentation/self_exit.dart';
 import 'package:cardo/features/boards/presentation/boards_providers.dart';
 import 'package:cardo/shared/widgets/cardo_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -304,6 +307,19 @@ void main() {
       expect(manager.currentRefreshToken, isNull);
       expect(manager.currentAccessToken, isNull);
       expect(find.text(app.l10n.errorSessionExpired), findsNothing);
+    });
+  });
+
+  group('own-exit marks', () {
+    testWidgets('signing out drops them', (tester) async {
+      final app = await pumpCardoApp(tester, server: FakeServer());
+      app.container.read(selfExitProvider.notifier).mark('board-1');
+      expect(app.container.read(selfExitProvider), isNotEmpty);
+
+      unawaited(app.container.read(sessionProvider.notifier).signOut());
+      await pumpFrames(tester, 4);
+
+      expect(app.container.read(selfExitProvider), isEmpty);
     });
   });
 }

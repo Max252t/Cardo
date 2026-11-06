@@ -104,14 +104,17 @@ class MemberRow extends ConsumerWidget {
   }
 
   Future<void> _remove(BuildContext context, WidgetRef ref) async {
-    final controller = ref.read(membersControllerProvider(boardId).notifier);
     final confirmed = await confirmRemoveMember(
       context,
       memberName: row.identity.name,
       boardTitle: boardTitle,
     );
-    if (confirmed) {
-      unawaited(controller.removeMember(row.userId));
+    if (confirmed && context.mounted) {
+      unawaited(
+        ref
+            .read(membersControllerProvider(boardId).notifier)
+            .removeMember(row.userId),
+      );
     }
   }
 }

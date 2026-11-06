@@ -12,6 +12,9 @@ import 'package:cardo/features/board_settings/presentation/board_settings_provid
 import 'package:cardo/features/board_settings/presentation/board_settings_screen.dart';
 import 'package:cardo/features/board_settings/presentation/self_exit.dart';
 import 'package:cardo/features/boards/domain/board_info.dart';
+import 'package:cardo/features/invites/data/invites_api.dart';
+import 'package:cardo/features/invites/presentation/invite_controller.dart';
+import 'package:cardo/features/invites/presentation/invites_providers.dart';
 import 'package:cardo/l10n/app_localizations.dart';
 import 'package:cardo/theme/cardo_theme.dart';
 import 'package:flutter/material.dart';
@@ -239,4 +242,71 @@ void main() {
 
     expect(find.byType(BoardEndedDialog), findsOneWidget);
   });
+
+  testWidgets('returning to the board clears the mark so a removal asks', (
+    tester,
+  ) async {
+    final rig = await pumpRig(
+      tester,
+      role: BoardRole.editor,
+      reason: BoardEndReason.removed,
+    );
+    final boardId = demoBoardSnapshot().board.id;
+    rig.container.read(selfExitProvider.notifier).mark(boardId);
+    rig.router.go('/boards');
+    await tester.pump(const Duration(milliseconds: 400));
+    rig.router.go('/board');
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(rig.container.read(selfExitProvider), isEmpty);
+
+    rig.gateway.emit(const EndedSignal(BoardEndReason.removed));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.byType(BoardEndedDialog), findsOneWidget);
+  });
+
+  test('accepting an invite to the board clears its own-exit mark', () async {
+    final container = ProviderContainer(
+      overrides: [
+        invitesApiProvider.overrideWithValue(
+          _AcceptingInvitesApi(
+            BoardInfo(
+              id: 'board-2',
+              title: 'Design',
+              ownerId: 'u-owner',
+              role: BoardRole.editor,
+              createdAt: DateTime.utc(2026),
+              updatedAt: DateTime.utc(2026),
+            ),
+          ),
+        ),
+        nowProvider.overrideWithValue(() => demoReferenceTime),
+      ],
+    );
+    addTearDown(container.dispose);
+    final link = container.listen(inviteControllerProvider, (_, _) {});
+    addTearDown(link.close);
+    final selfExit = container.read(selfExitProvider.notifier);
+    selfExit.mark('board-2');
+    selfExit.mark('board-9');
+
+    final info = await container
+        .read(inviteControllerProvider.notifier)
+        .accept('token');
+
+    expect(info?.id, 'board-2');
+    expect(selfExit.isRecent('board-2'), isFalse);
+    expect(selfExit.isRecent('board-9'), isTrue);
+  });
+}
+
+class _AcceptingInvitesApi implements InvitesApi {
+  _AcceptingInvitesApi(this.info);
+
+  final BoardInfo info;
+
+  @override
+  Future<Result<BoardInfo, ApiFailure>> acceptInvite(String token) async =>
+      Success<BoardInfo, ApiFailure>(info);
 }

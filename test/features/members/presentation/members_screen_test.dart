@@ -253,6 +253,26 @@ void main() {
       await settle(tester);
       expect(rig.sent('DELETE', anyaPath), hasLength(1));
     });
+
+    testWidgets('the board ending closes the open removal dialog too', (
+      tester,
+    ) async {
+      final rig = await pumpMembers(tester);
+      rig.on('DELETE', anyaPath, FakeResponse.empty(204));
+      await openMembers(tester, rig);
+
+      await tester.tap(find.byTooltip(rig.l10n.membersRemoveTooltip('Аня')));
+      await settle(tester);
+      expect(find.text(rig.l10n.membersRemoveConfirm), findsOneWidget);
+
+      rig.gateway.server.deleteBoard();
+      await settle(tester);
+
+      expect(find.text(rig.l10n.membersRemoveConfirm), findsNothing);
+      expect(find.text(rig.l10n.membersRemoveTitle('Аня')), findsNothing);
+      expect(rig.sent('DELETE', anyaPath), isEmpty);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('invites', () {
