@@ -11,49 +11,66 @@ String nackMessage(
   OpRejection rejection, {
   required String? actorName,
   bool retrying = false,
+  bool column = false,
 }) {
   return switch (rejection.reason) {
     NackReason.forbidden => l10n.nackForbidden,
     NackReason.validationError => l10n.nackValidation(
       rejection.limit ?? CardLimits.titleMaxLength,
     ),
+    NackReason.versionConflict when column && actorName != null =>
+      l10n.nackVersionConflictColumn(actorName),
+    NackReason.versionConflict when column =>
+      l10n.nackVersionConflictColumnUnknown,
     NackReason.versionConflict when actorName != null =>
       l10n.nackVersionConflict(actorName),
     NackReason.versionConflict => l10n.nackVersionConflictUnknown,
+    NackReason.notFound when column => l10n.nackNotFoundColumn,
     NackReason.notFound => l10n.nackNotFound,
     NackReason.rateLimited => l10n.nackRateLimited,
     NackReason.internal when retrying => l10n.nackInternal,
+    NackReason.resyncRequired => l10n.nackInternalFinal,
     NackReason.internal => l10n.nackInternalFinal,
   };
 }
 
 bool nackHasDismiss(NackReason reason) => reason == NackReason.versionConflict;
 
-void showBoardSnackbar(
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? showBoardSnackbar(
   BuildContext context, {
   required String message,
   IconData icon = LucideIcons.circleAlert,
   bool withDismiss = false,
+  String? actionLabel,
+  VoidCallback? onAction,
+  bool replaceCurrent = true,
+  Duration duration = CardoDurations.snackbar,
 }) {
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) {
-    return;
+    return null;
   }
   final l10n = AppLocalizations.of(context);
-  messenger
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        duration: CardoDurations.snackbar,
-        content: BoardSnackbarContent(message: message, icon: icon),
-        action: withDismiss
-            ? SnackBarAction(
-                label: l10n.snackbarDismiss,
-                onPressed: messenger.hideCurrentSnackBar,
-              )
-            : null,
-      ),
-    );
+  if (replaceCurrent) {
+    messenger.hideCurrentSnackBar();
+  }
+  return messenger.showSnackBar(
+    SnackBar(
+      duration: duration,
+      persist:
+          (actionLabel != null && onAction != null || withDismiss) &&
+          MediaQuery.accessibleNavigationOf(context),
+      content: BoardSnackbarContent(message: message, icon: icon),
+      action: actionLabel != null && onAction != null
+          ? SnackBarAction(label: actionLabel, onPressed: onAction)
+          : withDismiss
+          ? SnackBarAction(
+              label: l10n.snackbarDismiss,
+              onPressed: messenger.hideCurrentSnackBar,
+            )
+          : null,
+    ),
+  );
 }
 
 void showComingSoon(BuildContext context) {

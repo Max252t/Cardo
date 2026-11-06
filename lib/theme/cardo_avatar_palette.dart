@@ -20,6 +20,14 @@ abstract final class CardoAvatarPalette {
     amber,
   ];
 
+  static String choiceFor(String seed) {
+    var hash = 0;
+    for (final unit in seed.codeUnits) {
+      hash = (hash * 31 + unit) & 0x7fffffff;
+    }
+    return choices[hash % choices.length];
+  }
+
   static final Map<Color, Color> _darkAccents = <Color, Color>{
     CardoPrimitives.blue2D68F5: CardoPrimitives.blue6E97FF,
     CardoPrimitives.green13804F: CardoPrimitives.green2FBF7F,

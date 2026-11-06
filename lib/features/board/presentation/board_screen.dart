@@ -3,16 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../l10n/app_localizations.dart';
 import '../../../theme/cardo_theme.dart';
-import '../domain/board_sync_state.dart';
-import 'board_notices.dart';
 import 'board_providers.dart';
+import 'card_sheet_data.dart';
 import 'widgets/board_header.dart';
+import 'widgets/board_end_listener.dart';
+import 'widgets/board_resume_listener.dart';
+import 'widgets/protocol_issue_listener.dart';
+import 'widgets/rejected_ops_sheet.dart';
+import 'widgets/sync_summary_card.dart';
+import 'widgets/board_notices_listener.dart';
 import 'widgets/board_sidebar.dart';
-import 'widgets/board_snackbar.dart';
 import 'widgets/card_detail_panel.dart';
-import 'widgets/card_preview_sheet.dart';
+import 'widgets/card_sheet.dart';
 import 'widgets/compact_board.dart';
 import 'widgets/compact_board_parts.dart';
 import 'widgets/scrolling_board.dart';
@@ -22,44 +25,59 @@ class BoardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<BoardSyncState>(boardNotifierProvider, (previous, next) {
-      final notices = noticesBetween(previous, next);
-      if (notices.isEmpty) {
-        return;
-      }
-      final notice = notices.last;
-      showBoardSnackbar(
-        context,
-        message: nackMessage(
-          AppLocalizations.of(context),
-          notice.rejection,
-          actorName: notice.actorName,
-          retrying: notice.retrying,
-        ),
-        withDismiss: nackHasDismiss(notice.rejection.reason),
-      );
-    });
     final layout = CardoLayout.of(context);
     final windowClass = layout.windowClassFor(MediaQuery.sizeOf(context).width);
-    return Scaffold(
-      body: switch (windowClass) {
-        CardoWindowClass.compact => CompactBoard(
-          onCardTap: (cardId) => _openPreview(context, ref, cardId),
+    return BoardEndListener(
+      child: BoardResumeListener(
+        child: ProtocolIssueListener(
+          child: BoardNoticesListener(
+            child: Scaffold(
+              body: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  switch (windowClass) {
+                    CardoWindowClass.compact => CompactBoard(
+                      onCardTap: (cardId) => _openPreview(context, ref, cardId),
+                    ),
+                    CardoWindowClass.medium => MediumBoardLayout(
+                      onCardTap: (cardId) => _openPreview(context, ref, cardId),
+                    ),
+                    CardoWindowClass.expanded => const ExpandedBoardLayout(),
+                  },
+                  SyncSummaryOverlay(
+                    onDetails: () =>
+                        unawaited(_showRejected(context, ref, windowClass)),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        CardoWindowClass.medium => MediumBoardLayout(
-          onCardTap: (cardId) => _openPreview(context, ref, cardId),
-        ),
-        CardoWindowClass.expanded => const ExpandedBoardLayout(),
-      },
+      ),
     );
   }
 
-  void _openPreview(BuildContext context, WidgetRef ref, String cardId) {
-    final card = ref.read(boardViewProvider).cardById(cardId);
-    if (card == null) {
+  Future<void> _showRejected(
+    BuildContext context,
+    WidgetRef ref,
+    CardoWindowClass windowClass,
+  ) async {
+    final cardId = await showRejectedOps(context);
+    if (cardId == null || !context.mounted) {
       return;
     }
-    unawaited(showCardPreviewSheet(context, card));
+    if (windowClass == CardoWindowClass.expanded) {
+      ref.read(selectedCardIdProvider.notifier).select(cardId);
+    } else {
+      _openPreview(context, ref, cardId);
+    }
+  }
+
+  void _openPreview(BuildContext context, WidgetRef ref, String cardId) {
+    if (ref.read(cardSheetProvider(cardId)) == null) {
+      return;
+    }
+    unawaited(showCardSheet(context, cardId));
   }
 }
 
@@ -105,7 +123,8 @@ class ExpandedBoardLayout extends ConsumerWidget {
                           .select(cardId),
                     ),
                   ),
-                  if (selected != null) CardDetailPanel(data: selected),
+                  if (selected != null)
+                    CardDetailPanel(cardId: selected.card.id),
                 ],
               ),
             ),

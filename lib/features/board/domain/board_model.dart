@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-
+import '../../../core/equality/collection_equality.dart';
 import '../../../core/models/board_role.dart';
 import '../../../core/ranking/rank.dart';
 
@@ -10,7 +9,6 @@ abstract final class CardLimits {
   static const int descriptionMaxLength = 10000;
 }
 
-@immutable
 class BoardMember {
   const BoardMember({
     required this.userId,
@@ -54,7 +52,6 @@ class BoardMember {
   String toString() => 'BoardMember($userId, $name, ${role.wireName})';
 }
 
-@immutable
 class ColumnModel {
   const ColumnModel({
     required this.id,
@@ -103,7 +100,6 @@ class ColumnModel {
   String toString() => 'ColumnModel($id, $title, $rank, v$version)';
 }
 
-@immutable
 class CardModel {
   const CardModel({
     required this.id,
@@ -112,6 +108,8 @@ class CardModel {
     required this.rank,
     required this.createdBy,
     required this.updatedBy,
+    required this.createdAt,
+    required this.updatedAt,
     this.description = '',
     this.version = 1,
     this.descriptionVersion = 1,
@@ -127,6 +125,8 @@ class CardModel {
   final int descriptionVersion;
   final String createdBy;
   final String updatedBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final bool archived;
 
   bool get hasDescription => description.trim().isNotEmpty;
@@ -141,6 +141,8 @@ class CardModel {
     int? descriptionVersion,
     String? createdBy,
     String? updatedBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     bool? archived,
   }) {
     return CardModel(
@@ -153,6 +155,8 @@ class CardModel {
       descriptionVersion: descriptionVersion ?? this.descriptionVersion,
       createdBy: createdBy ?? this.createdBy,
       updatedBy: updatedBy ?? this.updatedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       archived: archived ?? this.archived,
     );
   }
@@ -169,6 +173,8 @@ class CardModel {
         other.descriptionVersion == descriptionVersion &&
         other.createdBy == createdBy &&
         other.updatedBy == updatedBy &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
         other.archived == archived;
   }
 
@@ -183,6 +189,8 @@ class CardModel {
     descriptionVersion,
     createdBy,
     updatedBy,
+    createdAt,
+    updatedAt,
     archived,
   );
 
@@ -190,7 +198,6 @@ class CardModel {
   String toString() => 'CardModel($id in $columnId @ $rank, v$version)';
 }
 
-@immutable
 class BoardModel {
   BoardModel({
     required this.id,
@@ -235,6 +242,11 @@ class BoardModel {
       }
     }
     return null;
+  }
+
+  CardModel? activeCard(String id) {
+    final card = cardById(id);
+    return card == null || card.archived ? null : card;
   }
 
   ColumnModel? columnById(String id) {
@@ -298,4 +310,23 @@ class BoardModel {
   String toString() =>
       'BoardModel($id, seq $seq, ${columns.length} columns, '
       '${cards.length} cards)';
+}
+
+ColumnMarker columnMarkerAt(int index, int count) {
+  if (index == 0) {
+    return ColumnMarker.backlog;
+  }
+  if (index == count - 1) {
+    return ColumnMarker.done;
+  }
+  return index == 1 ? ColumnMarker.inProgress : ColumnMarker.review;
+}
+
+List<ColumnModel> withColumnMarkers(Iterable<ColumnModel> columns) {
+  final sorted = List<ColumnModel>.of(columns)
+    ..sort((a, b) => compareRanks(a.rank, b.rank));
+  return <ColumnModel>[
+    for (var i = 0; i < sorted.length; i++)
+      sorted[i].copyWith(marker: columnMarkerAt(i, sorted.length)),
+  ];
 }

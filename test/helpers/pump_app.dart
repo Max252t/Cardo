@@ -8,13 +8,14 @@ Widget wrapApp(
   Brightness brightness = Brightness.light,
   bool disableAnimations = false,
   double textScale = 1.0,
+  Locale locale = const Locale('ru'),
 }) {
   return MaterialApp(
     themeAnimationDuration: Duration.zero,
     theme: brightness == Brightness.light
         ? buildLightTheme()
         : buildDarkTheme(),
-    locale: const Locale('ru'),
+    locale: locale,
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     builder: (context, app) {
@@ -37,6 +38,7 @@ Future<void> pumpApp(
   Brightness brightness = Brightness.light,
   bool disableAnimations = false,
   double textScale = 1.0,
+  Locale locale = const Locale('ru'),
 }) async {
   await tester.pumpWidget(
     wrapApp(
@@ -44,6 +46,7 @@ Future<void> pumpApp(
       brightness: brightness,
       disableAnimations: disableAnimations,
       textScale: textScale,
+      locale: locale,
     ),
   );
   await tester.pump();

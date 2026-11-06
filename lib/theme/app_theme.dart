@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'cardo_colors.dart';
+import 'cardo_column_tokens.dart';
+import 'cardo_form_tokens.dart';
 import 'cardo_layout.dart';
 import 'cardo_motion.dart';
 import 'cardo_radii.dart';
 import 'cardo_shadows.dart';
 import 'cardo_sizes.dart';
 import 'cardo_spacing.dart';
+import 'cardo_sync_tokens.dart';
 import 'cardo_typography.dart';
 
 ThemeData buildLightTheme() {
@@ -94,6 +97,9 @@ ThemeData _buildTheme({
   const sizes = CardoSizes.standard;
   const motion = CardoMotion.standard;
   const layout = CardoLayout.standard;
+  const form = CardoFormTokens.standard;
+  const sync = CardoSyncTokens.standard;
+  const columnTokens = CardoColumnTokens.standard;
 
   final scheme = _colorScheme(colors);
   final buttonShape = RoundedRectangleBorder(
@@ -210,6 +216,7 @@ ThemeData _buildTheme({
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: colors.surface,
       modalBackgroundColor: colors.surface,
+      modalBarrierColor: colors.scrim,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       modalElevation: 0,
@@ -230,6 +237,9 @@ ThemeData _buildTheme({
       shadows,
       motion,
       layout,
+      form,
+      sync,
+      columnTokens,
     ],
   );
 }

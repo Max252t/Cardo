@@ -3,6 +3,12 @@ import 'dart:async';
 import 'package:cardo/core/models/board_role.dart';
 import 'package:cardo/core/ranking/rank.dart';
 import 'package:cardo/features/board/data/board_gateway.dart';
+import 'package:cardo/features/board/data/fake/server_ops.dart';
+import 'package:cardo/features/board/data/realtime/protocol_issue.dart';
+import 'package:cardo/features/board/data/sync_signal.dart';
+import 'package:cardo/features/board/domain/apply_event.dart';
+import 'package:cardo/features/board/domain/board_event.dart';
+import 'package:cardo/features/board/domain/seq_ordering.dart';
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/data/fake_board_gateway.dart';
 import 'package:cardo/features/board/domain/board_model.dart';
@@ -31,6 +37,8 @@ CardModel makeCard(
     version: version,
     createdBy: 'u1',
     updatedBy: 'u1',
+    createdAt: DateTime.utc(2026, 1, 1),
+    updatedAt: DateTime.utc(2026, 1, 1),
     archived: archived,
   );
 }
@@ -143,26 +151,129 @@ ProviderContainer makeContainer({
 OpRejection rejection(NackReason reason) => OpRejection(reason: reason);
 
 class GatewayCall {
-  GatewayCall(this.op);
+  GatewayCall(this.gateway, this.op);
 
+  final ControlledGateway gateway;
   final BoardOp op;
-  final Completer<OpOutcome> completer = Completer<OpOutcome>();
+
+  void confirm(int seq) => gateway.confirm(op, seq);
+
+  void reject(NackReason reason, {int? atSeq}) =>
+      gateway.reject(op, reason, atSeq: atSeq);
+
+  void rejectWith(OpRejection rejection) => gateway.rejectWith(op, rejection);
 }
 
 class ControlledGateway implements BoardGateway {
   ControlledGateway({BoardSnapshot? initial})
-    : _snapshot = initial ?? demoBoardSnapshot();
+    : _snapshot = initial ?? demoBoardSnapshot() {
+    _server = _snapshot.board;
+    _ordering = SeqOrdering(_snapshot.board.seq);
+  }
 
   final BoardSnapshot _snapshot;
   final List<GatewayCall> calls = <GatewayCall>[];
+  final StreamController<SyncSignal> _signals =
+      StreamController<SyncSignal>.broadcast(sync: true);
+  late BoardModel _server;
+  late final SeqOrdering _ordering;
+  SendOutcome nextOutcome = SendOutcome.sent;
+  int connects = 0;
+  int closes = 0;
+  int retries = 0;
 
   @override
   BoardSnapshot snapshot() => _snapshot;
 
   @override
-  Future<OpOutcome> submit(BoardOp op) {
-    final call = GatewayCall(op);
-    calls.add(call);
-    return call.completer.future;
+  Stream<SyncSignal> get signals => _signals.stream;
+
+  @override
+  Stream<ProtocolIssue> get issues => const Stream<ProtocolIssue>.empty();
+
+  @override
+  void connect() => connects++;
+
+  @override
+  SendOutcome send(BoardOp op) {
+    final outcome = nextOutcome;
+    if (outcome == SendOutcome.sent) {
+      calls.add(GatewayCall(this, op));
+    }
+    return outcome;
+  }
+
+  @override
+  void retryNow() => retries++;
+
+  @override
+  Future<void> close() async => closes++;
+
+  @override
+  Future<void> dispose() => _signals.close();
+
+  void emit(SyncSignal signal) => _signals.add(signal);
+
+  void push(BoardEvent event) {
+    final intake = _ordering.accept(event);
+    for (final ready in intake.ready) {
+      _server = applyEvent(_server, ready);
+    }
+    if (intake.duplicateOpIds.isNotEmpty) {
+      emit(DuplicatesSignal(intake.duplicateOpIds));
+    }
+    if (intake.ready.isNotEmpty) {
+      emit(EventsSignal(intake.ready));
+    }
+  }
+
+  void confirm(BoardOp op, int seq) {
+    final verdict = judgeOp(
+      _server,
+      op,
+      seq: seq,
+      actorId: _snapshot.currentUser.userId,
+      now: DateTime.utc(2026, 1, 1, 12),
+    );
+    if (verdict is! OpAccepted) {
+      throw StateError('operation $op is not acceptable on the server');
+    }
+    push(verdict.event);
+  }
+
+  void reject(BoardOp op, NackReason reason, {int? atSeq}) {
+    rejectWith(op, OpRejection(reason: reason, atSeq: atSeq));
+  }
+
+  void rejectWith(BoardOp op, OpRejection rejection) {
+    emit(
+      NackSignal(
+        opId: op.opId,
+        rejection: rejection.withSeq(_ordering.lastSeq),
+      ),
+    );
+  }
+
+  void pushDescription(
+    String cardId,
+    String text, {
+    required int descriptionVersion,
+    String actorId = DemoIds.maxim,
+    int? seq,
+  }) {
+    final card = _server.cardById(cardId)!;
+    push(
+      CardEditedEvent(
+        seq: seq ?? _ordering.lastSeq + 1,
+        serverTs: demoReferenceTime,
+        actorId: actorId,
+        cardId: cardId,
+        description: text,
+        version: card.version + 1,
+        descriptionVersion: descriptionVersion,
+      ),
+    );
   }
 }
+
+CardModel demoCard(String cardId) => demoBoard().cardById(cardId)!;

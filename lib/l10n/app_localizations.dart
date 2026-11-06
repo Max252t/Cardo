@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('ru')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('ru'),
+  ];
 
   /// Название приложения в заголовке окна и переключателе задач
   ///
@@ -526,12 +530,6 @@ abstract class AppLocalizations {
   /// **'Закрыть'**
   String get cardPanelClose;
 
-  /// Автор карточки в панели
-  ///
-  /// In ru, this message translates to:
-  /// **'Создал {name}'**
-  String cardPanelCreatedBy(String name);
-
   /// Версия карточки
   ///
   /// In ru, this message translates to:
@@ -562,11 +560,131 @@ abstract class AppLocalizations {
   /// **'Карточка «{title}»'**
   String cardPanelSemantic(String title);
 
-  /// Заглушка пустого описания в превью карточки
+  /// Мета-строка карточки: автор и время создания
   ///
   /// In ru, this message translates to:
-  /// **'Описания пока нет'**
-  String get cardPreviewNoDescription;
+  /// **'Создал {name} · {when}'**
+  String cardMeta(String name, String when);
+
+  /// Относительное время: меньше минуты назад
+  ///
+  /// In ru, this message translates to:
+  /// **'только что'**
+  String get cardAgeJustNow;
+
+  /// Относительное время: минуты назад
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} минуту назад} few{{count} минуты назад} many{{count} минут назад} other{{count} минуты назад}}'**
+  String cardAgeMinutes(int count);
+
+  /// Относительное время: в течение сегодняшнего дня
+  ///
+  /// In ru, this message translates to:
+  /// **'сегодня'**
+  String get cardAgeToday;
+
+  /// Относительное время: вчера
+  ///
+  /// In ru, this message translates to:
+  /// **'вчера'**
+  String get cardAgeYesterday;
+
+  /// Относительное время: дни назад
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} день назад} few{{count} дня назад} many{{count} дней назад} other{{count} дня назад}}'**
+  String cardAgeDays(int count);
+
+  /// Относительное время: дата для давних карточек
+  ///
+  /// In ru, this message translates to:
+  /// **'{date}'**
+  String cardAgeDate(DateTime date);
+
+  /// Подсказка экранного диктора для заголовка, который можно править
+  ///
+  /// In ru, this message translates to:
+  /// **'Нажмите, чтобы изменить заголовок'**
+  String get cardTitleEditHint;
+
+  /// Метка поля inline-правки заголовка
+  ///
+  /// In ru, this message translates to:
+  /// **'Заголовок карточки'**
+  String get cardTitleField;
+
+  /// Счётчик символов названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} / {limit}'**
+  String boardTitleCounter(int count, int limit);
+
+  /// Счётчик символов описания
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} / {limit}'**
+  String cardDescriptionCounter(int count, int limit);
+
+  /// Подсказка при превышении лимита описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком длинное описание: максимум {limit} символов. Сохранение недоступно.'**
+  String cardDescriptionTooLong(int limit);
+
+  /// Заголовок баннера конфликта описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание изменил {name}'**
+  String cardConflictTitle(String name);
+
+  /// Заголовок баннера конфликта описания без имени автора
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание изменил другой участник'**
+  String get cardConflictTitleUnknown;
+
+  /// Текст баннера конфликта описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Ваш черновик сохранён. Перезаписать его версией или отменить свои правки?'**
+  String get cardConflictBody;
+
+  /// Кнопка баннера конфликта: сохранить свой черновик поверх чужой версии
+  ///
+  /// In ru, this message translates to:
+  /// **'Перезаписать'**
+  String get cardConflictOverwrite;
+
+  /// Кнопка баннера конфликта: отбросить свой черновик
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить'**
+  String get cardConflictCancel;
+
+  /// Подсказка баннера конфликта, пока не пришла актуальная версия описания
+  ///
+  /// In ru, this message translates to:
+  /// **'Загружаем актуальную версию…'**
+  String get cardConflictWaiting;
+
+  /// Snackbar: черновик описания потерян, потому что карточка ушла в архив
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка в архиве. Ваш текст не сохранён.'**
+  String get cardDraftLostArchived;
+
+  /// Snackbar: черновик описания потерян, потому что создание карточки отклонено
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточку не удалось создать. Ваш текст не сохранён.'**
+  String get cardDraftLostCreateRejected;
+
+  /// Действие snackbar: скопировать текст потерянного черновика
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать'**
+  String get cardDraftLostCopy;
 
   /// Заголовок диалога создания карточки
   ///
@@ -589,7 +707,7 @@ abstract class AppLocalizations {
   /// Кнопка отмены создания карточки
   ///
   /// In ru, this message translates to:
-  /// **'Отменить'**
+  /// **'Отмена'**
   String get addCardCancel;
 
   /// Snackbar: nack forbidden
@@ -645,6 +763,1314 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Понятно'**
   String get snackbarDismiss;
+
+  /// Кнопка повтора действия
+  ///
+  /// In ru, this message translates to:
+  /// **'Повторить'**
+  String get commonRetry;
+
+  /// Кнопка отмены
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get commonCancel;
+
+  /// Кнопка закрытия
+  ///
+  /// In ru, this message translates to:
+  /// **'Закрыть'**
+  String get commonClose;
+
+  /// Подпись индикатора загрузки
+  ///
+  /// In ru, this message translates to:
+  /// **'Загрузка…'**
+  String get commonLoading;
+
+  /// Заголовок экрана конфигурации
+  ///
+  /// In ru, this message translates to:
+  /// **'Не задан адрес сервера'**
+  String get configTitle;
+
+  /// Подсказка по настройке адреса сервера
+  ///
+  /// In ru, this message translates to:
+  /// **'Запустите приложение с --dart-define-from-file=env/local.json'**
+  String get configHint;
+
+  /// Подпись текущего значения адреса
+  ///
+  /// In ru, this message translates to:
+  /// **'Текущее значение'**
+  String get configCurrentValue;
+
+  /// Значение адреса, когда оно пустое
+  ///
+  /// In ru, this message translates to:
+  /// **'не задано'**
+  String get configValueEmpty;
+
+  /// Кнопка запуска демо без сервера
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть демо-доску'**
+  String get configOpenDemo;
+
+  /// Подпись на сплэше при восстановлении сессии
+  ///
+  /// In ru, this message translates to:
+  /// **'Восстанавливаем сессию…'**
+  String get splashRestoring;
+
+  /// Заголовок сплэша при недоступном сервере
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось подключиться'**
+  String get splashUnavailableTitle;
+
+  /// Ошибка: нет сети
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет соединения с сервером. Проверьте интернет и повторите.'**
+  String get errorNetworkOffline;
+
+  /// Ошибка: таймаут
+  ///
+  /// In ru, this message translates to:
+  /// **'Сервер не отвечает. Повторите попытку позже.'**
+  String get errorNetworkTimeout;
+
+  /// Ошибка: сервер занят или перегружен
+  ///
+  /// In ru, this message translates to:
+  /// **'Сервер занят. Повторите через несколько секунд.'**
+  String get errorBusy;
+
+  /// Ошибка 429 без Retry-After
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через минуту.'**
+  String get errorRateLimited;
+
+  /// Ошибка 429 с Retry-After в секундах
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через {seconds} с.'**
+  String errorRateLimitedSeconds(int seconds);
+
+  /// Ошибка 429 с Retry-After в минутах
+  ///
+  /// In ru, this message translates to:
+  /// **'Слишком много попыток. Попробуйте через {minutes} мин.'**
+  String errorRateLimitedMinutes(int minutes);
+
+  /// Ошибка 403
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет прав на это действие.'**
+  String get errorForbidden;
+
+  /// Ошибка 404
+  ///
+  /// In ru, this message translates to:
+  /// **'Не найдено. Возможно, доска удалена или у вас нет доступа.'**
+  String get errorNotFound;
+
+  /// Ошибка валидации на сервере
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте введённые данные.'**
+  String get errorValidation;
+
+  /// Неизвестная ошибка
+  ///
+  /// In ru, this message translates to:
+  /// **'Что-то пошло не так. Повторите попытку.'**
+  String get errorUnknown;
+
+  /// Сообщение на экране входа после истёкшей сессии
+  ///
+  /// In ru, this message translates to:
+  /// **'Сессия истекла, войдите снова.'**
+  String get errorSessionExpired;
+
+  /// Сообщение на экране входа после reuse refresh-токена
+  ///
+  /// In ru, this message translates to:
+  /// **'Мы завершили все сессии из соображений безопасности. Войдите заново.'**
+  String get errorSessionReused;
+
+  /// Подпись поля email
+  ///
+  /// In ru, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// Подпись поля пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Пароль'**
+  String get authPassword;
+
+  /// Подпись поля имени
+  ///
+  /// In ru, this message translates to:
+  /// **'Имя'**
+  String get authName;
+
+  /// Подсказка кнопки показа пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Показать пароль'**
+  String get authShowPassword;
+
+  /// Подсказка кнопки скрытия пароля
+  ///
+  /// In ru, this message translates to:
+  /// **'Скрыть пароль'**
+  String get authHidePassword;
+
+  /// Заголовок экрана входа
+  ///
+  /// In ru, this message translates to:
+  /// **'С возвращением'**
+  String get loginTitle;
+
+  /// Подзаголовок входа на узком экране
+  ///
+  /// In ru, this message translates to:
+  /// **'Доски команды уже ждут.'**
+  String get loginSubtitle;
+
+  /// Подзаголовок входа на широком экране
+  ///
+  /// In ru, this message translates to:
+  /// **'Войдите, чтобы открыть свои доски.'**
+  String get loginSubtitleWide;
+
+  /// Кнопка входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Войти'**
+  String get loginSubmit;
+
+  /// Кнопка перехода к регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get loginCreateAccount;
+
+  /// Вопрос под формой входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет аккаунта?'**
+  String get loginNoAccount;
+
+  /// Ссылка на регистрацию под формой входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать'**
+  String get loginCreateLink;
+
+  /// Ошибка неверных данных входа
+  ///
+  /// In ru, this message translates to:
+  /// **'Неверный email или пароль.'**
+  String get loginInvalidCredentials;
+
+  /// Заголовок бренд-панели
+  ///
+  /// In ru, this message translates to:
+  /// **'Доски, которые двигаются вместе с командой'**
+  String get loginBrandHeadline;
+
+  /// Текст бренд-панели
+  ///
+  /// In ru, this message translates to:
+  /// **'Все видят изменения друг друга сразу. Работает и без сети — синхронизируем, как только связь вернётся.'**
+  String get loginBrandBody;
+
+  /// Заголовок экрана регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get registerTitle;
+
+  /// Подзаголовок регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Так вас увидят коллеги на досках.'**
+  String get registerSubtitle;
+
+  /// Кнопка регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать аккаунт'**
+  String get registerSubmit;
+
+  /// Вопрос под формой регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Уже есть аккаунт?'**
+  String get registerHaveAccount;
+
+  /// Ссылка на вход под формой регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Войти'**
+  String get registerSignIn;
+
+  /// Подсказка кнопки назад на регистрации
+  ///
+  /// In ru, this message translates to:
+  /// **'Назад ко входу'**
+  String get registerBack;
+
+  /// Ошибка email_taken
+  ///
+  /// In ru, this message translates to:
+  /// **'Этот email уже зарегистрирован. Войдите или используйте другой адрес.'**
+  String get registerEmailTaken;
+
+  /// Подпись выбора цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Цвет аватара'**
+  String get avatarColorLabel;
+
+  /// Пометка необязательного выбора цвета
+  ///
+  /// In ru, this message translates to:
+  /// **'Необязательно'**
+  String get avatarColorOptional;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Синий'**
+  String get avatarColorBlue;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Зелёный'**
+  String get avatarColorGreen;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Фиолетовый'**
+  String get avatarColorViolet;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Малиновый'**
+  String get avatarColorPink;
+
+  /// Название цвета аватара
+  ///
+  /// In ru, this message translates to:
+  /// **'Янтарный'**
+  String get avatarColorAmber;
+
+  /// Валидация: пустой email
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите email'**
+  String get fieldEmailRequired;
+
+  /// Валидация: неверный формат email
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте email'**
+  String get fieldEmailInvalid;
+
+  /// Валидация: пустое имя
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите имя'**
+  String get fieldNameRequired;
+
+  /// Валидация: пустой пароль
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите пароль'**
+  String get fieldPasswordRequired;
+
+  /// Валидация: короткий пароль
+  ///
+  /// In ru, this message translates to:
+  /// **'Минимум {min} символов'**
+  String fieldPasswordTooShort(int min);
+
+  /// Валидация: слишком длинное значение
+  ///
+  /// In ru, this message translates to:
+  /// **'Не больше {max} символов'**
+  String fieldTooLong(int max);
+
+  /// Заголовок списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Мои доски'**
+  String get boardsTitle;
+
+  /// Подсказка поиска по доскам
+  ///
+  /// In ru, this message translates to:
+  /// **'Найти доску'**
+  String get boardsSearchHint;
+
+  /// Кнопка создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая доска'**
+  String get boardsNew;
+
+  /// Количество досок
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} доска} few{{count} доски} many{{count} досок} other{{count} доски}}'**
+  String boardsCount(int count);
+
+  /// Заголовок пустого списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Здесь появятся ваши доски'**
+  String get boardsEmptyTitle;
+
+  /// Текст пустого списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Создайте первую доску — колонки и участников добавите уже на ней.'**
+  String get boardsEmptyBody;
+
+  /// Кнопка в пустом списке досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать доску'**
+  String get boardsEmptyAction;
+
+  /// Заголовок ошибки загрузки списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить доски'**
+  String get boardsLoadError;
+
+  /// Результат поиска без совпадений
+  ///
+  /// In ru, this message translates to:
+  /// **'Ничего не найдено'**
+  String get boardsNoResults;
+
+  /// Подсказка кнопки профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль'**
+  String get boardsProfile;
+
+  /// Подсказка и метка кнопки обновления списка досок
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновить'**
+  String get boardsRefresh;
+
+  /// Время последнего изменения доски
+  ///
+  /// In ru, this message translates to:
+  /// **'изменено {when}'**
+  String boardUpdatedAt(String when);
+
+  /// Семантика плитки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска «{title}», {role}'**
+  String boardSemantic(String title, String role);
+
+  /// Заголовок создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая доска'**
+  String get newBoardTitle;
+
+  /// Подпись поля названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название'**
+  String get newBoardName;
+
+  /// Пояснение при создании доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы станете владельцем. Колонки и участников добавите уже на доске.'**
+  String get newBoardNote;
+
+  /// Кнопка создания доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать доску'**
+  String get newBoardSubmit;
+
+  /// Валидация: пустое название доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите название'**
+  String get newBoardRequired;
+
+  /// Заголовок профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль'**
+  String get profileTitle;
+
+  /// Подпись возврата из профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Мои доски'**
+  String get profileBack;
+
+  /// Кнопка сохранения профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get profileSave;
+
+  /// Snackbar после сохранения профиля
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль сохранён'**
+  String get profileSaved;
+
+  /// Подпись email в профиле
+  ///
+  /// In ru, this message translates to:
+  /// **'Email'**
+  String get profileEmail;
+
+  /// Кнопка выхода
+  ///
+  /// In ru, this message translates to:
+  /// **'Выйти'**
+  String get profileSignOut;
+
+  /// Пояснение под кнопкой выхода
+  ///
+  /// In ru, this message translates to:
+  /// **'Выход завершает сессию только на этом устройстве'**
+  String get profileSignOutNote;
+
+  /// Подпись скелетона доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Загружаем доску…'**
+  String get boardLoadingTitle;
+
+  /// Заголовок ошибки загрузки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось открыть доску'**
+  String get boardLoadErrorTitle;
+
+  /// Кнопка возврата к списку из ошибки
+  ///
+  /// In ru, this message translates to:
+  /// **'К списку досок'**
+  String get boardLoadErrorToList;
+
+  /// Код ошибки загрузки доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Код ошибки: {code}'**
+  String boardLoadErrorCode(String code);
+
+  /// Офлайн-баннер: число неотправленных изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет сети · {count, plural, one{{count} изменение ждёт} few{{count} изменения ждут} many{{count} изменений ждут} other{{count} изменения ждут}}'**
+  String syncOfflineBanner(int count);
+
+  /// Сводка после переподключения: заголовок
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} изменение не удалось применить} few{{count} изменения не удалось применить} many{{count} изменений не удалось применить} other{{count} изменения не удалось применить}}'**
+  String syncSummaryTitle(int count);
+
+  /// Сводка после переподключения: пояснение, когда часть изменений сохранена
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вас не было, доска изменилась. Остальное отправлено.'**
+  String get syncSummaryBody;
+
+  /// Сводка после переподключения: пояснение, когда ничего не сохранено
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вас не было, доска изменилась.'**
+  String get syncSummaryBodyAllFailed;
+
+  /// Сводка: скрыть
+  ///
+  /// In ru, this message translates to:
+  /// **'Скрыть'**
+  String get syncSummaryHide;
+
+  /// Сводка: открыть список неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Подробнее'**
+  String get syncSummaryDetails;
+
+  /// Список неприменённых изменений: заголовок
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} изменение не применилось} few{{count} изменения не применились} many{{count} изменений не применилось} other{{count} изменения не применились}}'**
+  String rejectedTitle(int count);
+
+  /// Список неприменённых изменений: подзаголовок без сохранённых
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вы были офлайн, доска поменялась.'**
+  String get rejectedSubtitle;
+
+  /// Список неприменённых изменений: подзаголовок с числом сохранённых
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока вы были офлайн, доска поменялась. {saved, plural, one{Сохранено ещё {saved} изменение.} few{Сохранено ещё {saved} изменения.} many{Сохранено ещё {saved} изменений.} other{Сохранено ещё {saved} изменения.}}'**
+  String rejectedSubtitleSaved(int saved);
+
+  /// Метка шторки неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Неприменённые изменения'**
+  String get rejectedSemantic;
+
+  /// Закрыть список неприменённых изменений
+  ///
+  /// In ru, this message translates to:
+  /// **'Понятно'**
+  String get rejectedClose;
+
+  /// Перейти к карточке на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Показать на доске'**
+  String get rejectedShowOnBoard;
+
+  /// Скопировать текст неприменённого изменения
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать текст'**
+  String get rejectedCopyText;
+
+  /// Подтверждение копирования
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировано'**
+  String get rejectedCopied;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'перемещение'**
+  String get rejectedKindMove;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'создание'**
+  String get rejectedKindCreate;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'правка названия'**
+  String get rejectedKindEditTitle;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'правка описания'**
+  String get rejectedKindEditDescription;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'архивация'**
+  String get rejectedKindArchive;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'новая колонка'**
+  String get rejectedKindCreateColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'переименование колонки'**
+  String get rejectedKindRenameColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'сдвиг колонки'**
+  String get rejectedKindMoveColumn;
+
+  /// Тип операции
+  ///
+  /// In ru, this message translates to:
+  /// **'архивация колонки'**
+  String get rejectedKindArchiveColumn;
+
+  /// Название карточки по умолчанию
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточка'**
+  String get rejectedSubjectCard;
+
+  /// Название колонки по умолчанию
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка'**
+  String get rejectedSubjectColumn;
+
+  /// Описание создания карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая карточка «{title}»'**
+  String rejectedSubjectNewCard(String title);
+
+  /// Описание создания колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая колонка «{title}»'**
+  String rejectedSubjectNewColumn(String title);
+
+  /// Описание перемещения карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'{title} → {column}'**
+  String rejectedSubjectMove(String title, String column);
+
+  /// Причина: изменение устарело
+  ///
+  /// In ru, this message translates to:
+  /// **'Изменение слишком долго ждало отправки и было отменено.'**
+  String get rejectedDropStale;
+
+  /// Причина: цель изменения удалена
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточки или колонки, к которым относилось изменение, больше нет на доске.'**
+  String get rejectedDropGone;
+
+  /// Диалог: заголовок при исключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт'**
+  String get boardEndedRemovedTitle;
+
+  /// Диалог: текст при исключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Вас убрали из участников доски «{title}». Ваши несохранённые изменения на ней отменены.'**
+  String boardEndedRemovedBody(String title);
+
+  /// Диалог: заголовок при удалении доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска удалена'**
+  String get boardEndedDeletedTitle;
+
+  /// Диалог: текст при удалении доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Владелец удалил доску «{title}».'**
+  String boardEndedDeletedBody(String title);
+
+  /// Диалог: общий текст, когда сервер отказал в подключении
+  ///
+  /// In ru, this message translates to:
+  /// **'Доступ к доске закрыт, или она удалена. Ваши несохранённые изменения на ней отменены.'**
+  String get boardEndedAccessLostBody;
+
+  /// Диалог: кнопка перехода к списку досок
+  ///
+  /// In ru, this message translates to:
+  /// **'К моим доскам'**
+  String get boardEndedAction;
+
+  /// Диалог: заголовок блока несохранённого текста
+  ///
+  /// In ru, this message translates to:
+  /// **'Несохранённый текст'**
+  String get boardEndedUnsavedHeading;
+
+  /// Snackbar: сервер шлёт незнакомые сообщения
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновите приложение: сервер использует новые возможности.'**
+  String get protocolUpdateApp;
+
+  /// Snackbar: nack version_conflict при сдвиге колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонку уже переместил {name}.'**
+  String nackVersionConflictColumn(String name);
+
+  /// Snackbar: nack version_conflict при сдвиге колонки без имени
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонку уже переместил другой участник.'**
+  String get nackVersionConflictColumnUnknown;
+
+  /// Snackbar: nack not_found для колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка уже в архиве.'**
+  String get nackNotFoundColumn;
+
+  /// Подсказка поля новой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Название колонки'**
+  String get columnNewHint;
+
+  /// Метка поля новой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Название новой колонки'**
+  String get columnNewSemantic;
+
+  /// Кнопка-галочка создания колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать колонку'**
+  String get columnNewCreate;
+
+  /// Заголовок пустой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка пуста'**
+  String get columnEmptyTitle;
+
+  /// Текст пустой колонки для редактора
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавьте первую карточку или перетащите сюда из другой колонки.'**
+  String get columnEmptyBody;
+
+  /// Текст пустой колонки для наблюдателя
+  ///
+  /// In ru, this message translates to:
+  /// **'Карточек пока нет.'**
+  String get columnEmptyBodyViewer;
+
+  /// Подсказка кнопки меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Меню колонки'**
+  String get columnMenu;
+
+  /// Метка кнопки меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Меню колонки «{title}»'**
+  String columnMenuSemantic(String title);
+
+  /// Метка шторки колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Колонка «{title}»'**
+  String columnSheetSemantic(String title);
+
+  /// Подпись поля переименования
+  ///
+  /// In ru, this message translates to:
+  /// **'Название колонки'**
+  String get columnNameLabel;
+
+  /// Пункт меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Сдвинуть левее'**
+  String get columnMoveLeft;
+
+  /// Пункт меню колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Сдвинуть правее'**
+  String get columnMoveRight;
+
+  /// Заголовок блока архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Архивировать «{title}»?'**
+  String columnArchiveTitle(String title);
+
+  /// Число карточек, уходящих в архив
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} карточка} few{{count} карточки} many{{count} карточек} other{{count} карточки}}'**
+  String columnArchiveCards(int count);
+
+  /// Текст блока архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Вместе с колонкой в архив уйдут {cards}. Участники доски сразу перестанут их видеть.'**
+  String columnArchiveBody(String cards);
+
+  /// Текст блока архивации пустой колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'В колонке нет карточек. Участники доски сразу перестанут видеть колонку.'**
+  String get columnArchiveBodyEmpty;
+
+  /// Кнопка отмены архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get columnArchiveCancel;
+
+  /// Кнопка подтверждения архивации колонки
+  ///
+  /// In ru, this message translates to:
+  /// **'В архив'**
+  String get columnArchiveConfirm;
+
+  /// Кнопка показа поля описания в форме новой карточки
+  ///
+  /// In ru, this message translates to:
+  /// **'Описание'**
+  String get cardComposerDescription;
+
+  /// Подпись редактора заголовка карточки на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Правка заголовка'**
+  String get cardInlineEditCaption;
+
+  /// Кнопка отмены правки заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменить правку'**
+  String get cardInlineEditCancel;
+
+  /// Кнопка сохранения заголовка на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить заголовок'**
+  String get cardInlineEditSave;
+
+  /// Действие запуска правки заголовка прямо на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'Править заголовок на доске'**
+  String get cardInlineEditAction;
+
+  /// Заголовок экрана участников
+  ///
+  /// In ru, this message translates to:
+  /// **'Участники'**
+  String get membersTitle;
+
+  /// Название экрана участников для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Участники доски «{title}»'**
+  String membersSheetSemantic(String title);
+
+  /// Число участников доски
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} участник} few{{count} участника} many{{count} участников} other{{count} участника}}'**
+  String membersCount(int count);
+
+  /// Число участников на доске прямо сейчас
+  ///
+  /// In ru, this message translates to:
+  /// **'{count} онлайн'**
+  String membersOnlineCount(int count);
+
+  /// Строка под заголовком списка участников
+  ///
+  /// In ru, this message translates to:
+  /// **'{members} · {online}'**
+  String membersSummary(String members, String online);
+
+  /// Пометка текущего пользователя в списке
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы'**
+  String get membersYou;
+
+  /// Статус участника, который сейчас на доске
+  ///
+  /// In ru, this message translates to:
+  /// **'на доске'**
+  String get membersOnBoard;
+
+  /// Подпись поля добавления участника по email
+  ///
+  /// In ru, this message translates to:
+  /// **'Email коллеги'**
+  String get membersAddLabel;
+
+  /// Кнопка добавления участника по email
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавить'**
+  String get membersAddAction;
+
+  /// Сообщение об успешном добавлении участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Участник добавлен: {name}'**
+  String membersAdded(String name);
+
+  /// Ошибка: email не зарегистрирован
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет пользователя с таким email'**
+  String get membersErrorNotFound;
+
+  /// Ошибка: пользователь уже участник
+  ///
+  /// In ru, this message translates to:
+  /// **'Этот пользователь уже на доске'**
+  String get membersErrorAlreadyMember;
+
+  /// Ошибка валидации при добавлении участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте email и роль'**
+  String get membersErrorValidation;
+
+  /// Ошибка прав при управлении участниками
+  ///
+  /// In ru, this message translates to:
+  /// **'Управлять участниками может только владелец доски'**
+  String get membersErrorForbidden;
+
+  /// Метка выбора роли участника для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Сменить роль: {name}, сейчас {role}'**
+  String membersRoleChange(String name, String role);
+
+  /// Метка выбора роли при добавлении
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль нового участника: {role}'**
+  String membersRoleForNew(String role);
+
+  /// Подсказка кнопки исключения участника
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить с доски: {name}'**
+  String membersRemoveTooltip(String name);
+
+  /// Заголовок подтверждения исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить {name}?'**
+  String membersRemoveTitle(String name);
+
+  /// Пояснение к подтверждению исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Участник сразу потеряет доступ к доске «{board}». Его несохранённые изменения не сохранятся.'**
+  String membersRemoveBody(String board);
+
+  /// Кнопка подтверждения исключения
+  ///
+  /// In ru, this message translates to:
+  /// **'Исключить'**
+  String get membersRemoveConfirm;
+
+  /// Заголовок секции инвайт-ссылок
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка-приглашение'**
+  String get invitesTitle;
+
+  /// Кнопка создания инвайт-ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Создать ссылку'**
+  String get invitesCreate;
+
+  /// Метка выбора роли для новой ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль по ссылке: {role}'**
+  String invitesRoleForNew(String role);
+
+  /// Метка текста ссылки для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка-приглашение: {link}'**
+  String invitesLinkSemantic(String link);
+
+  /// Кнопка копирования ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Копировать'**
+  String get invitesCopy;
+
+  /// Подтверждение копирования ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировано'**
+  String get invitesCopied;
+
+  /// Кнопка отзыва приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Отозвать'**
+  String get invitesRevoke;
+
+  /// Метка кнопки отзыва для диктора
+  ///
+  /// In ru, this message translates to:
+  /// **'Отозвать приглашение: {meta}'**
+  String invitesRevokeSemantic(String meta);
+
+  /// Описание приглашения: роль, срок, использования
+  ///
+  /// In ru, this message translates to:
+  /// **'{role} · {expiry} · {uses}'**
+  String invitesMeta(String role, String expiry, String uses);
+
+  /// Сколько дней осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{остался {count} день} few{осталось {count} дня} many{осталось {count} дней} other{осталось {count} дня}}'**
+  String invitesLeftDays(int count);
+
+  /// Сколько часов осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{остался {count} час} few{осталось {count} часа} many{осталось {count} часов} other{осталось {count} часа}}'**
+  String invitesLeftHours(int count);
+
+  /// Сколько минут осталось у приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{осталась {count} минута} few{осталось {count} минуты} many{осталось {count} минут} other{осталось {count} минуты}}'**
+  String invitesLeftMinutes(int count);
+
+  /// Приглашение просрочено
+  ///
+  /// In ru, this message translates to:
+  /// **'срок истёк'**
+  String get invitesExpired;
+
+  /// Сколько раз использовано приглашение
+  ///
+  /// In ru, this message translates to:
+  /// **'{max, plural, one{{used} из {max} использования} other{{used} из {max} использований}}'**
+  String invitesUses(int used, int max);
+
+  /// Пустой список приглашений
+  ///
+  /// In ru, this message translates to:
+  /// **'Активных ссылок нет. Создайте ссылку и отправьте её коллеге.'**
+  String get invitesEmpty;
+
+  /// Пояснение, почему у старых приглашений нет ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылку можно скопировать только сразу после создания.'**
+  String get invitesTokenHint;
+
+  /// Ошибка загрузки списка приглашений
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить приглашения'**
+  String get invitesLoadError;
+
+  /// Заголовок экрана принятия приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Вас приглашают на доску'**
+  String get inviteHeadline;
+
+  /// Пояснение на экране приглашения: превью приглашения недоступно до принятия
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль и права назначил владелец доски. Вы увидите их сразу после присоединения.'**
+  String get inviteNote;
+
+  /// Кнопка принятия приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Присоединиться'**
+  String get inviteAccept;
+
+  /// Заголовок для отозванного, истёкшего или исчерпанного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка больше не работает'**
+  String get inviteUnavailableTitle;
+
+  /// Текст для недоступного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Она отозвана, истекла или уже использована. Попросите пригласившего прислать новую.'**
+  String get inviteUnavailableBody;
+
+  /// Заголовок для неизвестного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка не найдена'**
+  String get inviteNotFoundTitle;
+
+  /// Текст для неизвестного приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте, что ссылка скопирована целиком, или попросите прислать новую.'**
+  String get inviteNotFoundBody;
+
+  /// Кнопка возврата к списку досок с экрана приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'К моим доскам'**
+  String get inviteToBoards;
+
+  /// Кнопка открытия приглашения по ссылке
+  ///
+  /// In ru, this message translates to:
+  /// **'У меня есть ссылка'**
+  String get inviteHaveLink;
+
+  /// Заголовок окна ввода ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть приглашение'**
+  String get inviteLinkTitle;
+
+  /// Подпись поля ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Ссылка или код приглашения'**
+  String get inviteLinkField;
+
+  /// Ошибка пустого поля ссылки
+  ///
+  /// In ru, this message translates to:
+  /// **'Вставьте ссылку или код приглашения'**
+  String get inviteLinkRequired;
+
+  /// Ошибка неверной ссылки-приглашения
+  ///
+  /// In ru, this message translates to:
+  /// **'Это не похоже на ссылку-приглашение. Вставьте ссылку целиком.'**
+  String get inviteLinkInvalid;
+
+  /// Кнопка открытия приглашения по введённой ссылке
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть'**
+  String get inviteLinkSubmit;
+
+  /// Заголовок экрана настроек доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки доски'**
+  String get boardSettingsTitle;
+
+  /// Подпись поля названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название'**
+  String get boardSettingsName;
+
+  /// Кнопка сохранения названия доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get boardSettingsSave;
+
+  /// Подтверждение переименования доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Название сохранено'**
+  String get boardSettingsSaved;
+
+  /// Подпись роли текущего пользователя в настройках доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Ваша роль'**
+  String get boardSettingsRole;
+
+  /// Заголовок блока опасных действий
+  ///
+  /// In ru, this message translates to:
+  /// **'Опасная зона'**
+  String get boardSettingsDanger;
+
+  /// Кнопка начала удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить доску'**
+  String get boardSettingsDeleteAction;
+
+  /// Заголовок подтверждения удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить доску?'**
+  String get boardSettingsDeleteTitle;
+
+  /// Текст подтверждения удаления доски с участниками
+  ///
+  /// In ru, this message translates to:
+  /// **'{count, plural, one{{count} участник сразу потеряет доступ, а открытые у него экраны доски закроются.} few{{count} участника сразу потеряют доступ, а открытые у них экраны доски закроются.} many{{count} участников сразу потеряют доступ, а открытые у них экраны доски закроются.} other{{count} участника сразу потеряют доступ, а открытые у них экраны доски закроются.}}'**
+  String boardSettingsDeleteBody(int count);
+
+  /// Текст подтверждения удаления доски без других участников
+  ///
+  /// In ru, this message translates to:
+  /// **'Доска и все её карточки будут удалены без возможности восстановления.'**
+  String get boardSettingsDeleteAlone;
+
+  /// Кнопка подтверждения удаления доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить'**
+  String get boardSettingsDeleteConfirm;
+
+  /// Кнопка начала выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть доску'**
+  String get boardSettingsLeaveAction;
+
+  /// Заголовок подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть доску?'**
+  String get boardSettingsLeaveTitle;
+
+  /// Текст подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы потеряете доступ к «{title}». Вернуться можно будет только по новой ссылке-приглашению.'**
+  String boardSettingsLeaveBody(String title);
+
+  /// Кнопка подтверждения выхода с доски
+  ///
+  /// In ru, this message translates to:
+  /// **'Покинуть'**
+  String get boardSettingsLeaveConfirm;
+
+  /// Кнопка возврата из настроек на доску
+  ///
+  /// In ru, this message translates to:
+  /// **'Назад к доске'**
+  String get boardSettingsBack;
 }
 
 class _AppLocalizationsDelegate
@@ -658,7 +2084,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ru'].contains(locale.languageCode);
+      <String>['en', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -667,6 +2093,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
     case 'ru':
       return AppLocalizationsRu();
   }

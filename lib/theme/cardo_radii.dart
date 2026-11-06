@@ -20,6 +20,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
     required this.sheet,
     required this.pill,
     required this.markerColumn,
+    required this.chip,
+    required this.editor,
     required this.markerTab,
   });
 
@@ -39,6 +41,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
     sheet: 28,
     pill: 999,
     markerColumn: 3,
+    chip: 9,
+    editor: 16,
     markerTab: 2,
   );
 
@@ -57,6 +61,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
   final double sheet;
   final double pill;
   final double markerColumn;
+  final double chip;
+  final double editor;
   final double markerTab;
 
   static CardoRadii of(BuildContext context) {
@@ -89,6 +95,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
     double? sheet,
     double? pill,
     double? markerColumn,
+    double? chip,
+    double? editor,
     double? markerTab,
   }) {
     return CardoRadii(
@@ -107,6 +115,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
       sheet: sheet ?? this.sheet,
       pill: pill ?? this.pill,
       markerColumn: markerColumn ?? this.markerColumn,
+      chip: chip ?? this.chip,
+      editor: editor ?? this.editor,
       markerTab: markerTab ?? this.markerTab,
     );
   }
@@ -133,6 +143,8 @@ class CardoRadii extends ThemeExtension<CardoRadii> {
       sheet: l(sheet, other.sheet),
       pill: l(pill, other.pill),
       markerColumn: l(markerColumn, other.markerColumn),
+      chip: l(chip, other.chip),
+      editor: l(editor, other.editor),
       markerTab: l(markerTab, other.markerTab),
     );
   }

@@ -160,10 +160,13 @@ void main() {
       );
       expect(_presence(), _presence());
       expect(_presence().hashCode, _presence().hashCode);
-      expect(const OpConfirmed(seq: 3), const OpConfirmed(seq: 3));
       expect(
-        const OpRejected(OpRejection(reason: NackReason.internal)),
-        const OpRejected(OpRejection(reason: NackReason.internal)),
+        const PresenceUser(userId: 'u', name: 'n', avatarColor: '#2D68F5'),
+        const PresenceUser(userId: 'u', name: 'n', avatarColor: '#2D68F5'),
+      );
+      expect(
+        const OpRejection(reason: NackReason.internal),
+        const OpRejection(reason: NackReason.internal),
       );
     });
   });

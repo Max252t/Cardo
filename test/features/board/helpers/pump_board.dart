@@ -29,6 +29,7 @@ Future<void> pumpBoard(
   RejectPolicy? rejectWhen,
   Duration delay = confirmDelay,
   TextDirection textDirection = TextDirection.ltr,
+  Locale locale = const Locale('ru'),
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -46,13 +47,14 @@ Future<void> pumpBoard(
       overrides: [
         boardGatewayProvider.overrideWithValue(board),
         idGeneratorProvider.overrideWithValue(ids.call),
+        nowProvider.overrideWithValue(() => demoReferenceTime),
       ],
       child: MaterialApp(
         themeAnimationDuration: Duration.zero,
         theme: brightness == Brightness.light
             ? buildLightTheme()
             : buildDarkTheme(),
-        locale: const Locale('ru'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, app) {

@@ -74,3 +74,10 @@ test/.test_coverage.dart
 *.tmp
 *.bak
 *~
+
+# Local API configuration
+env/*.json
+!env/example.json
+
+# Local git worktrees
+.claude/worktrees/

@@ -1,6 +1,5 @@
 import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/domain/board_op.dart';
-import 'package:cardo/features/board/domain/board_session.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/presentation/board_drag_controller.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
@@ -366,9 +365,7 @@ void main() {
         columnId: DemoIds.review,
         index: 3,
       );
-      gateway.calls.single.completer.complete(
-        OpRejected(rejection(NackReason.versionConflict)),
-      );
+      gateway.calls.single.rejectWith(rejection(NackReason.versionConflict));
       await Future<void>.delayed(Duration.zero);
       expect(container.read(boardDragProvider), isNull);
       controller.drop();
@@ -382,9 +379,7 @@ void main() {
             cardId: DemoIds.rankCard,
             toColumnId: DemoIds.review,
           );
-      gateway.calls.single.completer.complete(
-        OpRejected(rejection(NackReason.versionConflict)),
-      );
+      gateway.calls.single.rejectWith(rejection(NackReason.versionConflict));
       await Future<void>.delayed(Duration.zero);
       controller.start(
         cardId: DemoIds.rankCard,

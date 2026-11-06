@@ -285,11 +285,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cardPanelClose => 'Закрыть';
 
   @override
-  String cardPanelCreatedBy(String name) {
-    return 'Создал $name';
-  }
-
-  @override
   String cardPanelVersion(int version) {
     return 'v$version';
   }
@@ -309,7 +304,123 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get cardPreviewNoDescription => 'Описания пока нет';
+  String cardMeta(String name, String when) {
+    return 'Создал $name · $when';
+  }
+
+  @override
+  String get cardAgeJustNow => 'только что';
+
+  @override
+  String cardAgeMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count минуты назад',
+      many: '$count минут назад',
+      few: '$count минуты назад',
+      one: '$count минуту назад',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cardAgeToday => 'сегодня';
+
+  @override
+  String get cardAgeYesterday => 'вчера';
+
+  @override
+  String cardAgeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count дня назад',
+      many: '$count дней назад',
+      few: '$count дня назад',
+      one: '$count день назад',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cardAgeDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String get cardTitleEditHint => 'Нажмите, чтобы изменить заголовок';
+
+  @override
+  String get cardTitleField => 'Заголовок карточки';
+
+  @override
+  String boardTitleCounter(int count, int limit) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return '$countString / $limitString';
+  }
+
+  @override
+  String cardDescriptionCounter(int count, int limit) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return '$countString / $limitString';
+  }
+
+  @override
+  String cardDescriptionTooLong(int limit) {
+    final intl.NumberFormat limitNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String limitString = limitNumberFormat.format(limit);
+
+    return 'Слишком длинное описание: максимум $limitString символов. Сохранение недоступно.';
+  }
+
+  @override
+  String cardConflictTitle(String name) {
+    return 'Описание изменил $name';
+  }
+
+  @override
+  String get cardConflictTitleUnknown => 'Описание изменил другой участник';
+
+  @override
+  String get cardConflictBody =>
+      'Ваш черновик сохранён. Перезаписать его версией или отменить свои правки?';
+
+  @override
+  String get cardConflictOverwrite => 'Перезаписать';
+
+  @override
+  String get cardConflictCancel => 'Отменить';
+
+  @override
+  String get cardConflictWaiting => 'Загружаем актуальную версию…';
+
+  @override
+  String get cardDraftLostArchived =>
+      'Карточка в архиве. Ваш текст не сохранён.';
+
+  @override
+  String get cardDraftLostCreateRejected =>
+      'Карточку не удалось создать. Ваш текст не сохранён.';
+
+  @override
+  String get cardDraftLostCopy => 'Скопировать';
 
   @override
   String get addCardTitle => 'Новая карточка';
@@ -321,7 +432,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addCardSubmit => 'Добавить';
 
   @override
-  String get addCardCancel => 'Отменить';
+  String get addCardCancel => 'Отмена';
 
   @override
   String get nackForbidden => 'Нет прав на это действие.';
@@ -355,4 +466,869 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get snackbarDismiss => 'Понятно';
+
+  @override
+  String get commonRetry => 'Повторить';
+
+  @override
+  String get commonCancel => 'Отмена';
+
+  @override
+  String get commonClose => 'Закрыть';
+
+  @override
+  String get commonLoading => 'Загрузка…';
+
+  @override
+  String get configTitle => 'Не задан адрес сервера';
+
+  @override
+  String get configHint =>
+      'Запустите приложение с --dart-define-from-file=env/local.json';
+
+  @override
+  String get configCurrentValue => 'Текущее значение';
+
+  @override
+  String get configValueEmpty => 'не задано';
+
+  @override
+  String get configOpenDemo => 'Открыть демо-доску';
+
+  @override
+  String get splashRestoring => 'Восстанавливаем сессию…';
+
+  @override
+  String get splashUnavailableTitle => 'Не удалось подключиться';
+
+  @override
+  String get errorNetworkOffline =>
+      'Нет соединения с сервером. Проверьте интернет и повторите.';
+
+  @override
+  String get errorNetworkTimeout =>
+      'Сервер не отвечает. Повторите попытку позже.';
+
+  @override
+  String get errorBusy => 'Сервер занят. Повторите через несколько секунд.';
+
+  @override
+  String get errorRateLimited =>
+      'Слишком много попыток. Попробуйте через минуту.';
+
+  @override
+  String errorRateLimitedSeconds(int seconds) {
+    return 'Слишком много попыток. Попробуйте через $seconds с.';
+  }
+
+  @override
+  String errorRateLimitedMinutes(int minutes) {
+    return 'Слишком много попыток. Попробуйте через $minutes мин.';
+  }
+
+  @override
+  String get errorForbidden => 'Нет прав на это действие.';
+
+  @override
+  String get errorNotFound =>
+      'Не найдено. Возможно, доска удалена или у вас нет доступа.';
+
+  @override
+  String get errorValidation => 'Проверьте введённые данные.';
+
+  @override
+  String get errorUnknown => 'Что-то пошло не так. Повторите попытку.';
+
+  @override
+  String get errorSessionExpired => 'Сессия истекла, войдите снова.';
+
+  @override
+  String get errorSessionReused =>
+      'Мы завершили все сессии из соображений безопасности. Войдите заново.';
+
+  @override
+  String get authEmail => 'Email';
+
+  @override
+  String get authPassword => 'Пароль';
+
+  @override
+  String get authName => 'Имя';
+
+  @override
+  String get authShowPassword => 'Показать пароль';
+
+  @override
+  String get authHidePassword => 'Скрыть пароль';
+
+  @override
+  String get loginTitle => 'С возвращением';
+
+  @override
+  String get loginSubtitle => 'Доски команды уже ждут.';
+
+  @override
+  String get loginSubtitleWide => 'Войдите, чтобы открыть свои доски.';
+
+  @override
+  String get loginSubmit => 'Войти';
+
+  @override
+  String get loginCreateAccount => 'Создать аккаунт';
+
+  @override
+  String get loginNoAccount => 'Нет аккаунта?';
+
+  @override
+  String get loginCreateLink => 'Создать';
+
+  @override
+  String get loginInvalidCredentials => 'Неверный email или пароль.';
+
+  @override
+  String get loginBrandHeadline => 'Доски, которые двигаются вместе с командой';
+
+  @override
+  String get loginBrandBody =>
+      'Все видят изменения друг друга сразу. Работает и без сети — синхронизируем, как только связь вернётся.';
+
+  @override
+  String get registerTitle => 'Создать аккаунт';
+
+  @override
+  String get registerSubtitle => 'Так вас увидят коллеги на досках.';
+
+  @override
+  String get registerSubmit => 'Создать аккаунт';
+
+  @override
+  String get registerHaveAccount => 'Уже есть аккаунт?';
+
+  @override
+  String get registerSignIn => 'Войти';
+
+  @override
+  String get registerBack => 'Назад ко входу';
+
+  @override
+  String get registerEmailTaken =>
+      'Этот email уже зарегистрирован. Войдите или используйте другой адрес.';
+
+  @override
+  String get avatarColorLabel => 'Цвет аватара';
+
+  @override
+  String get avatarColorOptional => 'Необязательно';
+
+  @override
+  String get avatarColorBlue => 'Синий';
+
+  @override
+  String get avatarColorGreen => 'Зелёный';
+
+  @override
+  String get avatarColorViolet => 'Фиолетовый';
+
+  @override
+  String get avatarColorPink => 'Малиновый';
+
+  @override
+  String get avatarColorAmber => 'Янтарный';
+
+  @override
+  String get fieldEmailRequired => 'Введите email';
+
+  @override
+  String get fieldEmailInvalid => 'Проверьте email';
+
+  @override
+  String get fieldNameRequired => 'Введите имя';
+
+  @override
+  String get fieldPasswordRequired => 'Введите пароль';
+
+  @override
+  String fieldPasswordTooShort(int min) {
+    return 'Минимум $min символов';
+  }
+
+  @override
+  String fieldTooLong(int max) {
+    return 'Не больше $max символов';
+  }
+
+  @override
+  String get boardsTitle => 'Мои доски';
+
+  @override
+  String get boardsSearchHint => 'Найти доску';
+
+  @override
+  String get boardsNew => 'Новая доска';
+
+  @override
+  String boardsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count доски',
+      many: '$count досок',
+      few: '$count доски',
+      one: '$count доска',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardsEmptyTitle => 'Здесь появятся ваши доски';
+
+  @override
+  String get boardsEmptyBody =>
+      'Создайте первую доску — колонки и участников добавите уже на ней.';
+
+  @override
+  String get boardsEmptyAction => 'Создать доску';
+
+  @override
+  String get boardsLoadError => 'Не удалось загрузить доски';
+
+  @override
+  String get boardsNoResults => 'Ничего не найдено';
+
+  @override
+  String get boardsProfile => 'Профиль';
+
+  @override
+  String get boardsRefresh => 'Обновить';
+
+  @override
+  String boardUpdatedAt(String when) {
+    return 'изменено $when';
+  }
+
+  @override
+  String boardSemantic(String title, String role) {
+    return 'Доска «$title», $role';
+  }
+
+  @override
+  String get newBoardTitle => 'Новая доска';
+
+  @override
+  String get newBoardName => 'Название';
+
+  @override
+  String get newBoardNote =>
+      'Вы станете владельцем. Колонки и участников добавите уже на доске.';
+
+  @override
+  String get newBoardSubmit => 'Создать доску';
+
+  @override
+  String get newBoardRequired => 'Введите название';
+
+  @override
+  String get profileTitle => 'Профиль';
+
+  @override
+  String get profileBack => 'Мои доски';
+
+  @override
+  String get profileSave => 'Сохранить';
+
+  @override
+  String get profileSaved => 'Профиль сохранён';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileSignOut => 'Выйти';
+
+  @override
+  String get profileSignOutNote =>
+      'Выход завершает сессию только на этом устройстве';
+
+  @override
+  String get boardLoadingTitle => 'Загружаем доску…';
+
+  @override
+  String get boardLoadErrorTitle => 'Не удалось открыть доску';
+
+  @override
+  String get boardLoadErrorToList => 'К списку досок';
+
+  @override
+  String boardLoadErrorCode(String code) {
+    return 'Код ошибки: $code';
+  }
+
+  @override
+  String syncOfflineBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения ждут',
+      many: '$count изменений ждут',
+      few: '$count изменения ждут',
+      one: '$count изменение ждёт',
+    );
+    return 'Нет сети · $_temp0';
+  }
+
+  @override
+  String syncSummaryTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения не удалось применить',
+      many: '$count изменений не удалось применить',
+      few: '$count изменения не удалось применить',
+      one: '$count изменение не удалось применить',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncSummaryBody =>
+      'Пока вас не было, доска изменилась. Остальное отправлено.';
+
+  @override
+  String get syncSummaryBodyAllFailed => 'Пока вас не было, доска изменилась.';
+
+  @override
+  String get syncSummaryHide => 'Скрыть';
+
+  @override
+  String get syncSummaryDetails => 'Подробнее';
+
+  @override
+  String rejectedTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count изменения не применились',
+      many: '$count изменений не применилось',
+      few: '$count изменения не применились',
+      one: '$count изменение не применилось',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rejectedSubtitle => 'Пока вы были офлайн, доска поменялась.';
+
+  @override
+  String rejectedSubtitleSaved(int saved) {
+    String _temp0 = intl.Intl.pluralLogic(
+      saved,
+      locale: localeName,
+      other: 'Сохранено ещё $saved изменения.',
+      many: 'Сохранено ещё $saved изменений.',
+      few: 'Сохранено ещё $saved изменения.',
+      one: 'Сохранено ещё $saved изменение.',
+    );
+    return 'Пока вы были офлайн, доска поменялась. $_temp0';
+  }
+
+  @override
+  String get rejectedSemantic => 'Неприменённые изменения';
+
+  @override
+  String get rejectedClose => 'Понятно';
+
+  @override
+  String get rejectedShowOnBoard => 'Показать на доске';
+
+  @override
+  String get rejectedCopyText => 'Скопировать текст';
+
+  @override
+  String get rejectedCopied => 'Скопировано';
+
+  @override
+  String get rejectedKindMove => 'перемещение';
+
+  @override
+  String get rejectedKindCreate => 'создание';
+
+  @override
+  String get rejectedKindEditTitle => 'правка названия';
+
+  @override
+  String get rejectedKindEditDescription => 'правка описания';
+
+  @override
+  String get rejectedKindArchive => 'архивация';
+
+  @override
+  String get rejectedKindCreateColumn => 'новая колонка';
+
+  @override
+  String get rejectedKindRenameColumn => 'переименование колонки';
+
+  @override
+  String get rejectedKindMoveColumn => 'сдвиг колонки';
+
+  @override
+  String get rejectedKindArchiveColumn => 'архивация колонки';
+
+  @override
+  String get rejectedSubjectCard => 'Карточка';
+
+  @override
+  String get rejectedSubjectColumn => 'Колонка';
+
+  @override
+  String rejectedSubjectNewCard(String title) {
+    return 'Новая карточка «$title»';
+  }
+
+  @override
+  String rejectedSubjectNewColumn(String title) {
+    return 'Новая колонка «$title»';
+  }
+
+  @override
+  String rejectedSubjectMove(String title, String column) {
+    return '$title → $column';
+  }
+
+  @override
+  String get rejectedDropStale =>
+      'Изменение слишком долго ждало отправки и было отменено.';
+
+  @override
+  String get rejectedDropGone =>
+      'Карточки или колонки, к которым относилось изменение, больше нет на доске.';
+
+  @override
+  String get boardEndedRemovedTitle => 'Доступ к доске закрыт';
+
+  @override
+  String boardEndedRemovedBody(String title) {
+    return 'Вас убрали из участников доски «$title». Ваши несохранённые изменения на ней отменены.';
+  }
+
+  @override
+  String get boardEndedDeletedTitle => 'Доска удалена';
+
+  @override
+  String boardEndedDeletedBody(String title) {
+    return 'Владелец удалил доску «$title».';
+  }
+
+  @override
+  String get boardEndedAccessLostBody =>
+      'Доступ к доске закрыт, или она удалена. Ваши несохранённые изменения на ней отменены.';
+
+  @override
+  String get boardEndedAction => 'К моим доскам';
+
+  @override
+  String get boardEndedUnsavedHeading => 'Несохранённый текст';
+
+  @override
+  String get protocolUpdateApp =>
+      'Обновите приложение: сервер использует новые возможности.';
+
+  @override
+  String nackVersionConflictColumn(String name) {
+    return 'Колонку уже переместил $name.';
+  }
+
+  @override
+  String get nackVersionConflictColumnUnknown =>
+      'Колонку уже переместил другой участник.';
+
+  @override
+  String get nackNotFoundColumn => 'Колонка уже в архиве.';
+
+  @override
+  String get columnNewHint => 'Название колонки';
+
+  @override
+  String get columnNewSemantic => 'Название новой колонки';
+
+  @override
+  String get columnNewCreate => 'Создать колонку';
+
+  @override
+  String get columnEmptyTitle => 'Колонка пуста';
+
+  @override
+  String get columnEmptyBody =>
+      'Добавьте первую карточку или перетащите сюда из другой колонки.';
+
+  @override
+  String get columnEmptyBodyViewer => 'Карточек пока нет.';
+
+  @override
+  String get columnMenu => 'Меню колонки';
+
+  @override
+  String columnMenuSemantic(String title) {
+    return 'Меню колонки «$title»';
+  }
+
+  @override
+  String columnSheetSemantic(String title) {
+    return 'Колонка «$title»';
+  }
+
+  @override
+  String get columnNameLabel => 'Название колонки';
+
+  @override
+  String get columnMoveLeft => 'Сдвинуть левее';
+
+  @override
+  String get columnMoveRight => 'Сдвинуть правее';
+
+  @override
+  String columnArchiveTitle(String title) {
+    return 'Архивировать «$title»?';
+  }
+
+  @override
+  String columnArchiveCards(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count карточки',
+      many: '$count карточек',
+      few: '$count карточки',
+      one: '$count карточка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String columnArchiveBody(String cards) {
+    return 'Вместе с колонкой в архив уйдут $cards. Участники доски сразу перестанут их видеть.';
+  }
+
+  @override
+  String get columnArchiveBodyEmpty =>
+      'В колонке нет карточек. Участники доски сразу перестанут видеть колонку.';
+
+  @override
+  String get columnArchiveCancel => 'Отмена';
+
+  @override
+  String get columnArchiveConfirm => 'В архив';
+
+  @override
+  String get cardComposerDescription => 'Описание';
+
+  @override
+  String get cardInlineEditCaption => 'Правка заголовка';
+
+  @override
+  String get cardInlineEditCancel => 'Отменить правку';
+
+  @override
+  String get cardInlineEditSave => 'Сохранить заголовок';
+
+  @override
+  String get cardInlineEditAction => 'Править заголовок на доске';
+
+  @override
+  String get membersTitle => 'Участники';
+
+  @override
+  String membersSheetSemantic(String title) {
+    return 'Участники доски «$title»';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count участника',
+      many: '$count участников',
+      few: '$count участника',
+      one: '$count участник',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String membersOnlineCount(int count) {
+    return '$count онлайн';
+  }
+
+  @override
+  String membersSummary(String members, String online) {
+    return '$members · $online';
+  }
+
+  @override
+  String get membersYou => 'Вы';
+
+  @override
+  String get membersOnBoard => 'на доске';
+
+  @override
+  String get membersAddLabel => 'Email коллеги';
+
+  @override
+  String get membersAddAction => 'Добавить';
+
+  @override
+  String membersAdded(String name) {
+    return 'Участник добавлен: $name';
+  }
+
+  @override
+  String get membersErrorNotFound => 'Нет пользователя с таким email';
+
+  @override
+  String get membersErrorAlreadyMember => 'Этот пользователь уже на доске';
+
+  @override
+  String get membersErrorValidation => 'Проверьте email и роль';
+
+  @override
+  String get membersErrorForbidden =>
+      'Управлять участниками может только владелец доски';
+
+  @override
+  String membersRoleChange(String name, String role) {
+    return 'Сменить роль: $name, сейчас $role';
+  }
+
+  @override
+  String membersRoleForNew(String role) {
+    return 'Роль нового участника: $role';
+  }
+
+  @override
+  String membersRemoveTooltip(String name) {
+    return 'Исключить с доски: $name';
+  }
+
+  @override
+  String membersRemoveTitle(String name) {
+    return 'Исключить $name?';
+  }
+
+  @override
+  String membersRemoveBody(String board) {
+    return 'Участник сразу потеряет доступ к доске «$board». Его несохранённые изменения не сохранятся.';
+  }
+
+  @override
+  String get membersRemoveConfirm => 'Исключить';
+
+  @override
+  String get invitesTitle => 'Ссылка-приглашение';
+
+  @override
+  String get invitesCreate => 'Создать ссылку';
+
+  @override
+  String invitesRoleForNew(String role) {
+    return 'Роль по ссылке: $role';
+  }
+
+  @override
+  String invitesLinkSemantic(String link) {
+    return 'Ссылка-приглашение: $link';
+  }
+
+  @override
+  String get invitesCopy => 'Копировать';
+
+  @override
+  String get invitesCopied => 'Скопировано';
+
+  @override
+  String get invitesRevoke => 'Отозвать';
+
+  @override
+  String invitesRevokeSemantic(String meta) {
+    return 'Отозвать приглашение: $meta';
+  }
+
+  @override
+  String invitesMeta(String role, String expiry, String uses) {
+    return '$role · $expiry · $uses';
+  }
+
+  @override
+  String invitesLeftDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count дня',
+      many: 'осталось $count дней',
+      few: 'осталось $count дня',
+      one: 'остался $count день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count часа',
+      many: 'осталось $count часов',
+      few: 'осталось $count часа',
+      one: 'остался $count час',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String invitesLeftMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count минуты',
+      many: 'осталось $count минут',
+      few: 'осталось $count минуты',
+      one: 'осталась $count минута',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesExpired => 'срок истёк';
+
+  @override
+  String invitesUses(int used, int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '$used из $max использований',
+      one: '$used из $max использования',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get invitesEmpty =>
+      'Активных ссылок нет. Создайте ссылку и отправьте её коллеге.';
+
+  @override
+  String get invitesTokenHint =>
+      'Ссылку можно скопировать только сразу после создания.';
+
+  @override
+  String get invitesLoadError => 'Не удалось загрузить приглашения';
+
+  @override
+  String get inviteHeadline => 'Вас приглашают на доску';
+
+  @override
+  String get inviteNote =>
+      'Роль и права назначил владелец доски. Вы увидите их сразу после присоединения.';
+
+  @override
+  String get inviteAccept => 'Присоединиться';
+
+  @override
+  String get inviteUnavailableTitle => 'Ссылка больше не работает';
+
+  @override
+  String get inviteUnavailableBody =>
+      'Она отозвана, истекла или уже использована. Попросите пригласившего прислать новую.';
+
+  @override
+  String get inviteNotFoundTitle => 'Ссылка не найдена';
+
+  @override
+  String get inviteNotFoundBody =>
+      'Проверьте, что ссылка скопирована целиком, или попросите прислать новую.';
+
+  @override
+  String get inviteToBoards => 'К моим доскам';
+
+  @override
+  String get inviteHaveLink => 'У меня есть ссылка';
+
+  @override
+  String get inviteLinkTitle => 'Открыть приглашение';
+
+  @override
+  String get inviteLinkField => 'Ссылка или код приглашения';
+
+  @override
+  String get inviteLinkRequired => 'Вставьте ссылку или код приглашения';
+
+  @override
+  String get inviteLinkInvalid =>
+      'Это не похоже на ссылку-приглашение. Вставьте ссылку целиком.';
+
+  @override
+  String get inviteLinkSubmit => 'Открыть';
+
+  @override
+  String get boardSettingsTitle => 'Настройки доски';
+
+  @override
+  String get boardSettingsName => 'Название';
+
+  @override
+  String get boardSettingsSave => 'Сохранить';
+
+  @override
+  String get boardSettingsSaved => 'Название сохранено';
+
+  @override
+  String get boardSettingsRole => 'Ваша роль';
+
+  @override
+  String get boardSettingsDanger => 'Опасная зона';
+
+  @override
+  String get boardSettingsDeleteAction => 'Удалить доску';
+
+  @override
+  String get boardSettingsDeleteTitle => 'Удалить доску?';
+
+  @override
+  String boardSettingsDeleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count участника сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      many:
+          '$count участников сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      few:
+          '$count участника сразу потеряют доступ, а открытые у них экраны доски закроются.',
+      one:
+          '$count участник сразу потеряет доступ, а открытые у него экраны доски закроются.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get boardSettingsDeleteAlone =>
+      'Доска и все её карточки будут удалены без возможности восстановления.';
+
+  @override
+  String get boardSettingsDeleteConfirm => 'Удалить';
+
+  @override
+  String get boardSettingsLeaveAction => 'Покинуть доску';
+
+  @override
+  String get boardSettingsLeaveTitle => 'Покинуть доску?';
+
+  @override
+  String boardSettingsLeaveBody(String title) {
+    return 'Вы потеряете доступ к «$title». Вернуться можно будет только по новой ссылке-приглашению.';
+  }
+
+  @override
+  String get boardSettingsLeaveConfirm => 'Покинуть';
+
+  @override
+  String get boardSettingsBack => 'Назад к доске';
 }

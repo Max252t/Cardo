@@ -2,104 +2,139 @@
 
 [![CI](https://github.com/Max252t/Cardo/actions/workflows/ci.yml/badge.svg)](https://github.com/Max252t/Cardo/actions/workflows/ci.yml)
 
-Мобильный клиент на Flutter для совместной работы над канбан-досками в реальном времени (Trello-lite). Несколько пользователей одновременно двигают и редактируют карточки и видят изменения друг друга без перезагрузки.
+Клиент на Flutter для совместной работы над канбан-досками в реальном времени. Несколько человек одновременно двигают и правят карточки и сразу видят изменения друг друга.
 
-В этом репозитории только Flutter-клиент. Сервер (Go / Gin, PostgreSQL, Redis) живёт отдельно.
+В репозитории только клиент. Сервер (Go, PostgreSQL, Redis) живёт отдельно: [Cardo-backend](https://github.com/Max252t/Cardo-backend).
 
-> **Статус:** каркас проекта. Функциональность в разработке.
+Текущее состояние и список реализованного: [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md).
 
-## Возможности (MVP)
+## Что умеет приложение
 
-- Регистрация и вход по email и паролю, прозрачное обновление access-токена.
-- Доски с ролями `owner` / `editor` / `viewer`, приглашения по email и инвайт-ссылке.
-- Колонки и карточки: создание, редактирование, перемещение drag-and-drop, архивирование.
-- Realtime через WebSocket: изменения других участников, presence, индикатор соединения.
-- Оптимистичный UI: действия применяются мгновенно, отклонённые сервером операции исчезают с понятным сообщением.
-- Офлайн-очередь операций и переподключение с экспоненциальным backoff.
+- Регистрация, вход, профиль, выход. Access-токен хранится в памяти, refresh-токен в защищённом хранилище.
+- Список досок и создание доски.
+- Доска с колонками и карточками: создание, правка, перетаскивание, архив.
+- Роли `owner`, `editor`, `viewer`, участники доски, инвайт-ссылки и переход по ним.
+- Настройки доски: переименование, удаление, выход.
+- Синхронизация по WebSocket: чужие изменения без перезагрузки, присутствие участников, индикатор соединения, переподключение, очередь неподтверждённых операций и сообщения об отклонённых.
+- Русский и английский интерфейс, светлая и тёмная тема.
 
-## Как устроена синхронизация
+## Требования
 
-Клиент хранит два слоя состояния доски:
+- Flutter 3.47 (stable), Dart 3.13.
+- Windows: включённый Developer Mode (`start ms-settings:developers`) и компонент Visual Studio «C++ ATL». Он нужен для `flutter_secure_storage`.
+- Для Android и iOS: обычные инструменты Flutter для платформы.
 
-- **confirmed** — состояние, построенное только из событий сервера;
-- **pending** — очередь собственных операций, ещё не подтверждённых сервером.
-
-Пользователь видит их композицию:
-
-```dart
-BoardModel view(BoardSyncState s) =>
-    s.pending.fold(s.confirmed, (board, op) => op.applyTo(board));
-```
-
-- Каждое событие сервера несёт монотонный `seq` доски. События применяются строго по порядку, дубликаты отбрасываются, пропуски догружаются через REST.
-- Подтверждением операции служит событие с её `op_id`, отказом — `nack` с причиной (`version_conflict`, `forbidden`, `not_found` и т. д.).
-- ID новых сущностей генерирует клиент (UUID v7), поэтому повторная отправка очереди не создаёт дубликатов.
-- Порядок карточек и колонок задаётся строковым `rank` (fractional indexing). Клиент указывает соседей (`after_id` / `before_id`), итоговый rank вычисляет сервер.
-- После переподключения: `hello { last_seq }` → дельта или снапшот → rebase очереди → отправка.
-
-## Стек
-
-| Назначение | Библиотека |
-|------------|------------|
-| Состояние и DI | Riverpod 3 |
-| Модели | freezed |
-| REST | dio |
-| WebSocket | web_socket_channel |
-| Хранение токенов | flutter_secure_storage |
-| Drag-and-drop | `LongPressDraggable` + `DragTarget` |
-
-## Структура
-
-```
-lib/
-├── core/
-│   ├── api/            # dio, интерсептор токенов, ошибки
-│   ├── auth/           # хранение токенов, сессия
-│   ├── realtime/       # WsConnection: reconnect, heartbeat, handshake
-│   └── ranking/        # fractional indexing
-├── features/
-│   ├── auth/
-│   ├── boards/         # список досок
-│   ├── board/
-│   │   ├── domain/     # BoardModel, операции, applyTo
-│   │   ├── data/       # BoardSyncNotifier: confirmed + pending
-│   │   └── presentation/
-│   ├── members/
-│   └── presence/
-└── main.dart
-```
-
-## Запуск
-
-Требования: Flutter 3.47 (stable), Dart 3.13+.
+Зависимости:
 
 ```bash
 flutter pub get
 ```
 
-```bash
-flutter run
+## Адрес сервера
+
+Адрес передаётся через `--dart-define` с ключом `API_BASE_URL` и в коде не хранится.
+
+1. Скопируйте `env/example.json` в `env/local.json`. Файл `env/local.json` игнорируется git.
+2. Впишите адрес сервера в `API_BASE_URL`:
+
+```json
+{"API_BASE_URL": "http://localhost:8080"}
 ```
+
+Адрес без схемы `http` или `https`, с параметрами (`?`), фрагментом (`#`) или логином с паролем считается неверным.
+
+| Где запущено приложение | Адрес |
+|---|---|
+| Windows, macOS, Linux | `http://localhost:8080` |
+| Android-эмулятор | `http://10.0.2.2:8080` |
+| iOS-симулятор | `http://localhost:8080` |
+| Реальный сервер | `https://...` |
+
+Порт `8080` приходит из `docker-compose.yml` бэкенда. WebSocket-адрес строится из того же значения: `http` превращается в `ws`, `https` в `wss`.
+
+Правила для HTTP заданы настройками платформ:
+
+- debug и profile на Android разрешают HTTP только для `localhost`, `127.0.0.1` и `10.0.2.2` (`android/app/src/main/res/xml/network_security_config.xml`);
+- debug на iOS разрешает HTTP только для локальной сети (`NSAllowsLocalNetworking` в `ios/Runner/Info-Debug.plist`);
+- release требует HTTPS.
+
+## Запуск
+
+```bash
+flutter run -d windows --dart-define-from-file=env/local.json
+```
+
+Вместо `windows` подставьте нужное устройство (`flutter devices`).
+
+Без адреса сервера (пустой или неверный `API_BASE_URL`) откроется экран конфигурации. В debug-сборке на нём есть кнопка демо-доски, которая работает на встроенном фейковом сервере без сети.
+
+### Запуск сервера
+
+Инструкция лежит в репозитории [Cardo-backend](https://github.com/Max252t/Cardo-backend). Коротко:
+
+```bash
+git clone https://github.com/Max252t/Cardo-backend.git
+cd Cardo-backend
+docker compose up --build
+```
+
+Сервер откроется на `http://localhost:8080`.
 
 ## Проверки
 
-Те же проверки запускаются в CI на каждый push и pull request в `main`:
-
 ```bash
-dart format --output=none --set-exit-if-changed .
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze --no-pub --fatal-infos
+flutter test --no-pub
 ```
 
-```bash
-flutter analyze --fatal-infos
-```
+После правки ARB-файлов в `lib/l10n/` перегенерируйте локализацию:
 
 ```bash
-flutter test
+flutter gen-l10n
 ```
+
+Флаг `--no-pub` отключает неявный `pub get` перед командой: он обращается к сети и может надолго зависать. Выполните `flutter pub get` один раз при смене зависимостей, дальше запускайте с `--no-pub`. CI запускает те же проверки на каждый push и pull request.
+
+Строки интерфейса хранятся в `lib/l10n/app_ru.arb` (шаблон) и `lib/l10n/app_en.arb`. Тест следит, чтобы ключи и плейсхолдеры в двух файлах совпадали.
+
+## Структура проекта
+
+```
+lib/
+├── app/          # роутер, корневой виджет, экран конфигурации
+├── core/         # config, network, realtime, ranking, result, models, invite, equality
+├── features/
+│   ├── auth/            # вход, регистрация, профиль, сессия
+│   ├── boards/          # список досок
+│   ├── board/           # доска, карточки, синхронизация
+│   ├── board_settings/  # переименование, удаление, выход с доски
+│   ├── members/         # участники и роли
+│   ├── invites/         # инвайт-ссылки
+│   └── design_preview/  # просмотр дизайн-системы (debug)
+├── shared/       # общие виджеты, провайдеры, время, ошибки, язык
+├── theme/        # токены дизайн-системы и темы
+├── l10n/         # ARB-файлы и сгенерированные классы
+└── main.dart
+```
+
+Фича делится на слои:
+
+- `domain` содержит чистый Dart, без Flutter и без зависимостей от `data`;
+- `data` содержит работу с сетью и хранилищем, без Flutter UI, Riverpod и `dart:ui`;
+- `presentation` содержит экраны, виджеты и контроллеры на Riverpod.
+
+Правила чистой архитектуры закреплены тестами в `test/policy/`:
+
+- `layer_boundaries_test.dart` проверяет, какие слои на что могут ссылаться;
+- `realtime_boundaries_test.dart` проверяет границы realtime-кода;
+- `no_raw_values_test.dart` запрещает сырые цвета, размеры и длительности вне `lib/theme/`;
+- `no_hardcoded_endpoints_test.dart` запрещает адреса сервера в коде;
+- `no_hardcoded_locale_test.dart` запрещает жёстко заданный язык.
 
 ## Git
 
-- Модель ветвления — GitHub Flow: `main` всегда рабочий, изменения через feature-ветки и Pull Request.
+- Модель ветвления — Git Flow: `main` для релизов, `develop` для разработки, фичи в `feature/*` от `develop`.
 - Сообщения коммитов — [Conventional Commits](https://www.conventionalcommits.org/ru/v1.0.0/).
 
 ## Лицензия
