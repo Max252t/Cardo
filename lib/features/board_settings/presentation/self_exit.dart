@@ -18,6 +18,12 @@ class SelfExitNotifier extends Notifier<Map<String, DateTime>> {
     state = <String, DateTime>{...state}..remove(boardId);
   }
 
+  void reset() {
+    if (state.isNotEmpty) {
+      state = const <String, DateTime>{};
+    }
+  }
+
   bool isRecent(String boardId) {
     final markedAt = state[boardId];
     if (markedAt == null) {

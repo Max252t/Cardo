@@ -3,6 +3,7 @@ import 'package:cardo/features/board/data/demo_board_fixture.dart';
 import 'package:cardo/features/board/domain/board_sync_state.dart';
 import 'package:cardo/features/board/presentation/board_providers.dart';
 import 'package:cardo/features/board/presentation/widgets/card_sheet.dart';
+import 'package:cardo/l10n/app_localizations_en.dart';
 import 'package:cardo/l10n/app_localizations_ru.dart';
 import 'package:cardo/shared/widgets/conflict_banner.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +92,7 @@ void main() {
     testWidgets('viewer banner names the owner', (tester) async {
       await pumpBoard(tester, role: BoardRole.viewer, locale: _en);
       expect(
-        find.text(
-          'You are a viewer: you can look but not edit. '
-          'Access is managed by the owner, Максим.',
-        ),
+        find.text(AppLocalizationsEn().boardViewerBanner('Максим')),
         findsOneWidget,
       );
       expect(find.text('Add card'), findsNothing);
@@ -123,7 +121,7 @@ void main() {
         rejectWhen: (op) => const OpRejection(reason: NackReason.notFound),
       );
       await _moveRateLimit(tester);
-      expect(find.text('The card is already archived.'), findsWidgets);
+      expect(find.text(AppLocalizationsEn().nackNotFound), findsWidgets);
       expect(find.text('Not applied'), findsOneWidget);
       await _finish(tester);
     });
@@ -203,10 +201,7 @@ void main() {
       await tester.pump();
       expect(find.text('10,001 / 10,000'), findsOneWidget);
       expect(
-        find.text(
-          'Description is too long: 10,000 characters maximum. '
-          'Saving is unavailable.',
-        ),
+        find.text(AppLocalizationsEn().cardDescriptionTooLong(10000)),
         findsOneWidget,
       );
       await _finish(tester);

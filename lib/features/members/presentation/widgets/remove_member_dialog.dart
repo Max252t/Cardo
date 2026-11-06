@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/cardo_theme.dart';
+import '../../../board/presentation/board_providers.dart';
 
 Future<bool> confirmRemoveMember(
   BuildContext context, {
   required String memberName,
   required String boardTitle,
 }) async {
+  final container = ProviderScope.containerOf(context, listen: false);
   final confirmed = await showDialog<bool>(
     context: context,
-    builder: (context) =>
-        RemoveMemberDialog(memberName: memberName, boardTitle: boardTitle),
+    builder: (context) => UncontrolledProviderScope(
+      container: container,
+      child: RemoveMemberDialog(memberName: memberName, boardTitle: boardTitle),
+    ),
   );
   return confirmed ?? false;
 }
 
-class RemoveMemberDialog extends StatelessWidget {
+class RemoveMemberDialog extends ConsumerWidget {
   const RemoveMemberDialog({
     super.key,
     required this.memberName,
@@ -28,7 +33,16 @@ class RemoveMemberDialog extends StatelessWidget {
   final String boardTitle;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<bool>(
+      boardNotifierProvider.select((state) => state.ended != null),
+      (previous, ended) {
+        final route = ModalRoute.of(context);
+        if (ended && context.mounted && route != null) {
+          Navigator.of(context).removeRoute(route);
+        }
+      },
+    );
     final l10n = AppLocalizations.of(context);
     final colors = CardoColors.of(context);
     final typography = CardoTypography.of(context);

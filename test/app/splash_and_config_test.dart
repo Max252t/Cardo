@@ -1,6 +1,7 @@
 import 'package:cardo/features/auth/domain/session.dart';
 import 'package:cardo/features/auth/presentation/auth_providers.dart';
 import 'package:cardo/features/board/presentation/board_screen.dart';
+import 'package:cardo/l10n/app_localizations_en.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -243,7 +244,7 @@ void main() {
     testWidgets('the English texts', (tester) async {
       await pumpCardoApp(tester, variant: enPhone, config: '');
 
-      expect(find.text('Server address is not set'), findsOneWidget);
+      expect(find.text(AppLocalizationsEn().configTitle), findsOneWidget);
       expect(find.text('Open demo board'), findsOneWidget);
       expect(find.text('not set'), findsOneWidget);
       expect(

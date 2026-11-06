@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../core/result/result.dart';
 import '../../boards/domain/board_info.dart';
+import '../../board_settings/presentation/self_exit.dart';
 import '../../boards/presentation/boards_providers.dart';
 import 'invites_providers.dart';
 
@@ -57,6 +58,7 @@ class InviteController extends Notifier<InviteState> {
     }
     switch (result) {
       case Success<BoardInfo, ApiFailure>(:final value):
+        ref.read(selfExitProvider.notifier).clear(value.id);
         ref.invalidate(boardsListProvider);
         state = const InviteState();
         return value;

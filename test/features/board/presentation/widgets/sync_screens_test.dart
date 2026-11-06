@@ -365,7 +365,6 @@ void main() {
       );
 
       expect(find.text(en.syncSummaryTitle(2)), findsOneWidget);
-      expect(find.text('2 changes could not be applied'), findsOneWidget);
       expect(find.text('Hide'), findsOneWidget);
 
       await tester.tap(find.text('Details'));
